@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+        <span style="font-size: 16pt"><strong>
+        </strong></span>
+        <h1>
+            <span style="font-size: 16pt"><strong>
+        SqlStudio</strong></span><br />
+        </h1>
+        <br />
+        <h2>
+        Provider independent SQL query tool<br />
+        </h2>
+        <h3>
+            Overview</h3>
+        <p>
+            Tool to execute SQL commands against a MSSQL, Oracle, ODBC or Sqlite database.
+        </p>
+        <p>
+            In the Input tab you can write queries folowed by a semicolon(;) and enter and the
+            query will be executed on the curent database. If your query hava a result set the
+            data will be displayed in the Data tab below. Here you can view data/change data,
+            to update database right click on datagrid and select "Save".</p>
+        <p>
+            You can also type in several queries at one time seperated by semicolons and they
+            will be executed in one batch.</p>
+        <p>
+            Too see posible completions use the Tab key and to select previously executed commands
+            use the UP and DOWN arrows.</p>
+        <h3>
+        </h3>
+        <h3>
+            Aliases</h3>
+        Aliases are predefined commands that can have optional arguments that can be executed.<br />
+        <br />
+        Example:<br />
+        <strong>alias -a en "select a.flag, a.title, b.title as 'norwegian title', a.title_no
+            from asystitlesen a, asystitlesno b where a.title LIKE '%{0}%' and a.title_no =
+            b.title_no"<br />
+        </strong>
+        <br />
+        will add a alias "en" that you can use like this: "en workflow" will display all
+        titles that contains the word workflow in both english and norwegian.<br />
+        You can also manage your aliases from the Tools | Aliases menu.<br />
+        <h3>
+        Built-inn commands:<br />
+        </h3>
+        <ul>
+            <li>ls -t [%table name%], list all tables in db opptionally filtered by %table_name%</li>
+            <li>ls -c [%table name%] [%column name%], list all columns in db optionally filtered
+                by %table name% and %column name%</li>
+        </ul>
+        <p>
+        </p>
+	
+	</body>
+</html>

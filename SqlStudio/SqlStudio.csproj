@@ -1,0 +1,382 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1A03107A-FEBD-4927-8FD1-9840AEEBBAF6}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SqlStudio</RootNamespace>
+    <AssemblyName>SqlStudio</AssemblyName>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <ApplicationIcon>Danger.ico</ApplicationIcon>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <PublishUrl>http://localhost/SqlStudio/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bindebug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\bindebug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="GoldParser, Version=1.0.2544.36928, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="PoorMansTSqlFormatterLib35, Version=1.4.3.22972, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\bindebug\PoorMansTSqlFormatterLib35.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.112.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.112.0\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.112.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.112.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.112.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.112.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AliasesEditor\AliasesEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AliasesEditor\AliasesEditor.Designer.cs">
+      <DependentUpon>AliasesEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ArgumentsParser.cs" />
+    <Compile Include="AutoQueryEditor\AutoQueryEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AutoQueryEditor\AutoQueryEditor.Designer.cs">
+      <DependentUpon>AutoQueryEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BuiltInCommands.cs" />
+    <Compile Include="CommandCompletion\CommandCompletion.cs" />
+    <Compile Include="CommandParser.cs" />
+    <Compile Include="CompleterSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CompleterSelect.designer.cs">
+      <DependentUpon>CompleterSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConnectToolStripItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Converters\ConvertCvsDataToLogRecords.cs" />
+    <Compile Include="CrudGenerator.cs" />
+    <Compile Include="CvsImport\CsvImporter.cs" />
+    <Compile Include="CvsImport\CvsParser.cs" />
+    <Compile Include="DataFormatingUtils.cs" />
+    <Compile Include="DbConnectionInfo.cs" />
+    <Compile Include="Executer.cs" />
+    <Compile Include="FindDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FindDialog.Designer.cs">
+      <DependentUpon>FindDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GraphDataPoint.cs" />
+    <Compile Include="GraphData.cs" />
+    <Compile Include="GraphOutputTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HelpForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HelpForm.Designer.cs">
+      <DependentUpon>HelpForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IExecuteQueryCallback.cs" />
+    <Compile Include="ImageOutputTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ImgControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ScriptExecuter\IScriptReader.cs" />
+    <Compile Include="Interfaces\ISearchControl.cs" />
+    <Compile Include="LogSearchParametersDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LogSearchParametersDialog.Designer.cs">
+      <DependentUpon>LogSearchParametersDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="History.cs" />
+    <Compile Include="NewDBConnectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewDBConnectionForm.Designer.cs">
+      <DependentUpon>NewDBConnectionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ParameterValueDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ParameterValueDialog.Designer.cs">
+      <DependentUpon>ParameterValueDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AliasesEditor\AliasesEditor.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AliasesEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AutoQueryEditor\AutoQueryEditor.resx">
+      <DependentUpon>AutoQueryEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FindDialog.resx">
+      <DependentUpon>FindDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogSearchParametersDialog.resx">
+      <DependentUpon>LogSearchParametersDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainWindow.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewDBConnectionForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>NewDBConnectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ParameterValueDialog.resx">
+      <DependentUpon>ParameterValueDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RenameDialog.resx">
+      <DependentUpon>RenameDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="SearchControl.resx">
+      <DependentUpon>SearchControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SqlFormatDialog.resx">
+      <DependentUpon>SqlFormatDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextOutputDialog.resx">
+      <DependentUpon>TextOutputDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="RenameDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RenameDialog.Designer.cs">
+      <DependentUpon>RenameDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScriptExecuter\InternalScriptExecuter.cs" />
+    <Compile Include="ScriptExecuter\IScriptExecuter.cs" />
+    <Compile Include="ScriptExecuter\MsSqlScriptExecuter.cs" />
+    <Compile Include="ScriptExecuter\ScriptExecuterFactory.cs" />
+    <Compile Include="ScriptExecuter\ScriptReaderInternalFormat.cs" />
+    <Compile Include="ScriptExecuter\ScriptReaderMsSqlFormat.cs" />
+    <Compile Include="SearchControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SearchControl.Designer.cs">
+      <DependentUpon>SearchControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SqlFormatDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SqlFormatDialog.Designer.cs">
+      <DependentUpon>SqlFormatDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SqlOutputTabContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SqlParser\SqlElements.cs" />
+    <Compile Include="SqlParser\SqlParser.cs" />
+    <Compile Include="SyntaxHighlight\CSarpSyntaxHighlight.cs" />
+    <Compile Include="SyntaxHighlight\SQLSyntaxHighlight.cs" />
+    <Compile Include="SyntaxHighlight\SyntaxHighlightBase.cs" />
+    <Compile Include="TabDataGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TabDataGridContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TextOutputDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextOutputDialog.Designer.cs">
+      <DependentUpon>TextOutputDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextOutputTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UnixShell.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Danger.ico" />
+    <Content Include="Help.htm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlStudio.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CfgDataStore\CfgDataStore.csproj">
+      <Project>{6F025F9B-D711-4412-AAD2-86BAC2CCDAE8}</Project>
+      <Name>CfgDataStore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CommandPrompt\CommandPrompt.csproj">
+      <Project>{746124D0-4F96-4061-A299-4400C6F7CEB3}</Project>
+      <Name>CommandPrompt</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FormatTextControl\FormatTextControl.csproj">
+      <Project>{7EAE81F9-9885-4473-93A2-D6F1C15B24C2}</Project>
+      <Name>FormatTextControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SqlExecute\SqlExecute.csproj">
+      <Project>{70F21FC1-09EB-4E00-B132-339F1411B5B2}</Project>
+      <Name>SqlExecute</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.112.0\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.112.0\build\net46\System.Data.SQLite.Core.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.112.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.112.0\build\net46\System.Data.SQLite.Core.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

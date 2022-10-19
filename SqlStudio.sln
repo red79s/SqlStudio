@@ -1,0 +1,108 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStudio", "SqlStudio\SqlStudio.csproj", "{1A03107A-FEBD-4927-8FD1-9840AEEBBAF6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9B010465-86F4-48DA-AC83-AA1D8E95E42F} = {9B010465-86F4-48DA-AC83-AA1D8E95E42F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormatTextControl", "FormatTextControl\FormatTextControl.csproj", "{7EAE81F9-9885-4473-93A2-D6F1C15B24C2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9B010465-86F4-48DA-AC83-AA1D8E95E42F} = {9B010465-86F4-48DA-AC83-AA1D8E95E42F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandPrompt", "CommandPrompt\CommandPrompt.csproj", "{746124D0-4F96-4061-A299-4400C6F7CEB3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9B010465-86F4-48DA-AC83-AA1D8E95E42F} = {9B010465-86F4-48DA-AC83-AA1D8E95E42F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlExecute", "SqlExecute\SqlExecute.csproj", "{70F21FC1-09EB-4E00-B132-339F1411B5B2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9B010465-86F4-48DA-AC83-AA1D8E95E42F} = {9B010465-86F4-48DA-AC83-AA1D8E95E42F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryFiles", "BinaryFiles\BinaryFiles.csproj", "{9B010465-86F4-48DA-AC83-AA1D8E95E42F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfgDataStore", "CfgDataStore\CfgDataStore.csproj", "{6F025F9B-D711-4412-AAD2-86BAC2CCDAE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStudioTests", "SqlStudioTests\SqlStudioTests.csproj", "{EEB263B7-10E1-49C2-A44E-82B779D97E4E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A03107A-FEBD-4927-8FD1-9840AEEBBAF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A03107A-FEBD-4927-8FD1-9840AEEBBAF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A03107A-FEBD-4927-8FD1-9840AEEBBAF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A03107A-FEBD-4927-8FD1-9840AEEBBAF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EAE81F9-9885-4473-93A2-D6F1C15B24C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EAE81F9-9885-4473-93A2-D6F1C15B24C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EAE81F9-9885-4473-93A2-D6F1C15B24C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EAE81F9-9885-4473-93A2-D6F1C15B24C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{746124D0-4F96-4061-A299-4400C6F7CEB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{746124D0-4F96-4061-A299-4400C6F7CEB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{746124D0-4F96-4061-A299-4400C6F7CEB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{746124D0-4F96-4061-A299-4400C6F7CEB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70F21FC1-09EB-4E00-B132-339F1411B5B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70F21FC1-09EB-4E00-B132-339F1411B5B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70F21FC1-09EB-4E00-B132-339F1411B5B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70F21FC1-09EB-4E00-B132-339F1411B5B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B010465-86F4-48DA-AC83-AA1D8E95E42F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B010465-86F4-48DA-AC83-AA1D8E95E42F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B010465-86F4-48DA-AC83-AA1D8E95E42F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B010465-86F4-48DA-AC83-AA1D8E95E42F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F025F9B-D711-4412-AAD2-86BAC2CCDAE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F025F9B-D711-4412-AAD2-86BAC2CCDAE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F025F9B-D711-4412-AAD2-86BAC2CCDAE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F025F9B-D711-4412-AAD2-86BAC2CCDAE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEB263B7-10E1-49C2-A44E-82B779D97E4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEB263B7-10E1-49C2-A44E-82B779D97E4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEB263B7-10E1-49C2-A44E-82B779D97E4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEB263B7-10E1-49C2-A44E-82B779D97E4E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {14B0E8C0-5D70-46F4-A841-736B62E04A06}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://eloe.visualstudio.com/
+		SccProjectUniqueName0 = SqlStudio\\SqlStudio.csproj
+		SccProjectName0 = SqlStudio
+		SccAuxPath0 = https://eloe.visualstudio.com
+		SccLocalPath0 = SqlStudio
+		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName1 = FormatTextControl\\FormatTextControl.csproj
+		SccProjectName1 = FormatTextControl
+		SccAuxPath1 = https://eloe.visualstudio.com
+		SccLocalPath1 = FormatTextControl
+		SccProvider1 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName2 = CommandPrompt\\CommandPrompt.csproj
+		SccProjectName2 = CommandPrompt
+		SccAuxPath2 = https://eloe.visualstudio.com
+		SccLocalPath2 = CommandPrompt
+		SccProvider2 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName3 = SqlExecute\\SqlExecute.csproj
+		SccProjectName3 = SqlExecute
+		SccAuxPath3 = https://eloe.visualstudio.com
+		SccLocalPath3 = SqlExecute
+		SccProvider3 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName4 = BinaryFiles\\BinaryFiles.csproj
+		SccProjectName4 = BinaryFiles
+		SccAuxPath4 = https://eloe.visualstudio.com
+		SccLocalPath4 = BinaryFiles
+		SccProvider4 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName5 = CfgDataStore\\CfgDataStore.csproj
+		SccProjectName5 = CfgDataStore
+		SccAuxPath5 = https://eloe.visualstudio.com
+		SccLocalPath5 = CfgDataStore
+		SccProvider5 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+	EndGlobalSection
+EndGlobal
