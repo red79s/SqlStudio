@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using SqlExecute;
 using System;
 using System.Collections.Generic;
@@ -218,7 +217,7 @@ namespace CfgDataStore
 
         public void SetHistoryItems(List<string> items)
         {
-            _dbContext.Database.ExecuteSqlRaw($"DELETE FROM {nameof(_dbContext.History)}");
+            _dbContext.Database.ExecuteSqlCommand($"DELETE FROM {nameof(_dbContext.History)}");
             
             for (int i = 0; i < items.Count; i++)
             {
@@ -226,7 +225,7 @@ namespace CfgDataStore
                 var key = GetKey(nameof(_dbContext.History));
                 _dbContext.History.Add(new HistoryItem
                 {
-                    p_key = key,
+                    //p_key = key,
                     command = item
                 });
             }

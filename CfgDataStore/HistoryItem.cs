@@ -2,9 +2,11 @@
 // Automaticaly generated file: 12/17/2006 5:28:54 PM
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CfgDataStore
 {
+	[Table("History")]
     public class HistoryItem
 	{
 		[Key]

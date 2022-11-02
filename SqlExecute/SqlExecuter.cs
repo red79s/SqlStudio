@@ -1,15 +1,15 @@
+
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlServerCe;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Data.SQLite;
-using Oracle.ManagedDataAccess.Client;
+using System.Data.SqlServerCe;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace SqlExecute
 {

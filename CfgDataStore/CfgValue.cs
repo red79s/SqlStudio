@@ -10,12 +10,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CfgDataStore
 {
     /// <summary>
     /// Typed DataRow for table: cfg_values
     /// </summary>
+	[Table("cfg_values")]
 	public class CfgValue
 	{
 		[Key]
