@@ -208,36 +208,37 @@ namespace CfgDataStore
         public List<string> GetHistoryItems()
         {
             List<string> ret = new List<string>();
-            foreach (var item in _dbContext.History.ToList())
+            foreach (var item in _dbContext.HistoryLog.ToList())
             {
-                ret.Add(item.command);
+                ret.Add(item.Command);
             }
             return ret;
         }
 
         public void SetHistoryItems(List<string> items)
         {
-            _dbContext.Database.ExecuteSqlCommand($"DELETE FROM {nameof(_dbContext.History)}");
+            var existingItems = _dbContext.HistoryLog.ToList();
             
-            for (int i = 0; i < items.Count; i++)
+            foreach (var item in items)
             {
-                var item = items[i];
-                var key = GetKey(nameof(_dbContext.History));
-                _dbContext.History.Add(new HistoryItem
+                var existing = existingItems.FirstOrDefault(x => x.Command == item);
+                if (existing != null)
                 {
-                    //p_key = key,
-                    command = item
+                    _dbContext.HistoryLog.Remove(existing);
+                }
+                _dbContext.HistoryLog.Add(new HistoryLogItem
+                {
+                    Command = item,
+                    LastExecuted = DateTime.Now
                 });
             }
         }
 
         public void ClearHistory()
         {
-            foreach (var item in _dbContext.History.ToList())
-            {
-                _dbContext.History.Remove(item);
-            }
+            _dbContext.HistoryLog.RemoveRange(_dbContext.HistoryLog);
         }
+
         #endregion
         #region AutoQueries
         public List<AutoQuery> GetAutoQueries()
