@@ -21,6 +21,7 @@ namespace SqlStudio
 
         public TabDataGridContainer(ConfigDataStore configDataStore, IExecuteQueryCallback executeQueryCallback)
         {
+            
             _filterControlls = new List<TextBox>();
 
             _searchControl = new SearchControl();
@@ -41,6 +42,16 @@ namespace SqlStudio
             this.Controls.Add(_tdg);
 
             SetLayout();
+        }
+
+        const int WM_KEYDOWN = 0x100;
+        protected override bool ProcessKeyPreview(ref Message m)
+        {
+            if (m.Msg == WM_KEYDOWN && (Keys)m.WParam == Keys.F5)
+            {
+                return true;
+            }
+            return base.ProcessKeyPreview(ref m);
         }
 
         private void _tdg_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

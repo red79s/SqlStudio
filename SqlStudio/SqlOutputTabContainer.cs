@@ -85,7 +85,6 @@ namespace SqlStudio
                     if (tp is DataSetTabPage)
                         ((DataSetTabPage)tp).DisplayFilterRow = value;
                 }
-
             }
         }
 
@@ -185,13 +184,18 @@ namespace SqlStudio
             InsertNewDataTab(label);
         }
 
+        private void InsertNewTabPage(TabPage tabPage)
+        {
+            TabPages.Insert(TabCount - 1, tabPage);
+            SelectedTab = tabPage;
+        }
+
         public void CreateNewImageTab(string label, Bitmap bm)
         {
             ImageOutputTabPage iotp = new ImageOutputTabPage();
             iotp.SetImage(bm);
             iotp.Text = label;
-            TabPages.Add(iotp);
-            SelectedTab = iotp;
+            InsertNewTabPage(iotp);
         }
 
         public void CreateNewGraphTab(string label, GraphData data)
@@ -199,8 +203,7 @@ namespace SqlStudio
             GraphOutputTabPage gotp = new GraphOutputTabPage();
             gotp.Text = label;
             gotp.SetData(data);
-            TabPages.Add(gotp);
-            SelectedTab = gotp;
+            InsertNewTabPage(gotp);
         }
 
         public void CreateNewTextOutputTab(string label, string text)
@@ -208,8 +211,7 @@ namespace SqlStudio
             TextOutputTabPage totp = new TextOutputTabPage();
             totp.SetText(text);
             totp.Text = label;
-            TabPages.Add(totp);
-            SelectedTab = totp;
+            InsertNewTabPage(totp);
         }
 
         private DataSetTabPage InsertNewDataTab(string label)
@@ -264,11 +266,19 @@ namespace SqlStudio
 
         private ConfigDataStore _configDataStore;
         private readonly IExecuteQueryCallback _executeQueryCallback;
-
+        private List<SqlResult> _results;
         public DataSetTabPage(ConfigDataStore configDataStore, IExecuteQueryCallback executeQueryCallback)
         {
             _configDataStore = configDataStore;
             _executeQueryCallback = executeQueryCallback;
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F5)
+            {
+                MessageBox.Show($"Execute: {Text}");
+            }
         }
 
         private bool _dispFilterRow = false;
@@ -287,6 +297,8 @@ namespace SqlStudio
 
         public void SetResults(List<SqlResult> results)
         {
+            _results = results;
+
             Controls.Clear();
             SplitContainer lastSplit = null;
 
@@ -296,6 +308,10 @@ namespace SqlStudio
                 if (results.Count == 1)
                 {
                     Text = results[0].TableName;
+                    if (string.IsNullOrEmpty(Text))
+                    {
+                        Text = results[0].ResType.ToString();
+                    }
                 }
                 else
                 {
