@@ -41,7 +41,11 @@ namespace SqlStudio
 
                 if (c == _seperator && !inComment)
                 {
-                    ret.Add(currentCommand);
+                    currentCommand = currentCommand.Trim();
+                    if (currentCommand.Length > 0)
+                    {
+                        ret.Add(currentCommand);
+                    }
                     currentCommand = "";
                 }
                 else

@@ -17,7 +17,7 @@ namespace SqlStudio
         public delegate void UpdatedResultsDelegate(object sender, int rows, string message);
         public event UpdatedResultsDelegate UpdatedResults;
 
-        private SqlResult _res = null;
+        private SqlResult _sqlResult = null;
         private System.Data.DataView _view = null;
         private ToolStripMenuItem _dynamicDataMenuItem;
         private ConfigDataStore _configDataStore;
@@ -102,6 +102,10 @@ namespace SqlStudio
             scriptDropdownMenu.DropDownItems.Add(miCreateScriptWithCode);
 
             _dynamicDataMenuItem = new ToolStripMenuItem("Auto Queries");
+            var selectFromTableMenuItem = new ToolStripMenuItem("SELECT * FROM [table]");
+            selectFromTableMenuItem.Click += MiSelectFromTable_Click;
+            _dynamicDataMenuItem.DropDownItems.Add(selectFromTableMenuItem);
+
             if (_configDataStore != null)
             {
                 foreach (var autoQuery in _configDataStore.GetAutoQueries())
@@ -133,6 +137,11 @@ namespace SqlStudio
             ContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(ContextMenuStrip_Opening);
             //base.DefaultValuesNeeded += new DataGridViewRowEventHandler(TabDataGrid_DefaultValuesNeeded);
             DefaultValuesNeeded += TabDataGrid_DefaultValuesNeeded;
+        }
+
+        public SqlResult GetLastSqlResult()
+        {
+            return _sqlResult;
         }
 
         private void MiCreateLineGraphFromData_Click(object sender, EventArgs e)
@@ -220,6 +229,18 @@ namespace SqlStudio
                 }
             }
             tabContainer.CreateNewGraphTab(label, data);
+        }
+
+        private void MiSelectFromTable_Click(object sender, EventArgs e)
+        {
+            if (SelectedRows.Count < 1 && SelectedCells.Count < 1)
+                return;
+
+            if (SelectedCells[0].Value is string)
+            {
+                var tableName = SelectedCells[0].Value as string;
+                _executeQueryCallback.ExecuteQuery($"SELECT * FROM {tableName};", true, tableName);
+            }
         }
 
         private void AutoQueryMenuItem_Click(object sender, EventArgs e)
@@ -1079,6 +1100,9 @@ namespace SqlStudio
             foreach (ToolStripMenuItem menuItem in _dynamicDataMenuItem.DropDownItems)
             {
                 var autoQuery = menuItem.Tag as AutoQuery;
+                if (autoQuery == null)
+                    continue;
+
                 if (!string.IsNullOrEmpty(autoQuery.TableName))
                 {
                     menuItem.Enabled = autoQuery.TableName.Equals(tableName, StringComparison.CurrentCultureIgnoreCase);
@@ -1158,12 +1182,12 @@ namespace SqlStudio
             DataGridViewSelectedRowCollection selRows = SelectedRows;
             foreach (DataGridViewRow dgRow in selRows)
             {
-                DataRow drNew = _res.DataTable.NewRow();
-                for (int i = 0; i < _res.DataTable.Columns.Count; i++)
+                DataRow drNew = _sqlResult.DataTable.NewRow();
+                for (int i = 0; i < _sqlResult.DataTable.Columns.Count; i++)
                 {
-                    drNew[i] = _res.DataTable.Rows[dgRow.Index][i];
+                    drNew[i] = _sqlResult.DataTable.Rows[dgRow.Index][i];
                 }
-                _res.DataTable.Rows.Add(drNew);
+                _sqlResult.DataTable.Rows.Add(drNew);
             }
         }
 
@@ -1197,10 +1221,10 @@ namespace SqlStudio
 
         public SqlResult SqlResult
         {
-            get { return _res; }
+            get { return _sqlResult; }
             set
             {
-                _res = value;
+                _sqlResult = value;
                 
                 InitializeResults();
                 ApplyDefaultFormating();
@@ -1225,13 +1249,13 @@ namespace SqlStudio
 
         private void InitializeResults()
         {
-            if (_res == null)
+            if (_sqlResult == null)
                 return;
 
-            _view = new System.Data.DataView(_res.DataTable);
+            _view = new System.Data.DataView(_sqlResult.DataTable);
             DataSource = _view;
             
-            if (_res.DataAdapter == null)
+            if (_sqlResult.DataAdapter == null)
             {
                 ReadOnly = true;
                 AllowUserToAddRows = false;

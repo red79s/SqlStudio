@@ -42,13 +42,24 @@ namespace SqlStudio
             this.Controls.Add(_tdg);
 
             SetLayout();
+            _executeQueryCallback = executeQueryCallback;
         }
 
         const int WM_KEYDOWN = 0x100;
+        private readonly IExecuteQueryCallback _executeQueryCallback;
+
         protected override bool ProcessKeyPreview(ref Message m)
         {
             if (m.Msg == WM_KEYDOWN && (Keys)m.WParam == Keys.F5)
             {
+                if (_tdg != null)
+                {
+                    var res = _tdg.GetLastSqlResult();
+                    if (res != null && res.SqlQuery != null )
+                    {
+                        _executeQueryCallback.ExecuteQuery(res.SqlQuery, false, "");
+                    }
+                }
                 return true;
             }
             return base.ProcessKeyPreview(ref m);

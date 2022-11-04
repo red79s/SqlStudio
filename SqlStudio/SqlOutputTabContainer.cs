@@ -70,6 +70,9 @@ namespace SqlStudio
             cms.Items.Add(tsmiDataClose);
             ToolStripMenuItem tsmiDataRename = new ToolStripMenuItem("Rename", null, tsmiDataRename_Click);
             cms.Items.Add(tsmiDataRename);
+            var tsmiDataRefresh = new ToolStripMenuItem("Refresh", null, tsmiDataRefresh_Click);
+            tsmiDataRefresh.ShortcutKeys = Keys.F5;
+            cms.Items.Add(tsmiDataRefresh);
             return cms;
         }
 
@@ -99,6 +102,27 @@ namespace SqlStudio
             rnd.NameText = SelectedTab.Text;
             if (rnd.ShowDialog() == DialogResult.OK)
                 SelectedTab.Text = rnd.NameText;
+        }
+
+        void tsmiDataRefresh_Click(object sender, EventArgs e)
+        {
+            if (SelectedTab is DataSetTabPage)
+            {
+                var results = ((DataSetTabPage)SelectedTab).GetSqlResults();
+                string queries = "";
+                foreach (var res in results)
+                {
+                    if (!string.IsNullOrEmpty(res.SqlQuery))
+                    {
+                        queries += res.SqlQuery;
+                    }
+                }
+
+                if (queries != "")
+                {
+                    _executeCallback.ExecuteQuery(queries, false, "");
+                }
+            }
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -273,14 +297,6 @@ namespace SqlStudio
             _executeQueryCallback = executeQueryCallback;
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.F5)
-            {
-                MessageBox.Show($"Execute: {Text}");
-            }
-        }
-
         private bool _dispFilterRow = false;
         public bool DisplayFilterRow
         {
@@ -293,6 +309,11 @@ namespace SqlStudio
                     tdgc.FilterRow = value;
                 }
             }
+        }
+
+        public List<SqlResult> GetSqlResults()
+        {
+            return _results;
         }
 
         public void SetResults(List<SqlResult> results)
