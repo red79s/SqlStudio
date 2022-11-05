@@ -95,10 +95,6 @@
     <Content Include="Mono.Security.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Npgsql.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Npgsql.pdb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SQL-ANSI-89.cgt">
