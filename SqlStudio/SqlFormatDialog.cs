@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -27,8 +23,8 @@ namespace SqlStudio
 
         private void buttonFormat_Click(object sender, EventArgs e)
         {
-            var formater = new PoorMansTSqlFormatterLib.Formatters.TSqlStandardFormatter();
-            var formatingManager = new PoorMansTSqlFormatterLib.SqlFormattingManager(formater);
+            var formater = new PoorMansTSqlFormatterRedux.Formatters.TSqlStandardFormatter();
+            var formatingManager = new PoorMansTSqlFormatterRedux.SqlFormattingManager(formater);
 
             var output = formatingManager.Format(textBoxSql.Text);
 

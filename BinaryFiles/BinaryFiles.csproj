@@ -99,10 +99,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Npgsql.pdb" />
-    <Content Include="PoorMansTSqlFormatterLib35.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PoorMansTSqlFormatterLib35.pdb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SQL-ANSI-89.cgt">
