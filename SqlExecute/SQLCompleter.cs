@@ -1,9 +1,8 @@
+using GoldParser;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using GoldParser;
 using System.Data;
+using System.IO;
 
 namespace SqlExecute
 {

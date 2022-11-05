@@ -135,8 +135,23 @@ namespace SqlStudio
             ContextMenuStrip.Items.Add(miFindTimeDiff);
 
             ContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(ContextMenuStrip_Opening);
-            //base.DefaultValuesNeeded += new DataGridViewRowEventHandler(TabDataGrid_DefaultValuesNeeded);
-            DefaultValuesNeeded += TabDataGrid_DefaultValuesNeeded;
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.N))
+            {
+                this.ProcessDownKey(Keys.Down);
+
+                if (SelectedCells != null && SelectedCells.Count == 1)
+                {
+                    SelectedCells[0].Value = DateTime.Now;
+                }
+
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         public SqlResult GetLastSqlResult()
@@ -1113,44 +1128,6 @@ namespace SqlStudio
                 if (!string.IsNullOrEmpty(autoQuery.ColumnName))
                 {
                     menuItem.Enabled = autoQuery.ColumnName.Equals(columnName, StringComparison.CurrentCultureIgnoreCase);
-                }
-            }
-        }
-
-        void TabDataGrid_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
-        {
-            return;
-
-            for (int i = 0; i < e.Row.Cells.Count; i++)
-            {
-                DataGridViewCell dgvc = e.Row.Cells[i];
-                if (dgvc.ValueType == typeof(string) && dgvc.Value == null)
-                {
-                    dgvc.Value = "";
-                }
-                else if (dgvc.ValueType == typeof(byte) && dgvc.Value == null)
-                {
-                    dgvc.Value = 0;
-                }
-                else if (dgvc.ValueType == typeof(int) && dgvc.Value == null)
-                {
-                    dgvc.Value = 0;
-                }
-                else if (dgvc.ValueType == typeof(bool) && dgvc.Value == null)
-                {
-                    dgvc.Value = false;
-                }
-                else if (dgvc.ValueType == typeof(long) && dgvc.Value == null)
-                {
-                    dgvc.Value = 0;
-                }
-                else if (dgvc.ValueType == typeof(DateTime) && dgvc.Value == null)
-                {
-                    dgvc.Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm::ss");
-                }
-                else
-                {
-                    dgvc.Value = "";
                 }
             }
         }
