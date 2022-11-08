@@ -34,7 +34,7 @@ namespace SqlExecute.DbSchemaCache
         {
             List<string> ret = new List<string>();
 
-            string sql = string.Format("select distinct {0} from {1} where {0} like '{2}%'",
+            string sql = string.Format("select distinct {0} from {1} where {0} like '%{2}%'",
                 ColumnCacheDataRow.table_nameColumn, _dtColCache.TableName, tableSearch);
             var com = new SQLiteCommand(sql, _connection);
             var read = com.ExecuteReader();
