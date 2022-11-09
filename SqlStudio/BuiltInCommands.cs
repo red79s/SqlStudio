@@ -134,7 +134,7 @@ namespace SqlStudio
                 }
                 else
                 {
-                    aliases = _cfgDataStore.AliasSearch("");
+                    aliases = _cfgDataStore.GetAliases();
                 }
 
                 foreach (var alias in aliases)

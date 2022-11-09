@@ -85,6 +85,11 @@ namespace CfgDataStore
             return aliases.ToList();
         }
 
+        public List<Alias> GetAliases()
+        {
+            return _dbContext.Aliases.ToList();
+        }
+
         public void ModifyAlias(string aliasName, string alias)
         {
             var a = _dbContext.Aliases.FirstOrDefault(x => x.alias_name == aliasName);

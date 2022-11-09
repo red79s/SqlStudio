@@ -5,23 +5,20 @@
 // Time: 11/3/2008
 // Path: C:\dev\src\utils\SqlStudio\SqlStudio\CfgDataStore
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Data;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CfgDataStore
 {
-    /// <summary>
-    /// Typed DataRow for table: cfg_values
-    /// </summary>
+	/// <summary>
+	/// Typed DataRow for table: cfg_values
+	/// </summary>
 	[Table("cfg_values")]
 	public class CfgValue
 	{
 		[Key]
-		public long p_key { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public long p_key { get; set; }
 		
 		
 		public string name { get; set; }

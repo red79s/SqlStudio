@@ -596,7 +596,7 @@ namespace SqlStudio
         private void aliasesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var aliasEditor = new AliasesEditor.AliasesEditor();
-            var aliases = _cfgDataStore.AliasSearch("");
+            var aliases = _cfgDataStore.GetAliases();
             foreach (var alias in aliases)
                 aliasEditor.AddAlias(new AliasesEditor.Alias(alias.alias_name, alias.alias_value));
 

@@ -14,7 +14,8 @@ namespace CfgDataStore
 	public class Connection
 	{
 		[Key]
-		public long p_key { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public long p_key { get; set; }
 
 		public string provider { get; set; }
 
