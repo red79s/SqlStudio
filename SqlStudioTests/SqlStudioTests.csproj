@@ -53,11 +53,16 @@
     <Compile Include="CvsParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptReaderMsSqlFormatTests.cs" />
+    <Compile Include="TestParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommandPrompt\CommandPrompt.csproj">
       <Project>{746124d0-4f96-4061-a299-4400c6f7ceb3}</Project>
       <Name>CommandPrompt</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SqlParser\SqlParser.csproj">
+      <Project>{23fc2062-18d2-49cd-9a77-663e09f100fd}</Project>
+      <Name>SqlParser</Name>
     </ProjectReference>
     <ProjectReference Include="..\SqlStudio\SqlStudio.csproj">
       <Project>{1a03107a-febd-4927-8fd1-9840aeebbaf6}</Project>
