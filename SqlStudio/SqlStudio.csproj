@@ -362,9 +362,17 @@
       <Project>{746124D0-4F96-4061-A299-4400C6F7CEB3}</Project>
       <Name>CommandPrompt</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{4161310A-80E1-45E8-B5EF-61471316A7DC}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FormatTextControl\FormatTextControl.csproj">
       <Project>{7EAE81F9-9885-4473-93A2-D6F1C15B24C2}</Project>
       <Name>FormatTextControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SqlCommandCompleter\SqlCommandCompleter.csproj">
+      <Project>{A4A9BEFB-0393-4E91-AF8F-692F4304387D}</Project>
+      <Name>SqlCommandCompleter</Name>
     </ProjectReference>
     <ProjectReference Include="..\SqlExecute\SqlExecute.csproj">
       <Project>{70F21FC1-09EB-4E00-B132-339F1411B5B2}</Project>

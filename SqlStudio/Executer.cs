@@ -1,17 +1,13 @@
+using CfgDataStore;
+using SqlExecute;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
-using System.Text;
-using System.Windows.Forms;
 using System.Threading;
-
-using SqlExecute;
-using CfgDataStore;
 
 namespace SqlStudio
 {
-    class Executer
+    public class Executer
     {
         public delegate void ExecutionFinishedDelegate(object sender, List<SqlResult> results);
         public event ExecutionFinishedDelegate ExecutionFinished;
@@ -36,11 +32,6 @@ namespace SqlStudio
             _cfgDataStore = cfgDataStore;
             _sqlExecuter = new SqlExecuter();
             _sqlExecuter.Executed += new SqlExecuter.ExecutedDelegate(_sqlExecuter_Executed);
-        }
-
-        public List<string> GetPosibleCompletions(string sqlCmd, int index)
-        {
-            return _sqlExecuter.GetPosibleCompletions(sqlCmd, index);
         }
 
         public string CurrentScriptPath 

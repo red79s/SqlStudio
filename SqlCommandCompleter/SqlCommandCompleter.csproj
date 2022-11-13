@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4161310A-80E1-45E8-B5EF-61471316A7DC}</ProjectGuid>
+    <ProjectGuid>{A4A9BEFB-0393-4E91-AF8F-692F4304387D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Common</RootNamespace>
-    <AssemblyName>Common</AssemblyName>
+    <RootNamespace>SqlCommandCompleter</RootNamespace>
+    <AssemblyName>SqlCommandCompleter</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -41,12 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ColumnInfo.cs" />
-    <Compile Include="IDatabaseSchemaInfo.cs" />
-    <Compile Include="ILogger.cs" />
-    <Compile Include="ISqlCompleter.cs" />
-    <Compile Include="TableInfo.cs" />
+    <Compile Include="SqlCompleter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CommandCompleteTableInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{4161310A-80E1-45E8-B5EF-61471316A7DC}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,6 @@
 ﻿namespace SqlStudio
 {
-    internal class DbConnectionInfo
+    public class DbConnectionInfo
     {
         public string ProviderName { get; set; }
         public string Server { get; set; }

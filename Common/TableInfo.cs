@@ -5,6 +5,6 @@ namespace Common
     public class TableInfo
     {
         public string TableName { get; set; }
-        public IList<ColumnInfo> Columns { get; set; }
+        public IList<ColumnInfo> Columns { get; set; } = new List<ColumnInfo>();
     }
 }

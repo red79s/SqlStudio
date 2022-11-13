@@ -83,6 +83,7 @@ namespace SqlStudio
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.sqlOutput = new SqlStudio.SqlOutputTabContainer();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripMessageLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.visibleRowsToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -95,7 +96,6 @@ namespace SqlStudio
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sqlOutput = new SqlStudio.SqlOutputTabContainer();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -570,6 +570,18 @@ namespace SqlStudio
             this.helpToolStripMenuItem1.Text = "Help...";
             this.helpToolStripMenuItem1.Click += new System.EventHandler(this.helpToolStripMenuItem1_Click);
             // 
+            // sqlOutput
+            // 
+            this.sqlOutput.DisplayFilterRow = false;
+            this.sqlOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sqlOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sqlOutput.Location = new System.Drawing.Point(0, 0);
+            this.sqlOutput.Name = "sqlOutput";
+            this.sqlOutput.SelectedIndex = 0;
+            this.sqlOutput.ShowToolTips = true;
+            this.sqlOutput.Size = new System.Drawing.Size(811, 205);
+            this.sqlOutput.TabIndex = 0;
+            // 
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -587,7 +599,7 @@ namespace SqlStudio
             // toolStripMessageLabel
             // 
             this.toolStripMessageLabel.Name = "toolStripMessageLabel";
-            this.toolStripMessageLabel.Size = new System.Drawing.Size(622, 17);
+            this.toolStripMessageLabel.Size = new System.Drawing.Size(591, 17);
             this.toolStripMessageLabel.Spring = true;
             this.toolStripMessageLabel.Text = "Disconnected";
             this.toolStripMessageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -663,17 +675,6 @@ namespace SqlStudio
             this.runToolStripMenuItem.Size = new System.Drawing.Size(127, 26);
             this.runToolStripMenuItem.Text = "Run";
             this.runToolStripMenuItem.Click += new System.EventHandler(this.toolStripButtonRunScript_Click);
-            // 
-            // sqlOutput
-            // 
-            this.sqlOutput.DisplayFilterRow = false;
-            this.sqlOutput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.sqlOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sqlOutput.Location = new System.Drawing.Point(0, 0);
-            this.sqlOutput.Name = "sqlOutput";
-            this.sqlOutput.SelectedIndex = 0;
-            this.sqlOutput.Size = new System.Drawing.Size(811, 205);
-            this.sqlOutput.TabIndex = 0;
             // 
             // MainWindow
             // 

@@ -1,4 +1,5 @@
 
+using Common;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Threading;
 
 namespace SqlExecute
 {
-    public class SqlExecuter
+    public class SqlExecuter : IDatabaseSchemaInfo
     {
         public enum DatabaseProvider 
         { 
@@ -84,11 +85,6 @@ namespace SqlExecute
             //TODO, propegate debug msg.
         }
 
-        public List<string> GetPosibleCompletions(string sqlCmd, int index)
-        {
-            return _completer.GetPosibleCompletions(sqlCmd, index);
-        }
-
         public DbConnection Connection
         {
             get { return _connection; }
@@ -97,6 +93,35 @@ namespace SqlExecute
         public DbSchemaCache.DbSchemaCache SchemaCache
         {
             get { return _dbCache; }
+        }
+
+        public string DatabaseName => "";
+        public IList<TableInfo> Tables
+        {
+            get
+            {
+                if (_dbCache == null)
+                {
+                    return new List<TableInfo>();
+                }
+
+                var ret = new List<TableInfo>();
+                foreach (var table in _dbCache.GetTables(""))
+                {
+                    var ti = new TableInfo { TableName = table };
+               
+                    string sWhereClause = $"table_name = '{table}'";
+                    _dbCache.ColumnCache.Clear();
+                    _dbCache.ColumnCache.FillQuery(sWhereClause);
+                    DataRow[] rows = _dbCache.ColumnCache.Select();
+                    for (int r = 0; r<rows.Length; r++)
+                    {
+                        ti.Columns.Add( new ColumnInfo { ColumnName = (string)rows[r]["column_name"] });
+                    }
+                    ret.Add(ti);
+                }
+                return ret;
+            }
         }
 
         public void SetTimeout(int iTimeout) //in seconds

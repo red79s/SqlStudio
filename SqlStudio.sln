@@ -38,6 +38,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlParser", "SqlParser\SqlParser.csproj", "{23FC2062-18D2-49CD-9A77-663E09F100FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlCommandCompleter", "SqlCommandCompleter\SqlCommandCompleter.csproj", "{A4A9BEFB-0393-4E91-AF8F-692F4304387D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlCommandCompleterTests", "SqlCommandCompleterTests\SqlCommandCompleterTests.csproj", "{778F187E-288C-40B9-92FE-69F905776C1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +84,14 @@ Global
 		{23FC2062-18D2-49CD-9A77-663E09F100FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23FC2062-18D2-49CD-9A77-663E09F100FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23FC2062-18D2-49CD-9A77-663E09F100FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4A9BEFB-0393-4E91-AF8F-692F4304387D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4A9BEFB-0393-4E91-AF8F-692F4304387D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4A9BEFB-0393-4E91-AF8F-692F4304387D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4A9BEFB-0393-4E91-AF8F-692F4304387D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{778F187E-288C-40B9-92FE-69F905776C1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{778F187E-288C-40B9-92FE-69F905776C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{778F187E-288C-40B9-92FE-69F905776C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{778F187E-288C-40B9-92FE-69F905776C1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

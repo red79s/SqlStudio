@@ -4,7 +4,7 @@ namespace Common
 {
     public interface IDatabaseSchemaInfo
     {
-        string DatabaseName { get; set; }
-        IList <TableInfo> Tables { get; set; }
+        string DatabaseName { get; }
+        IList <TableInfo> Tables { get; }
     }
 }

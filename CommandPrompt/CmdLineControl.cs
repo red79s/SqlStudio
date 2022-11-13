@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace CommandPrompt
@@ -11,7 +12,7 @@ namespace CommandPrompt
     {
         public delegate void CommandReadyDelegate(object sender, string cmd);
         public event CommandReadyDelegate CommandReady;
-        public delegate List<string> CommandCompletionDelegate(object sender, string cmd, int index);
+        public delegate IList<string> CommandCompletionDelegate(object sender, string cmd, int index);
         public event CommandCompletionDelegate CommandCompletion;
 
         private enum CmdMode { LINE, COMMAND };
@@ -331,15 +332,15 @@ namespace CommandPrompt
                         index -= _cmdStartPos.Index;
                 }
                 if (CaretPos.Line > _cmdStartPos.Line)
-                    index += (CaretPos.Index - 1); //point to char in front of caret
+                    index += (CaretPos.Index); //point to char in front of caret
                 else
-                    index += (CaretPos.Index - 1) - _cmdStartPos.Index;
+                    index += (CaretPos.Index) - _cmdStartPos.Index;
 
                 if (index < 0)
                     return;
 
                 string selectedItem = "";
-                List<string> posCompletions = CommandCompletion(this, cmd, index);
+                IList<string> posCompletions = CommandCompletion(this, cmd, index);
                 if (posCompletions.Count > 1)
                 {
                     CompleterSelect cs = new CompleterSelect();
@@ -349,7 +350,7 @@ namespace CommandPrompt
                     Point p = GetCaretLocation();
                     cs.Location = GetGlobalPosition(p.X, p.Y + LineHeight);
                     cs.SetItems(posCompletions.ToArray());
-                    if (cs.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    if (cs.ShowDialog() == DialogResult.OK)
                     {
                         selectedItem = cs.SelectedItem;
                     }
@@ -368,7 +369,7 @@ namespace CommandPrompt
                     }
                     else if (selIndex >= 0)
                     {
-                        ReplaceText(new TextPos(CaretPos.Line, CaretPos.Index - ((index + 1) - selIndex)), CaretPos, selectedItem, true);
+                        ReplaceText(new TextPos(CaretPos.Line, CaretPos.Index - (index - selIndex)), CaretPos, selectedItem, true);
                     }
                 }
             }

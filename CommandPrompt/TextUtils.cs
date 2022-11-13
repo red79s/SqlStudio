@@ -1,13 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace FormatTextControl
 {
     public class TextUtils
     {
         public static int GetNearestWordStart(string text, int index)
         {
+            if (index >= text.Length)
+                index = text.Length - 1;
+
+            if (index < 0)
+            {
+                return 0;
+            }
+
             if (text[index] == ' ' || text[index] == ',')
                 return -1;
 

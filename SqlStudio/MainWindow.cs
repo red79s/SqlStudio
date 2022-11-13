@@ -1,4 +1,6 @@
 using CfgDataStore;
+using Common;
+using SqlCommandCompleter;
 using SqlExecute;
 using SqlStudio.Converters;
 using SqlStudio.CvsImport;
@@ -17,7 +19,7 @@ using System.Windows.Forms;
 
 namespace SqlStudio
 {
-    public partial class MainWindow : Form, IExecuteQueryCallback
+    public partial class MainWindow : Form, IExecuteQueryCallback, ILogger
     {
         private Executer _executer = null;
         private ConfigDataStore _cfgDataStore = null;
@@ -27,6 +29,8 @@ namespace SqlStudio
         private Timer _executeTimer = new Timer();
         private Timer _autoSaveConfigTimer = new Timer();
         private string _userConfigDbFile;
+        private ISqlCompleter _sqlCompleter = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -43,6 +47,8 @@ namespace SqlStudio
             
             _executer = new Executer(cmdLineControl, _cfgDataStore);
             _executer.ExecutionFinished += new Executer.ExecutionFinishedDelegate(_executer_ExecutionFinished);
+
+            _sqlCompleter = new SqlCompleter(this, _executer.SqlExecuter);
 
             _syntaxHighLight = new SyntaxHighlight.SQLSyntaxHighlight();
             _syntaxHighLight.DefaultColor = cmdLineControl.ForeColor;
@@ -130,7 +136,7 @@ namespace SqlStudio
             }
         }
 
-        List<string> cmdLineControl_CommandCompletion(object sender, string cmd, int index)
+        IList<string> cmdLineControl_CommandCompletion(object sender, string cmd, int index)
         {
             int lastCmdSep = CommandParser.GetLastCmdSeperator(cmd, ';', index);
 
@@ -142,13 +148,13 @@ namespace SqlStudio
                 realIndex = index - (lastCmdSep + 1);
             }
 
-            if (realCmd[0] == ':')
+            if (realCmd.Length > 0 && realCmd[0] == ':')
             {
                 realCmd = realCmd.Substring(1, realCmd.Length - 1);
                 realIndex--;
             }
 
-            return _executer.GetPosibleCompletions(realCmd, realIndex);
+            return _sqlCompleter.GetPossibleCompletions(realCmd, realIndex);
         }
 
         private void InitMenues()
@@ -1012,6 +1018,16 @@ namespace SqlStudio
                 ((CommandPrompt.SQLScript)tp.Controls[0]).Open(rows);
                 tabControlMainDocs.TabPages.Add(tp);
             }
+        }
+
+        public void Log(LogLevel logLevel, string message)
+        {
+            toolStripMessageLabel.Text = $"{logLevel}: {message}";
+        }
+
+        public void Log(LogLevel logLevel, string message, Exception ex)
+        {
+            toolStripMessageLabel.Text = $"{logLevel}: {message}, {ex.Message}";
         }
     }
 }

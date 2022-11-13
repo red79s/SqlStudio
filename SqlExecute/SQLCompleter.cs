@@ -1,3 +1,4 @@
+using Common;
 using GoldParser;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.IO;
 
 namespace SqlExecute
 {
-    public class SQLCompleter
+    public class SQLCompleter : ISqlCompleter
     {
         public delegate void DebugMessageDelegate(object sender, string msg);
         public event DebugMessageDelegate DebugMessage;
@@ -48,7 +49,7 @@ namespace SqlExecute
             }
         }
 
-        public List<string> GetPosibleCompletions(string cmd, int index)
+        public IList<string> GetPossibleCompletions(string cmd, int index)
         {
             if (cmd == null || cmd.Length < 1)
                 return new List<string>();
