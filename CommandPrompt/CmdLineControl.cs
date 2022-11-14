@@ -1,3 +1,4 @@
+using Common;
 using FormatTextControl;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace CommandPrompt
     {
         public delegate void CommandReadyDelegate(object sender, string cmd);
         public event CommandReadyDelegate CommandReady;
-        public delegate IList<string> CommandCompletionDelegate(object sender, string cmd, int index);
+        public delegate CommandCompletionResult CommandCompletionDelegate(object sender, string cmd, int index);
         public event CommandCompletionDelegate CommandCompletion;
 
         private enum CmdMode { LINE, COMMAND };
@@ -340,8 +341,8 @@ namespace CommandPrompt
                     return;
 
                 string selectedItem = "";
-                IList<string> posCompletions = CommandCompletion(this, cmd, index);
-                if (posCompletions.Count > 1)
+                var completetionsRes = CommandCompletion(this, cmd, index);
+                if (completetionsRes.PossibleCompletions.Count > 1)
                 {
                     CompleterSelect cs = new CompleterSelect();
                     cs.Text = "";
@@ -349,20 +350,20 @@ namespace CommandPrompt
                     cs.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
                     Point p = GetCaretLocation();
                     cs.Location = GetGlobalPosition(p.X, p.Y + LineHeight);
-                    cs.SetItems(posCompletions.ToArray());
+                    cs.SetItems(completetionsRes.PossibleCompletions.ToArray());
                     if (cs.ShowDialog() == DialogResult.OK)
                     {
                         selectedItem = cs.SelectedItem;
                     }
                 }
-                else if (posCompletions.Count > 0)
+                else if (completetionsRes.PossibleCompletions.Count > 0)
                 {
-                    selectedItem = posCompletions[0];
+                    selectedItem = completetionsRes.PossibleCompletions[0];
                 }
 
                 if (selectedItem.Length > 0)
                 {
-                    int selIndex = TextUtils.GetNearestWordStart(cmd, index);
+                    int selIndex = completetionsRes.CompletedTextStartIndex;
                     if (selIndex < 0)
                     {
                         AppendText(selectedItem);

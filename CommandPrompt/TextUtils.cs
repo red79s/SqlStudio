@@ -12,8 +12,8 @@ namespace FormatTextControl
                 return 0;
             }
 
-            if (text[index] == ' ' || text[index] == ',')
-                return -1;
+            if (index > 0 && (text[index] == ' ' || text[index] == ',') && text[index - 1] == ' ')
+                return index;
 
             for (int i = index - 1; i >= 0; i--)
             {

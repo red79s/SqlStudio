@@ -212,7 +212,6 @@
     <Compile Include="OracleSchemaInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQL 89.cs" />
-    <Compile Include="SQLCompleter.cs" />
     <Compile Include="SqlExecuter.cs" />
     <Compile Include="SQLiteSchemaInfo.cs" />
     <Compile Include="SqlResult.cs" />

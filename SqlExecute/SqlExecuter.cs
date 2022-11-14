@@ -68,16 +68,13 @@ namespace SqlExecute
         private DbProviderFactory _dbFactory = null;
         private DatabaseProvider _provider = DatabaseProvider.SQLITE;
         private DBSchemaInfoBase _schemaInfo = null;
-        private SQLCompleter _completer = null;
         private DbSchemaCache.DbSchemaCache _dbCache = null;
         private int _iCommandTimeout = 20;
+        private object _cacheLockObj = new object();
 
         public SqlExecuter()
         {
             _dbCache = new SqlExecute.DbSchemaCache.DbSchemaCache();
-            _completer = new SQLCompleter();
-            _completer.DBCache = _dbCache;
-            _completer.DebugMessage += new SQLCompleter.DebugMessageDelegate(_completer_DebugMessage);
         }
 
         void _completer_DebugMessage(object sender, string msg)
@@ -261,10 +258,7 @@ namespace SqlExecute
 
         void gsiThread_DataReady(object sender, DataTable dt, long executionTimeMS)
         {
-            lock (_completer)
-            {
-                FillCache(dt);
-            }
+            FillCache(dt);
 
             SqlResult result = new SqlResult(SqlResult.ResultType.BACKGROUND_INFO);
             result.ExecutionTimeMS = executionTimeMS;
@@ -290,10 +284,8 @@ namespace SqlExecute
                 result.Success = true;
 
                 _schemaInfo = DBSchemaInfoBase.GetSchemaClass(_provider, _connection, _dbFactory);
-                lock (_completer)
-                {
-                    FillCache(null);
-                }
+                
+                FillCache(null);
             }
             catch (Exception ex)
             {
@@ -312,31 +304,35 @@ namespace SqlExecute
 
         private void FillCache(DataTable dtColumns)
         {
-            if (dtColumns == null)
-                dtColumns = GetColumnsInternal("", "");
-
-            _dbCache.ColumnCache.TruncateTable();
-            _dbCache.ColumnCache.FillQuery("");
-            foreach (DataRow dr in dtColumns.Rows)
+            lock (_cacheLockObj)
             {
-                DbSchemaCache.ColumnCacheDataRow drCol = _dbCache.ColumnCache.NewDBRow();
-                drCol.table_name = (string)dr["table_name"];
-                drCol.column_name = (string)dr["column_name"];
-                drCol.data_type = (string)dr["data_type"];
-                if (dr["column_length"] != DBNull.Value)
-                    drCol.column_length = (int)dr["column_length"];
-                else
-                    drCol.column_length = 0;
-                if (dr["ordinal_position"] != DBNull.Value)
-                    drCol.ordinal_position = (int)dr["ordinal_position"];
-                else
-                    drCol.ordinal_position = 0;
+                if (dtColumns == null)
+                    dtColumns = GetColumnsInternal("", "");
 
-                drCol.is_nullable = GetDBBool(dr, "is_nullable", true);
-                drCol.primary_key = GetDBBool(dr, "primary_key", false);
-                _dbCache.ColumnCache.Rows.Add(drCol);
+                _dbCache.ColumnCache.TruncateTable();
+                _dbCache.ColumnCache.FillQuery("");
+                foreach (DataRow dr in dtColumns.Rows)
+                {
+                    DbSchemaCache.ColumnCacheDataRow drCol = _dbCache.ColumnCache.NewDBRow();
+                    drCol.table_name = (string)dr["table_name"];
+                    drCol.column_name = (string)dr["column_name"];
+                    drCol.data_type = (string)dr["data_type"];
+                    if (dr["column_length"] != DBNull.Value)
+                        drCol.column_length = (int)dr["column_length"];
+                    else
+                        drCol.column_length = 0;
+                    if (dr["ordinal_position"] != DBNull.Value)
+                        drCol.ordinal_position = (int)dr["ordinal_position"];
+                    else
+                        drCol.ordinal_position = 0;
+
+                    drCol.is_nullable = GetDBBool(dr, "is_nullable", true);
+                    drCol.primary_key = GetDBBool(dr, "primary_key", false);
+                    _dbCache.ColumnCache.Rows.Add(drCol);
+                }
+                _dbCache.ColumnCache.Save();
             }
-            _dbCache.ColumnCache.Save();
+            
         }
 
         private bool GetDBBool(DataRow dr, string column, bool defValue)

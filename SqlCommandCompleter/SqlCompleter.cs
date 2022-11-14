@@ -56,7 +56,7 @@ namespace SqlCommandCompleter
             _databaseSchemaInfo = databaseSchemaInfo;
         }
 
-        public IList<string> GetPossibleCompletions(string sqlCommand, int index)
+        public CommandCompletionResult GetPossibleCompletions(string sqlCommand, int index)
         {
             if (sqlCommand == null)
             {
@@ -76,13 +76,13 @@ namespace SqlCommandCompleter
             var symbol = symbols[symbolIndex];
             if (symbol.Index == 0)
             {
-                return MergePossible(_sqlKeywordsStart, symbol.Text);
+                return MergePossible(_sqlKeywordsStart, symbol);
             }
 
             var keyWord = GetPreviousSymbol(symbols, _sqlKeywords, index);
             if (keyWord == null)
             {
-                return MergePossible(_sqlKeywords, symbol.Text);
+                return MergePossible(_sqlKeywords, symbol);
             }
 
             //table list
@@ -95,7 +95,7 @@ namespace SqlCommandCompleter
                     tables.Insert(0, "SET");
                 }
 
-                return MergePossible(tables, symbol.Text);
+                return MergePossible(tables, symbol);
             }
 
             //column list
@@ -104,27 +104,27 @@ namespace SqlCommandCompleter
                 keyWord.Text.Equals("WHERE", StringComparison.CurrentCultureIgnoreCase))
             {
                 var tables = GetTableInfo(symbols);
-                var columns = GetColumnNames(symbol.Text.Length == 0, tables);
+                var columns = GetColumnNames(symbol.Text.Length == 0, tables, symbol);
                 if (keyWord.Text.Equals("SELECT", StringComparison.CurrentCultureIgnoreCase))
                 {
                     columns.Insert(0, "FROM");
                 }
 
-                return MergePossible(columns, symbol.Text);
+                return MergePossible(columns, symbol);
             }
 
-            return MergePossible(_sqlKeywords, symbol.Text);
+            return MergePossible(_sqlKeywords, symbol);
         }
 
         
-        public List<string> MergePossible(List<string> possibleCompletions, string symbolText)
+        public CommandCompletionResult MergePossible(List<string> possibleCompletions, Symbol symbol)
         {
-            var ret = new List<string>();
+            var ret = new CommandCompletionResult { CompletedText = symbol.Text, CompletedTextStartIndex = symbol.Index };
             foreach (var item in possibleCompletions)
             {
-                if (item.IndexOf(symbolText, StringComparison.CurrentCultureIgnoreCase) == 0)
+                if (item.IndexOf(symbol.Text, StringComparison.CurrentCultureIgnoreCase) == 0)
                 {
-                    ret.Add(item);
+                    ret.PossibleCompletions.Add(item);
                 }
             }
             return ret;
@@ -295,7 +295,7 @@ namespace SqlCommandCompleter
             return ret;
         }
 
-        private List<string> GetColumnNames(bool includeStar, List<CommandCompleteTableInfo> possibleTables)
+        private List<string> GetColumnNames(bool includeStar, List<CommandCompleteTableInfo> possibleTables, Symbol symbol)
         {
             List<string> ret = new List<string>();
             if (includeStar)
@@ -303,20 +303,27 @@ namespace SqlCommandCompleter
                 ret.Add("*");
             }
 
+            var tableAlias = GetColumnAlias(symbol);
+
             foreach (var table in _databaseSchemaInfo.Tables)
             {
                 if (possibleTables.Count > 0)
                 {
-                    foreach (var t in possibleTables)
+                    var t = possibleTables.FirstOrDefault(x => x.TableName == table.TableName);
+                    
+                    if (t != null)
                     {
-                        if (t.TableName == table.TableName)
+                        if (tableAlias != "" && t.Alias != tableAlias)
                         {
-                            foreach (var column in table.Columns)
+                            break;
+                        }
+
+                        foreach (var column in table.Columns)
+                        {
+                            var columnName = tableAlias != null ? tableAlias + "." + column.ColumnName : column.ColumnName;
+                            if (!ret.Contains(columnName))
                             {
-                                if (!ret.Contains(column.ColumnName))
-                                {
-                                    ret.Add(column.ColumnName);
-                                }
+                                ret.Add(columnName);
                             }
                         }
                     }
@@ -333,6 +340,14 @@ namespace SqlCommandCompleter
                 }
             }
             return ret;
+        }
+
+        private string GetColumnAlias(Symbol symbol)
+        {
+            int index = symbol.Text.IndexOf('.');
+            if (index < 0)
+                return "";
+            return symbol.Text.Substring(0, index);
         }
     }
 }

@@ -136,7 +136,7 @@ namespace SqlStudio
             }
         }
 
-        IList<string> cmdLineControl_CommandCompletion(object sender, string cmd, int index)
+        CommandCompletionResult cmdLineControl_CommandCompletion(object sender, string cmd, int index)
         {
             int lastCmdSep = CommandParser.GetLastCmdSeperator(cmd, ';', index);
 

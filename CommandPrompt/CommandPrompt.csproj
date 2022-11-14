@@ -124,6 +124,10 @@
       <Project>{6f025f9b-d711-4412-aad2-86bac2ccdae8}</Project>
       <Name>CfgDataStore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{4161310A-80E1-45E8-B5EF-61471316A7DC}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FormatTextControl\FormatTextControl.csproj">
       <Project>{7EAE81F9-9885-4473-93A2-D6F1C15B24C2}</Project>
       <Name>FormatTextControl</Name>

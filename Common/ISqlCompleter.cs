@@ -4,6 +4,6 @@ namespace Common
 {
     public interface ISqlCompleter
     {
-        IList<string> GetPossibleCompletions(string sqlCommand, int index);
+        CommandCompletionResult GetPossibleCompletions(string sqlCommand, int index);
     }
 }

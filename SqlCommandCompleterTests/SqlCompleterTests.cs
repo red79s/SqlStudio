@@ -96,77 +96,77 @@ namespace SqlCommandCompleterTests
         public void TestGetPossibleCompletionsSelect()
         {
             var comp = CreateCompleter();
-            var posCompletions = comp.GetPossibleCompletions("S", 1);
-            Assert.AreEqual(1, posCompletions.Count);
+            var res = comp.GetPossibleCompletions("S", 1);
+            Assert.AreEqual(1, res.PossibleCompletions.Count);
         }
 
         [TestMethod]
         public void TestGetPossibleCompletionsSelectLower()
         {
             var comp = CreateCompleter();
-            var posCompletions = comp.GetPossibleCompletions("s", 1);
-            Assert.AreEqual(1, posCompletions.Count);
+            var res = comp.GetPossibleCompletions("s", 1);
+            Assert.AreEqual(1, res.PossibleCompletions.Count);
         }
 
         [TestMethod]
         public void TestGetPossibleCompletionsNoText()
         {
             var comp = CreateCompleter();
-            var posCompletions = comp.GetPossibleCompletions("", 0);
-            Assert.AreEqual(5, posCompletions.Count);
+            var res = comp.GetPossibleCompletions("", 0);
+            Assert.AreEqual(5, res.PossibleCompletions.Count);
         }
 
         [TestMethod]
         public void TestGetPossibleCompletionsTableNames()
         {
             var comp = CreateCompleter();
-            var posCompletions = comp.GetPossibleCompletions("select * from ", 14);
-            Assert.AreEqual(2, posCompletions.Count);
+            var res = comp.GetPossibleCompletions("select * from ", 14);
+            Assert.AreEqual(2, res.PossibleCompletions.Count);
         }
 
         [TestMethod]
         public void TestGetPossibleCompletionsTableNamesFoo()
         {
             var comp = CreateCompleter();
-            var posCompletions = comp.GetPossibleCompletions("select * from f", 15);
-            Assert.AreEqual(1, posCompletions.Count);
-            Assert.AreEqual("foo", posCompletions[0]);
+            var res = comp.GetPossibleCompletions("select * from f", 15);
+            Assert.AreEqual(1, res.PossibleCompletions.Count);
+            Assert.AreEqual("foo", res.PossibleCompletions[0]);
         }
 
         [TestMethod]
         public void TestGetPossibleCompletionsFrom()
         {
             var comp = CreateCompleter();
-            var posCompletions = comp.GetPossibleCompletions("select * f", 10);
-            Assert.AreEqual(3, posCompletions.Count);
-            Assert.AreEqual("FROM", posCompletions[0]);
+            var res = comp.GetPossibleCompletions("select * f", 10);
+            Assert.AreEqual(3, res.PossibleCompletions.Count);
+            Assert.AreEqual("FROM", res.PossibleCompletions[0]);
         }
 
         [TestMethod]
         public void TestGetPossibleCompletionsCol()
         {
             var comp = CreateCompleter();
-            var posCompletions = comp.GetPossibleCompletions("select ", 7);
-            Assert.AreEqual(6, posCompletions.Count);
-            Assert.AreEqual("*", posCompletions[1]);
-            Assert.AreEqual("foo_col1", posCompletions[2]);
+            var res = comp.GetPossibleCompletions("select ", 7);
+            Assert.AreEqual(6, res.PossibleCompletions.Count);
+            Assert.AreEqual("*", res.PossibleCompletions[1]);
+            Assert.AreEqual("foo_col1", res.PossibleCompletions[2]);
         }
 
         [TestMethod]
         public void TestGetPossibleCompletionsColWithSeachText()
         {
             var comp = CreateCompleter();
-            var posCompletions = comp.GetPossibleCompletions("select fo", 9);
-            Assert.AreEqual(2, posCompletions.Count);
-            Assert.AreEqual("foo_col1", posCompletions[0]);
+            var res = comp.GetPossibleCompletions("select fo", 9);
+            Assert.AreEqual(2, res.PossibleCompletions.Count);
+            Assert.AreEqual("foo_col1", res.PossibleCompletions[0]);
         }
 
         [TestMethod]
         public void TestGetPossibleCompletionsColWithTable()
         {
             var comp = CreateCompleter();
-            var posCompletions = comp.GetPossibleCompletions("select fo from bar", 9);
-            Assert.AreEqual(0, posCompletions.Count);
+            var res = comp.GetPossibleCompletions("select fo from bar", 9);
+            Assert.AreEqual(0, res.PossibleCompletions.Count);
         }
 
         [TestMethod]
@@ -189,10 +189,10 @@ namespace SqlCommandCompleterTests
         public void TestGetPossibleCompletionsInBetweenSpaces()
         {
             var comp = CreateCompleter();
-            var posCompletions = comp.GetPossibleCompletions("SELECT  FROM foo;", 7);
-            Assert.AreEqual(4, posCompletions.Count);
-            Assert.AreEqual("FROM", posCompletions[0]);
-            Assert.AreEqual("foo_col1", posCompletions[2]);
+            var res = comp.GetPossibleCompletions("SELECT  FROM foo;", 7);
+            Assert.AreEqual(4, res.PossibleCompletions.Count);
+            Assert.AreEqual("FROM", res.PossibleCompletions[0]);
+            Assert.AreEqual("foo_col1", res.PossibleCompletions[2]);
         }
     }
 }
