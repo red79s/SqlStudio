@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace CommandPrompt
@@ -18,32 +13,34 @@ namespace CommandPrompt
         {
             InitializeComponent();
 
-            this.listBoxSelections.KeyDown += new KeyEventHandler(listBoxSelections_KeyDown);
-            this.listBoxSelections.KeyPress += new KeyPressEventHandler(listBoxSelections_KeyPress);
-            this.listBoxSelections.MouseDoubleClick += new MouseEventHandler(listBoxSelections_MouseDoubleClick);
+            listBoxSelections.KeyDown += new KeyEventHandler(listBoxSelections_KeyDown);
+            listBoxSelections.KeyPress += new KeyPressEventHandler(listBoxSelections_KeyPress);
+            listBoxSelections.MouseDoubleClick += new MouseEventHandler(listBoxSelections_MouseDoubleClick);
             ContextMenu cm = new ContextMenu();
             MenuItem miReset = new MenuItem("Reset");
             miReset.Click += new EventHandler(miReset_Click);
             cm.MenuItems.Add(miReset);
-            this.listBoxSelections.ContextMenu = cm;
+            listBoxSelections.ContextMenu = cm;
         }
 
         void listBoxSelections_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar))
             {
-                this._selFilter += e.KeyChar;
-                this._selFilter = this._selFilter.ToLower();
-                this.HighlightFilter();
+                _selFilter += e.KeyChar;
+                _selFilter = _selFilter.ToLower();
+
+                HighlightFilter();
+                e.Handled = true;
             }
         }
 
         void miReset_Click(object sender, EventArgs e)
         {
-            this._selFilter = string.Empty;
-            if (this.listBoxSelections.Items.Count > 0)
+            _selFilter = string.Empty;
+            if (listBoxSelections.Items.Count > 0)
             {
-                this.listBoxSelections.SelectedItem = this.listBoxSelections.Items[0];
+                listBoxSelections.SelectedItem = listBoxSelections.Items[0];
             }
         }
 
@@ -51,8 +48,8 @@ namespace CommandPrompt
         {
             if (e.Button == MouseButtons.Left)
             {
-                this.SelectedItem = (string)this.listBoxSelections.SelectedItem;
-                this.CloseOK();
+                SelectedItem = (string)listBoxSelections.SelectedItem;
+                CloseOK();
             }
         }
 
@@ -60,33 +57,42 @@ namespace CommandPrompt
         {
             if (e.KeyCode == Keys.Enter)
             {
-                this.SelectedItem = (string)this.listBoxSelections.SelectedItem;
-                this.CloseOK();
+                SelectedItem = (string)listBoxSelections.SelectedItem;
+                CloseOK();
             }
             else if (e.KeyCode == Keys.Space)
             {
-                this.SelectedItem = (string)this.listBoxSelections.SelectedItem + " ";
-                this.CloseOK();
+                SelectedItem = (string)listBoxSelections.SelectedItem + " ";
+                CloseOK();
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                this.CloseCancel();
+                CloseCancel();
             }
             else if (e.KeyCode == Keys.Back)
             {
-                if (this._selFilter.Length > 0)
-                    this._selFilter = this._selFilter.Substring(0, this._selFilter.Length - 1);
+                if (_selFilter.Length > 0)
+                    _selFilter = _selFilter.Substring(0, _selFilter.Length - 1);
+
+                HighlightFilter();
+                e.Handled = true;
             }
         }
 
         private void HighlightFilter()
         {
-            int count = this.listBoxSelections.Items.Count;
+          int count = listBoxSelections.Items.Count;
             for (int i = 0; i < count; i++)
             {
-                if (((string)this.listBoxSelections.Items[i]).ToLower().IndexOf(this._selFilter) >= 0)
+                var itemText = (string)listBoxSelections.Items[i];
+
+                if (itemText.IndexOf(_selFilter, StringComparison.CurrentCultureIgnoreCase) >= 0)
                 {
-                    this.listBoxSelections.SelectedItem = this.listBoxSelections.Items[i];
+                    if (listBoxSelections.SelectedItem != listBoxSelections.Items[i])
+                    {
+                        listBoxSelections.SelectedItem = listBoxSelections.Items[i];
+                    }
+                    return;
                 }
             }
         }
@@ -94,32 +100,32 @@ namespace CommandPrompt
         public void SetItems(string[] items)
         {
             Array.Sort(items);
-            this._items = items;
-            this.listBoxSelections.Items.Clear();
-            foreach (string s in this._items)
+            _items = items;
+            listBoxSelections.Items.Clear();
+            foreach (string s in _items)
             {
-                this.listBoxSelections.Items.Add(s);
+                listBoxSelections.Items.Add(s);
             }
             if (items.Length > 0)
-                this.listBoxSelections.SelectedIndex = 0;
+                listBoxSelections.SelectedIndex = 0;
         }
 
         public string SelectedItem
         {
-            get { return this._selectedItem; }
-            set { this._selectedItem = value; }
+            get { return _selectedItem; }
+            set { _selectedItem = value; }
         }
 
         private void CloseOK()
         {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void CloseCancel()
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
     }
 }

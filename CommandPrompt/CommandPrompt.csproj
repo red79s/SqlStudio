@@ -151,6 +151,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CompleterSelect.resx">
+      <DependentUpon>CompleterSelect.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DateAndTimePicker.resx">
       <DependentUpon>DateAndTimePicker.cs</DependentUpon>
     </EmbeddedResource>

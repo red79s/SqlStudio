@@ -33,14 +33,14 @@ namespace SqlStudio
 
 		public UnixShell() : base()
 		{
-			this.AcceptsTab = true;
-			this.Multiline = true;
-			this.alLinePos = new ArrayList();
-			this.Text = string.Empty;
-			this.sPriProm = "$ ";
-			this.sSecProm = ": ";
+			AcceptsTab = true;
+			Multiline = true;
+			alLinePos = new ArrayList();
+			Text = string.Empty;
+			sPriProm = "$ ";
+			sSecProm = ": ";
 			
-			this.history = new History();
+			history = new History();
 			InsertNewPriLine();
 		}
 
@@ -48,11 +48,11 @@ namespace SqlStudio
 		{
 			get
 			{
-				return this.sPriProm;
+				return sPriProm;
 			}
 			set
 			{
-				this.sPriProm = value;
+				sPriProm = value;
 			}
 		}
 
@@ -60,17 +60,17 @@ namespace SqlStudio
 		{
 			get
 			{
-				return this.sSecProm;
+				return sSecProm;
 			}
 			set
 			{
-				this.sSecProm = value;
+				sSecProm = value;
 			}
 		}
 
 		protected override void OnKeyDown(System.Windows.Forms.KeyEventArgs e)
 		{
-            if (!this.bAccseptInput)
+            if (!bAccseptInput)
             {
                 e.Handled = true;
                 return;
@@ -89,15 +89,15 @@ namespace SqlStudio
 				case (int)KeyCodes.RIGHT_ARROW: HandleArrowLeftRight(e); break;
 			}
 			if(iDebug>2)
-				Debug(string.Format("OnKeyDown: {0} ({1}) cc={2}", (char)e.KeyValue, e.KeyValue, this.curCursor));
+				Debug(string.Format("OnKeyDown: {0} ({1}) cc={2}", (char)e.KeyValue, e.KeyValue, curCursor));
 			if(iDebug>3)
 			{
-				for(int i=0; i<this.alLinePos.Count;i++)
+				for(int i=0; i<alLinePos.Count;i++)
 				{
-					int b = (int)this.alLinePos[i];
+					int b = (int)alLinePos[i];
 					int end = base.Text.Length;
-					if(i < (this.alLinePos.Count - 1))
-						end = (int)this.alLinePos[i+1];
+					if(i < (alLinePos.Count - 1))
+						end = (int)alLinePos[i+1];
 					string lText = base.Text.Substring(b, end - b).Replace(System.Environment.NewLine,"NN");
 					Debug(string.Format("line={0},b={1},e={2} line<{3}>", i, b, end, lText));
 				}
@@ -106,7 +106,7 @@ namespace SqlStudio
 
 		protected override void OnKeyPress(System.Windows.Forms.KeyPressEventArgs e)
 		{
-            if (!this.bAccseptInput)
+            if (!bAccseptInput)
             {
                 e.Handled = true;
                 return;
@@ -125,15 +125,15 @@ namespace SqlStudio
 				default: InsertChar(); break;
 			}
 			if(iDebug>2)
-				Debug(string.Format("OnKeyPress: {0} ({1}) cc={2} ", e.KeyChar, (int)e.KeyChar, this.curCursor));
+				Debug(string.Format("OnKeyPress: {0} ({1}) cc={2} ", e.KeyChar, (int)e.KeyChar, curCursor));
 			if(iDebug>3)
 			{
-				for(int i=0; i<this.alLinePos.Count;i++)
+				for(int i=0; i<alLinePos.Count;i++)
 				{
-					int b = (int)this.alLinePos[i];
+					int b = (int)alLinePos[i];
 					int end = base.Text.Length;
-					if(i < (this.alLinePos.Count - 1))
-						end = (int)this.alLinePos[i+1];
+					if(i < (alLinePos.Count - 1))
+						end = (int)alLinePos[i+1];
 					string lText = base.Text.Substring(b, end - b).Replace(System.Environment.NewLine,"NN");
 					Debug(string.Format("line={0},b={1},e={2} line<{3}>", i, b, end, lText));
 				}
@@ -146,67 +146,67 @@ namespace SqlStudio
 			string[] lines = str.Split('\n');
 			for(int i = 0; i < lines.Length; i++) //insert each line
 			{
-				string left = this.Text.Substring(0, this.curCursor) + lines[i];
-				string right = this.Text.Substring(this.curCursor, this.Text.Length - this.curCursor);
+				string left = Text.Substring(0, curCursor) + lines[i];
+				string right = Text.Substring(curCursor, Text.Length - curCursor);
 				if(i < (lines.Length - 1)) //insert new line break
 				{
-					left += System.Environment.NewLine + this.sSecProm;
+					left += System.Environment.NewLine + sSecProm;
 					int line = GetLine();
-					this.alLinePos.Insert(line + 1, left.Length - this.sSecProm.Length);
+					alLinePos.Insert(line + 1, left.Length - sSecProm.Length);
 				}
-				this.curCursor = left.Length;
+				curCursor = left.Length;
 				base.Text = left + right;
 			}
 
-			this.SelectionStart = this.curCursor;
-			this.SelectionLength = 0;
-			this.ScrollToCaret();
+			SelectionStart = curCursor;
+			SelectionLength = 0;
+			ScrollToCaret();
 		}
 
 		protected void InsertChar()
 		{
-			if(this.curCursor < base.Text.Length)
+			if(curCursor < base.Text.Length)
 			{
-				for(int i=GetLine()+1; i<this.alLinePos.Count; i++)
-					this.alLinePos[i] = (int)this.alLinePos[i] + 1;
+				for(int i=GetLine()+1; i<alLinePos.Count; i++)
+					alLinePos[i] = (int)alLinePos[i] + 1;
 			}
-			this.SelectionStart = this.curCursor;
-			this.curCursor++;
-			this.SelectionLength = 0;
+			SelectionStart = curCursor;
+			curCursor++;
+			SelectionLength = 0;
 
-			this.completerState = (int)CompleterState.UNINITALIZED;
+			completerState = (int)CompleterState.UNINITALIZED;
 		}
 
 		protected void InsertChar(char e)
 		{
-			if(this.curCursor != this.SelectionStart)
+			if(curCursor != SelectionStart)
 			{
-				this.SelectionStart = this.curCursor;
-				this.SelectionLength = 0;
+				SelectionStart = curCursor;
+				SelectionLength = 0;
 			}
-			if(this.curCursor < this.Text.Length)
+			if(curCursor < Text.Length)
 			{	
-				string left = this.Text.Substring(0, this.curCursor);
-				string right = this.Text.Substring(this.curCursor, this.Text.Length - this.curCursor);
+				string left = Text.Substring(0, curCursor);
+				string right = Text.Substring(curCursor, Text.Length - curCursor);
 				if(e == '\n')
 				{
 					int line = GetLine();
 					base.Text = left + System.Environment.NewLine + right;
-					this.curCursor += System.Environment.NewLine.Length;
-					this.alLinePos.Insert(line + 1, this.curCursor);
+					curCursor += System.Environment.NewLine.Length;
+					alLinePos.Insert(line + 1, curCursor);
 
-					for(int i=GetLine()+1; i<this.alLinePos.Count; i++)
-						this.alLinePos[i] = (int)this.alLinePos[i] + System.Environment.NewLine.Length;
+					for(int i=GetLine()+1; i<alLinePos.Count; i++)
+						alLinePos[i] = (int)alLinePos[i] + System.Environment.NewLine.Length;
 
-					this.InsertString(this.sSecProm);
+					InsertString(sSecProm);
 				}
 				else
 				{
-					for(int i=GetLine()+1; i<this.alLinePos.Count; i++)
-						this.alLinePos[i] = (int)this.alLinePos[i] + 1;
+					for(int i=GetLine()+1; i<alLinePos.Count; i++)
+						alLinePos[i] = (int)alLinePos[i] + 1;
 
 					base.Text = left + e + right;
-					this.curCursor++;
+					curCursor++;
 				}
 			}
 			else
@@ -214,24 +214,24 @@ namespace SqlStudio
 				if(e == '\n')
 				{
 					base.Text += System.Environment.NewLine;
-					this.curCursor = base.Text.Length;
-					this.alLinePos.Add(this.curCursor);
+					curCursor = base.Text.Length;
+					alLinePos.Add(curCursor);
 
-					this.InsertString(this.sSecProm);
+					InsertString(sSecProm);
 				}
 				else
 				{
 					base.Text += e;
-					this.curCursor++;
+					curCursor++;
 				}
 			}
-			this.SelectionStart = this.curCursor;
-			this.SelectionLength = 0;
+			SelectionStart = curCursor;
+			SelectionLength = 0;
 		}
 
 		protected void HandleCopy(System.Windows.Forms.KeyPressEventArgs e)
 		{
-			if(this.iDebug>1)
+			if(iDebug>1)
 				Debug("selected text <" + base.SelectedText + ">");
 
 			Clipboard.SetDataObject(base.SelectedText, true);
@@ -245,45 +245,45 @@ namespace SqlStudio
 				string cText = Clipboard.GetDataObject().GetData(DataFormats.Text).ToString();
 				string dText = cText.Replace("\r","R");
 				dText = dText.Replace("\n","N");
-				if(this.iDebug>1)
+				if(iDebug>1)
 					Debug("text on Clipboard: " + dText);
                 
-                if (this.SelectionLength > 0)
+                if (SelectionLength > 0)
                 {
-                    if (this.SelectionStart < this.startCmd)
+                    if (SelectionStart < startCmd)
                     {
-                        int diff = this.startCmd - this.SelectionStart;
-                        if (diff < this.SelectionLength)
+                        int diff = startCmd - SelectionStart;
+                        if (diff < SelectionLength)
                         {
-                            this.SelectionStart = this.SelectionStart + diff;
-                            this.SelectionLength = this.SelectionLength - diff;
+                            SelectionStart = SelectionStart + diff;
+                            SelectionLength = SelectionLength - diff;
                         }
                         else
                         {
-                            this.SelectionStart = this.curCursor;
-                            this.SelectionLength = 0;
+                            SelectionStart = curCursor;
+                            SelectionLength = 0;
                         }
                     }
 
-                    this.RemoveSelection(this.SelectionStart, this.SelectionLength);
+                    RemoveSelection(SelectionStart, SelectionLength);
                 }
 				
-                this.InsertString(cText);
+                InsertString(cText);
 			}
-			this.ScrollToCaret();
+			ScrollToCaret();
 		}
 		
         
 		protected void HandleCut(System.Windows.Forms.KeyPressEventArgs e)
 		{
 			e.Handled = true;
-			if(this.SelectionStart < (this.startCmd + this.sPriProm.Length))
+			if(SelectionStart < (startCmd + sPriProm.Length))
 			{
 				Clipboard.SetDataObject(base.SelectedText,true);
 			}
 			else
 			{
-				string selText = GetRemoveSelection(this.SelectionStart, this.SelectionLength);
+				string selText = GetRemoveSelection(SelectionStart, SelectionLength);
 				Clipboard.SetDataObject(selText,true);
 			}
 		}
@@ -307,20 +307,20 @@ namespace SqlStudio
 			base.Text = base.Text.Substring(0, begin) + base.Text.Substring(begin + len, base.Text.Length - (begin + len));
 			
 			int linesRemoved = lineEnd - lineBegin;
-			this.alLinePos.RemoveRange(lineBegin + 1, linesRemoved);
+			alLinePos.RemoveRange(lineBegin + 1, linesRemoved);
 			
-			for(int i = (lineEnd + 1 - linesRemoved); i < this.alLinePos.Count; i++)
+			for(int i = (lineEnd + 1 - linesRemoved); i < alLinePos.Count; i++)
 			{
-				this.alLinePos[i] = (int)this.alLinePos[i] - len;
+				alLinePos[i] = (int)alLinePos[i] - len;
 			}
 			
-			if(this.curCursor > begin && this.curCursor <= (begin + len))
-				this.curCursor = begin;
-			else if(this.curCursor > (begin + len))
-				this.curCursor -= len;
+			if(curCursor > begin && curCursor <= (begin + len))
+				curCursor = begin;
+			else if(curCursor > (begin + len))
+				curCursor -= len;
 
-			this.SelectionStart = this.curCursor;
-			this.SelectionLength = 0;
+			SelectionStart = curCursor;
+			SelectionLength = 0;
 		}
 
 		private string GetSelection(int begin, int len)
@@ -329,11 +329,11 @@ namespace SqlStudio
 			int subBegin = begin;
 			for(int i=GetLine(begin) + 1; i<=GetLine(begin + len); i++)
 			{
-				int lbPos = (int)this.alLinePos[i];
+				int lbPos = (int)alLinePos[i];
 				if(lbPos > (begin + len))
 					lbPos = begin + len;
 				cmd += base.Text.Substring(subBegin, lbPos - subBegin);
-				subBegin = lbPos + this.sSecProm.Length;
+				subBegin = lbPos + sSecProm.Length;
 			}
 			cmd += base.Text.Substring(subBegin, begin + len - subBegin);
 			return cmd;
@@ -344,12 +344,12 @@ namespace SqlStudio
 		protected void HandleEnter(System.Windows.Forms.KeyEventArgs e)
 		{
 			e.Handled = true;
-			if(this.EndCmd())
+			if(EndCmd())
 			{
-				string cmd = this.GetCmd();
-				this.history.Add(cmd);
+				string cmd = GetCmd();
+				history.Add(cmd);
 
-                this.bAccseptInput = false;
+                bAccseptInput = false;
 				
                 if(CommandEvent != null)
 					CommandEvent(this, cmd);
@@ -357,28 +357,28 @@ namespace SqlStudio
 			}
 			else
 			{
-				this.InsertChar('\n');
+				InsertChar('\n');
 			}
 		}
 
         public void CommandFinished()
         {
-            this.bAccseptInput = true;
-            this.InsertNewPriLine();
+            bAccseptInput = true;
+            InsertNewPriLine();
         }
 
 		public string GetCmd()
 		{
-			return GetSelection(this.startCmd + this.sPriProm.Length, base.Text.Length - (this.startCmd + this.sPriProm.Length));
+			return GetSelection(startCmd + sPriProm.Length, base.Text.Length - (startCmd + sPriProm.Length));
 		}
 
 		private string StripEndChar(string cmd)
 		{
-			if(this.endChar == 0)
+			if(endChar == 0)
 				return cmd;
 
 			int i=cmd.Length - 1;
-			while(i>0 && cmd[i]!= this.endChar)
+			while(i>0 && cmd[i]!= endChar)
 				i--;
 			return cmd.Substring(0, i);
 		}
@@ -386,52 +386,52 @@ namespace SqlStudio
 		protected void HandleBackspace(System.Windows.Forms.KeyEventArgs e)
 		{
 			e.Handled = true;
-			if(this.curCursor <= (this.startCmd + this.sPriProm.Length))
+			if(curCursor <= (startCmd + sPriProm.Length))
 				return;
-			if(this.curCursor != this.SelectionStart)
+			if(curCursor != SelectionStart)
 			{
-				this.SelectionStart = this.curCursor;
-				this.SelectionLength = 0;
+				SelectionStart = curCursor;
+				SelectionLength = 0;
 			}
 			int line = GetLine();
-			if(this.curCursor <= ((int)this.alLinePos[line] + this.sSecProm.Length))
+			if(curCursor <= ((int)alLinePos[line] + sSecProm.Length))
 			{
-				base.Text = base.Text.Substring(0, this.curCursor - this.sSecProm.Length - System.Environment.NewLine.Length) + base.Text.Substring(this.curCursor, base.Text.Length - this.curCursor);
-				this.curCursor -= (this.sSecProm.Length + System.Environment.NewLine.Length);
-				this.alLinePos.RemoveAt(line);
-				for(int i=line; i<this.alLinePos.Count; i++)
+				base.Text = base.Text.Substring(0, curCursor - sSecProm.Length - System.Environment.NewLine.Length) + base.Text.Substring(curCursor, base.Text.Length - curCursor);
+				curCursor -= (sSecProm.Length + System.Environment.NewLine.Length);
+				alLinePos.RemoveAt(line);
+				for(int i=line; i<alLinePos.Count; i++)
 				{
-					int newLineStart = (int)this.alLinePos[i] - (this.sSecProm.Length + System.Environment.NewLine.Length);
-					this.alLinePos[i] = newLineStart;
+					int newLineStart = (int)alLinePos[i] - (sSecProm.Length + System.Environment.NewLine.Length);
+					alLinePos[i] = newLineStart;
 				}
 			}
 			else
 			{
-				base.Text = base.Text.Substring(0, this.curCursor - 1) + base.Text.Substring(this.curCursor, base.Text.Length - this.curCursor);
-				this.curCursor --;				
+				base.Text = base.Text.Substring(0, curCursor - 1) + base.Text.Substring(curCursor, base.Text.Length - curCursor);
+				curCursor --;				
 			}
-			this.SelectionStart = this.curCursor;
-			this.SelectionLength = 0;
+			SelectionStart = curCursor;
+			SelectionLength = 0;
 		}
 
-		protected void HandleTab(System.Windows.Forms.KeyEventArgs e)
+		protected void HandleTab(KeyEventArgs e)
 		{
 			e.Handled = true;
 
-            if (this.CompleterEvent != null)
+            if (CompleterEvent != null)
             {
                 List<string> completions = new List<string>();
-                string cmd = this.GetCmd();
+                string cmd = GetCmd();
                 if (cmd.Length < 1)
                     return;
 
-                this.CompleterEvent(this, cmd, cmd.Length - 1, ref completions);
+                CompleterEvent(this, cmd, cmd.Length - 1, ref completions);
 
                 if (completions != null && completions.Count > 0)
                 {
                     if (completions.Count == 1)
                     {
-                        this.InsertString(completions[0].Substring(cmd.Length, completions[0].Length - cmd.Length));
+                        InsertString(completions[0].Substring(cmd.Length, completions[0].Length - cmd.Length));
                     }
                     else
                     {
@@ -439,7 +439,7 @@ namespace SqlStudio
                         cs.SetItems(completions.ToArray());
                         if (cs.ShowDialog() == DialogResult.OK)
                         {
-                            this.InsertString(cs.SelectedItem.Substring(cmd.Length, cs.SelectedItem.Length - cmd.Length));
+                            InsertString(cs.SelectedItem.Substring(cmd.Length, cs.SelectedItem.Length - cmd.Length));
                         }
                     }
                 }
@@ -447,73 +447,26 @@ namespace SqlStudio
 			
 		}
 
-		public void InsertCompletion(string partial, string[] comp)
-		{
-			if(comp.Length < 1)
-			{
-				this.completerState = (int)CompleterState.UNINITALIZED;
-			}
-			else if(comp.Length == 1)
-			{
-				this.completerState = (int)CompleterState.UNINITALIZED;
-				this.InsertString(comp[0].Substring(partial.Length, comp[0].Length - partial.Length));
-			}
-			else if(this.completerState == (int)CompleterState.ASKING)
-			{
-                CompleterSelect cs = new CompleterSelect();
-                cs.SetItems(comp);
-                if (cs.ShowDialog() == DialogResult.OK)
-                {
-                    this.InsertString(cs.SelectedItem.Substring(partial.Length, cs.SelectedItem.Length - partial.Length));
-                }
-                
-				this.completerState = (int)CompleterState.UNINITALIZED;
-			}
-		}
-
-		public void ReInsertCmd(string str)
-		{
-			string cmd = GetCmd();
-			int iCursor = this.curCursor - this.startCmd;
-			this.RemoveSelection(this.startCmd, base.Text.Length - this.startCmd);
-			base.Text += str;
-			this.InsertNewPriLine();
-			this.InsertString(cmd);
-			this.curCursor = this.startCmd + iCursor;
-			this.SelectionStart = this.curCursor;
-			this.SelectionLength = 0;
-		}
-
-		private string GetPartialCmd()
-		{
-			int i = this.curCursor - 1;
-			while(i > (this.startCmd + this.sPriProm.Length) && base.Text[i] != ' ')
-				i--;
-			if(base.Text[i] == ' ')
-				i++;
-			return base.Text.Substring(i , this.curCursor - i);
-		}
-
 		protected void HandleArrowUpDown(System.Windows.Forms.KeyEventArgs e)
 		{
 			e.Handled = true;
 
-			if(this.history.HaveTemp())
+			if(history.HaveTemp())
 			{
-				this.RemoveSelection(this.startCmd + this.sPriProm.Length, base.Text.Length - this.startCmd - this.sPriProm.Length);
+				RemoveSelection(startCmd + sPriProm.Length, base.Text.Length - startCmd - sPriProm.Length);
 			}
 			else
 			{
-				this.history.AddTemp(this.GetSelection(this.startCmd + this.sPriProm.Length, base.Text.Length - this.startCmd - this.sPriProm.Length));
-				this.RemoveSelection(this.startCmd + this.sPriProm.Length, base.Text.Length - this.startCmd - this.sPriProm.Length);
+				history.AddTemp(GetSelection(startCmd + sPriProm.Length, base.Text.Length - startCmd - sPriProm.Length));
+				RemoveSelection(startCmd + sPriProm.Length, base.Text.Length - startCmd - sPriProm.Length);
 			}
 			if(e.KeyValue == (int)KeyCodes.UP_ARROW)
 			{
-				this.InsertString(this.history.getPrev());
+				InsertString(history.getPrev());
 			}
 			else
 			{
-				this.InsertString(this.history.getNext());
+				InsertString(history.getNext());
 			}
 			base.ScrollToCaret();
 		}
@@ -521,98 +474,98 @@ namespace SqlStudio
 		protected void HandleArrowLeftRight(System.Windows.Forms.KeyEventArgs e)
 		{
 			e.Handled = true;
-			if(this.curCursor <= (this.startCmd + this.sPriProm.Length) && e.KeyValue == (int)KeyCodes.LEFT_ARROW)
+			if(curCursor <= (startCmd + sPriProm.Length) && e.KeyValue == (int)KeyCodes.LEFT_ARROW)
 				return;
-			if(this.curCursor >= base.Text.Length && e.KeyValue == (int)KeyCodes.RIGHT_ARROW)
+			if(curCursor >= base.Text.Length && e.KeyValue == (int)KeyCodes.RIGHT_ARROW)
 				return;
-			if(this.curCursor != this.SelectionStart)
+			if(curCursor != SelectionStart)
 			{
-				this.SelectionStart = this.curCursor;
-				this.SelectionLength = 0;
+				SelectionStart = curCursor;
+				SelectionLength = 0;
 			}
 			int line = GetLine();
 			if(e.KeyValue == (int)KeyCodes.LEFT_ARROW)
 			{
-				if(this.curCursor <= ((int)this.alLinePos[line] + this.sSecProm.Length))
+				if(curCursor <= ((int)alLinePos[line] + sSecProm.Length))
 				{
-					this.curCursor -= (this.sSecProm.Length + System.Environment.NewLine.Length);
+					curCursor -= (sSecProm.Length + System.Environment.NewLine.Length);
 				}
 				else
 				{
-					this.curCursor --;				
+					curCursor --;				
 				}
 			}
 			else
 			{
-				if(this.curCursor >= GetEndOfLine(line))
+				if(curCursor >= GetEndOfLine(line))
 				{
-					this.curCursor += (System.Environment.NewLine.Length + this.sSecProm.Length);
+					curCursor += (System.Environment.NewLine.Length + sSecProm.Length);
 				}
 				else
 				{
-					this.curCursor++;
+					curCursor++;
 				}
 			}
-			this.SelectionStart = this.curCursor;
-			this.SelectionLength = 0;
+			SelectionStart = curCursor;
+			SelectionLength = 0;
 		}
 
 		public void InsertNewPriLine()
 		{
 			if(base.Text.Length > 0)
 				base.Text += System.Environment.NewLine;
-			this.curCursor = base.Text.Length;
-			this.startCmd = this.curCursor;
-			this.alLinePos.Clear();
-			this.alLinePos.Add(this.startCmd);
-			InsertString(this.sPriProm);
-			this.ScrollToCaret();
+			curCursor = base.Text.Length;
+			startCmd = curCursor;
+			alLinePos.Clear();
+			alLinePos.Add(startCmd);
+			InsertString(sPriProm);
+			ScrollToCaret();
 		}
 		
 		private void InsertParamLine(string sParamName)
 		{
-			if((this.startCmd + this.sPriProm.Length) == this.curCursor)
+			if((startCmd + sPriProm.Length) == curCursor)
 			{
-				base.Text = base.Text.Substring(0, this.startCmd);
+				base.Text = base.Text.Substring(0, startCmd);
 			}
 			else if(base.Text.Length > 0)
 			{
 				base.Text += System.Environment.NewLine;
 			}
 			base.Text += sParamName;
-			this.curCursor = base.Text.Length;
-			this.startCmd = this.curCursor;
-			this.alLinePos.Clear();
-			this.alLinePos.Add(this.startCmd);
+			curCursor = base.Text.Length;
+			startCmd = curCursor;
+			alLinePos.Clear();
+			alLinePos.Add(startCmd);
 		}
 
 		private int GetLine(int pos)
 		{
-			for(int i=0; i<this.alLinePos.Count; i++)
+			for(int i=0; i<alLinePos.Count; i++)
 			{
-				if((int)this.alLinePos[i] > pos)
+				if((int)alLinePos[i] > pos)
 					return i - 1;
 			}
-			return this.alLinePos.Count - 1;
+			return alLinePos.Count - 1;
 		}
 		
 		private int GetLine()
 		{
-			return GetLine(this.curCursor);
+			return GetLine(curCursor);
 		}
 
 		private int GetEndOfLine(int line)
 		{
-			if(line == (this.alLinePos.Count - 1))
+			if(line == (alLinePos.Count - 1))
 				return base.Text.Length;
-			return base.Text.IndexOf(System.Environment.NewLine, (int)this.alLinePos[line]);
+			return base.Text.IndexOf(System.Environment.NewLine, (int)alLinePos[line]);
 		}
 
 		private bool EndCmd()
 		{
-			if((int)this.endChar == 0)
+			if((int)endChar == 0)
 				return true;
-			string exp = string.Format("{0} *$", this.endChar.ToString());
+			string exp = string.Format("{0} *$", endChar.ToString());
 			if(Regex.IsMatch(base.Text, exp, RegexOptions.Multiline))
 				return true;
 			return false;
@@ -623,14 +576,14 @@ namespace SqlStudio
 			str = str.Replace("\r","");
 			str = str.Replace("\n", System.Environment.NewLine);
 			base.Text += str;
-			this.curCursor = base.Text.Length;
-			this.SelectionStart = this.curCursor;
-			this.SelectionLength = 0;
+			curCursor = base.Text.Length;
+			SelectionStart = curCursor;
+			SelectionLength = 0;
 		}
 
 		public void InsertCmdString(string str)
 		{
-			this.InsertString(str);
+			InsertString(str);
 		}
 
 		public override string Text
@@ -650,22 +603,22 @@ namespace SqlStudio
 			base.OnMouseDown (e);
 			if(e.Button == System.Windows.Forms.MouseButtons.Left)
 			{
-				if(this.SelectionStart > (this.startCmd + this.sPriProm.Length))
+				if(SelectionStart > (startCmd + sPriProm.Length))
 				{
-					this.curCursor = this.SelectionStart;
-					for(int i=1; i<this.alLinePos.Count; i++)
+					curCursor = SelectionStart;
+					for(int i=1; i<alLinePos.Count; i++)
 					{
-						if(this.curCursor >= (int)this.alLinePos[i] && this.curCursor < ((int)this.alLinePos[i] + this.sSecProm.Length))
+						if(curCursor >= (int)alLinePos[i] && curCursor < ((int)alLinePos[i] + sSecProm.Length))
 						{
-							this.curCursor += this.sSecProm.Length;
-							this.SelectionStart = this.curCursor;
+							curCursor += sSecProm.Length;
+							SelectionStart = curCursor;
 							break;
 						}
 					}
-					this.SelectionLength = 0;
+					SelectionLength = 0;
 				}
-				if(this.iDebug>1)
-					Debug(string.Format("cc={0}", this.curCursor));
+				if(iDebug>1)
+					Debug(string.Format("cc={0}", curCursor));
 			}
 		}
 
@@ -677,23 +630,23 @@ namespace SqlStudio
 
 		public void SaveHist(string sFile)
 		{
-			this.history.Save(sFile);
+			history.Save(sFile);
 		}
 
 		public void LoadHist(string sFile)
 		{
-			this.history.Load(sFile);
+			history.Load(sFile);
 		}
 
 		public int DebugLevel
 		{
 			set
 			{
-				this.iDebug = value;
+				iDebug = value;
 			}
 			get
 			{
-				return this.iDebug;
+				return iDebug;
 			}
 		}
 	}
