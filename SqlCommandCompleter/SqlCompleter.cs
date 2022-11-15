@@ -304,7 +304,7 @@ namespace SqlCommandCompleter
             }
 
             var tableAlias = GetColumnAlias(symbol);
-
+            
             foreach (var table in _databaseSchemaInfo.Tables)
             {
                 if (possibleTables.Count > 0)
@@ -320,7 +320,7 @@ namespace SqlCommandCompleter
 
                         foreach (var column in table.Columns)
                         {
-                            var columnName = tableAlias != null ? tableAlias + "." + column.ColumnName : column.ColumnName;
+                            var columnName = tableAlias != "" ? tableAlias + "." + column.ColumnName : column.ColumnName;
                             if (!ret.Contains(columnName))
                             {
                                 ret.Add(columnName);
