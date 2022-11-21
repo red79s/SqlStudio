@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SqlCommandCompleter
 {
@@ -50,6 +48,20 @@ namespace SqlCommandCompleter
             "CREATE TABLE"
         };
 
+        private List<string> _sqlKeywordsSearch = new List<string>
+        {
+            "GROUP BY",
+            "ORDER BY",
+            "AND",
+            "OR",
+            "GETDATE()",
+            "GETUTCDATE()",
+            "CONVERT(",
+            "DATEADD(day, ",
+            "DATEADD(month, ",
+            "DATEADD(year, "
+        };
+
         public SqlCompleter(ILogger logger, IDatabaseSchemaInfo databaseSchemaInfo)
         {
             _logger = logger;
@@ -86,29 +98,49 @@ namespace SqlCommandCompleter
             }
 
             //table list
-            if (keyWord.Text.Equals("FROM", StringComparison.CurrentCultureIgnoreCase) || 
-                keyWord.Text.Equals("UPDATE", StringComparison.CurrentCultureIgnoreCase))
+            if (keyWord.Text.Equals("UPDATE", StringComparison.CurrentCultureIgnoreCase))
             {
                 var tables = GetTableNames();
-                if (keyWord.Text.Equals("UPDATE", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    tables.Insert(0, "SET");
-                }
+                tables.Insert(0, "SET");
+
+                return MergePossible(tables, symbol);
+            }
+
+            //table list
+            if (keyWord.Text.Equals("FROM", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var tables = GetTableNames();
+                tables.Insert(0, "WHERE");
 
                 return MergePossible(tables, symbol);
             }
 
             //column list
-            if (keyWord.Text.Equals("SELECT", StringComparison.CurrentCultureIgnoreCase) || 
-                keyWord.Text.Equals("SET", StringComparison.CurrentCultureIgnoreCase) ||
-                keyWord.Text.Equals("WHERE", StringComparison.CurrentCultureIgnoreCase))
+            if (keyWord.Text.Equals("SELECT", StringComparison.CurrentCultureIgnoreCase))
             {
                 var tables = GetTableInfo(symbols);
                 var columns = GetColumnNames(symbol.Text.Length == 0, tables, symbol);
-                if (keyWord.Text.Equals("SELECT", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    columns.Insert(0, "FROM");
-                }
+                columns.Insert(0, "FROM");
+
+                return MergePossible(columns, symbol);
+            }
+
+            //column list
+            if (keyWord.Text.Equals("SET", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var tables = GetTableInfo(symbols);
+                var columns = GetColumnNames(symbol.Text.Length == 0, tables, symbol);
+                columns.Insert(0, "WHERE");
+
+                return MergePossible(columns, symbol);
+            }
+
+            //column list
+            if (keyWord.Text.Equals("WHERE", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var tables = GetTableInfo(symbols);
+                var columns = GetColumnNames(symbol.Text.Length == 0, tables, symbol);
+                columns.AddRange(_sqlKeywordsSearch);
 
                 return MergePossible(columns, symbol);
             }
