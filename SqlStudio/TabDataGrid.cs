@@ -1247,13 +1247,13 @@ namespace SqlStudio
             int iTotalWIdeal = 0;
             for (int i = 0; i < Columns.Count; i++)
             {
-                iTotalWIdeal += Columns[i].GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true);
+                iTotalWIdeal += Columns[i].GetPreferredWidth(DataGridViewAutoSizeColumnMode.AllCells, true);
             }
 
             if (iTotalWIdeal <= (Width - RowHeadersWidth))
             {
                 for (int i = 0; i < (Columns.Count); i++)
-                    Columns[i].Width = Columns[i].GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true);
+                    Columns[i].Width = Columns[i].GetPreferredWidth(DataGridViewAutoSizeColumnMode.AllCells, true);
             }
             else
             {
