@@ -294,14 +294,44 @@ namespace SqlCommandCompleter
         {
             var ret = new List<CommandCompleteTableInfo>();
             int i = index;
+            while (i < symbols.Count)
+            {
+                var tableInfo = GetSingleTableInfo(symbols, i);
+                if (tableInfo != null)
+                {
+                    ret.Add(tableInfo);
+                }
+
+                while (i < symbols.Count && 
+                    _sqlKeywords.FirstOrDefault(x => x.Equals(symbols[i].Text, StringComparison.OrdinalIgnoreCase)) == null && 
+                    symbols[i].Text != ",")
+                {
+                    i++;
+                }
+                if (i < symbols.Count && symbols[i].Text == ",")
+                {
+                    i++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return ret;
+        }
+
+        private CommandCompleteTableInfo GetSingleTableInfo(List<Symbol> symbols, int index)
+        {
+            int i = index;
             while (i < symbols.Count && symbols[i].Text == " ")
             {
                 i++;
             }
-            
-            if ( i < symbols.Count)
+
+            if (i < symbols.Count)
             {
-                CommandCompleteTableInfo ti = new CommandCompleteTableInfo { TableName= symbols[i].Text };
+                CommandCompleteTableInfo ti = new CommandCompleteTableInfo { TableName = symbols[i].Text };
                 i++;
                 while (i < symbols.Count && symbols[i].Text == " ")
                 {
@@ -311,10 +341,10 @@ namespace SqlCommandCompleter
                 {
                     ti.Alias = symbols[i].Text;
                 }
-                ret.Add(ti);
+                return ti;
             }
 
-            return ret;
+            return null;
         }
         
         private List<string> GetTableNames()
@@ -345,17 +375,15 @@ namespace SqlCommandCompleter
                     
                     if (t != null)
                     {
-                        if (tableAlias != "" && t.Alias != tableAlias)
+                        if (tableAlias != "" && t.Alias == tableAlias)
                         {
-                            break;
-                        }
-
-                        foreach (var column in table.Columns)
-                        {
-                            var columnName = tableAlias != "" ? tableAlias + "." + column.ColumnName : column.ColumnName;
-                            if (!ret.Contains(columnName))
+                            foreach (var column in table.Columns)
                             {
-                                ret.Add(columnName);
+                                var columnName = tableAlias != "" ? tableAlias + "." + column.ColumnName : column.ColumnName;
+                                if (!ret.Contains(columnName))
+                                {
+                                    ret.Add(columnName);
+                                }
                             }
                         }
                     }

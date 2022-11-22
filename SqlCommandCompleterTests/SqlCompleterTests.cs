@@ -170,6 +170,14 @@ namespace SqlCommandCompleterTests
         }
 
         [TestMethod]
+        public void TestGetPossibleCompletionsColWithTwoTables()
+        {
+            var comp = CreateCompleter();
+            var res = comp.GetPossibleCompletions("select from bar a, foo b where b.", 33);
+            Assert.AreEqual(2, res.PossibleCompletions.Count);
+        }
+
+        [TestMethod]
         public void TestGetSymbols()
         {
             var comp = CreateCompleter();
