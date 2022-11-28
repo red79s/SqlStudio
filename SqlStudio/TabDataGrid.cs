@@ -9,6 +9,8 @@ using System.Data.Common;
 using System.IO;
 using CfgDataStore;
 using System.Text.RegularExpressions;
+using Common;
+using System.Linq;
 
 namespace SqlStudio
 {
@@ -18,16 +20,18 @@ namespace SqlStudio
         public event UpdatedResultsDelegate UpdatedResults;
 
         private SqlResult _sqlResult = null;
-        private System.Data.DataView _view = null;
+        private DataView _view = null;
         private ToolStripMenuItem _dynamicDataMenuItem;
+        private ToolStripMenuItem _generatedDataMenuItem;
         private ConfigDataStore _configDataStore;
         private readonly IExecuteQueryCallback _executeQueryCallback;
+        private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
 
-        public TabDataGrid(ConfigDataStore configDataStore, IExecuteQueryCallback executeQueryCallback)
+        public TabDataGrid(ConfigDataStore configDataStore, IExecuteQueryCallback executeQueryCallback, IDatabaseSchemaInfo databaseSchemaInfo)
         {
             _configDataStore = configDataStore;
             _executeQueryCallback = executeQueryCallback;
-
+            _databaseSchemaInfo = databaseSchemaInfo;
             BackgroundColor = Color.WhiteSmoke;
             ContextMenuStrip = new ContextMenuStrip();
 
@@ -101,10 +105,10 @@ namespace SqlStudio
             miCreateScriptWithCode.Click += miCreateScriptWithCode_Click;
             scriptDropdownMenu.DropDownItems.Add(miCreateScriptWithCode);
 
+            _generatedDataMenuItem = new ToolStripMenuItem("Generated");
+            ContextMenuStrip.Items.Add(_generatedDataMenuItem);
+
             _dynamicDataMenuItem = new ToolStripMenuItem("Auto Queries");
-            var selectFromTableMenuItem = new ToolStripMenuItem("SELECT * FROM [table]");
-            selectFromTableMenuItem.Click += MiSelectFromTable_Click;
-            _dynamicDataMenuItem.DropDownItems.Add(selectFromTableMenuItem);
 
             if (_configDataStore != null)
             {
@@ -246,16 +250,22 @@ namespace SqlStudio
             tabContainer.CreateNewGraphTab(label, data);
         }
 
-        private void MiSelectFromTable_Click(object sender, EventArgs e)
+        private void GeneratedQueryMenuItem_Click(object sender, EventArgs e)
         {
             if (SelectedRows.Count < 1 && SelectedCells.Count < 1)
                 return;
 
-            if (SelectedCells[0].Value is string)
-            {
-                var tableName = SelectedCells[0].Value as string;
-                _executeQueryCallback.ExecuteQuery($"SELECT * FROM {tableName};", true, tableName);
-            }
+            var menuItem = sender as ToolStripMenuItem;
+            if (menuItem == null)
+                return;
+
+            var autoQuery = menuItem.Tag as AutoQuery;
+            if (autoQuery == null)
+                return;
+
+            var query = autoQuery.Command;
+            var substitutedQuery = SubstitueColumnValues(query);
+            _executeQueryCallback.ExecuteQuery(substitutedQuery, true, autoQuery.Description);
         }
 
         private void AutoQueryMenuItem_Click(object sender, EventArgs e)
@@ -303,7 +313,7 @@ namespace SqlStudio
             {
                 if (cell.OwningColumn.Name.Equals(columnName, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    var dbStrValue = GetDbStringValue(cell.ValueType, cell.Value);
+                    var dbStrValue = GetDbStringValue(cell.ValueType, cell.Value, false);
                     return dbStrValue;
                 }
             }
@@ -815,7 +825,7 @@ namespace SqlStudio
                 if (value == DBNull.Value)
                     continue;
 
-                string strValue = GetDbStringValue(type, value);
+                string strValue = GetDbStringValue(type, value, true);
                 if (IsBlobColumn(colName))
                 {
                     if (blobId == null)
@@ -853,9 +863,14 @@ namespace SqlStudio
             return insertStmt.ToString();
         }
 
-        private string GetDbStringValue(Type type, object value)
+        private string GetDbStringValue(Type type, object value, bool quoteStrings)
         {
-            string strValue = "'" + value.ToString().Trim().Replace("'", "''") + "'";
+            string strValue = value.ToString();
+            if (quoteStrings)
+            {
+                strValue = "'" + value.ToString().Trim().Replace("'", "''") + "'";
+            }
+            
             if (type == typeof(bool))
             {
                 strValue = (bool)value == true ? "1" : "0";
@@ -1130,6 +1145,58 @@ namespace SqlStudio
                     menuItem.Enabled = autoQuery.ColumnName.Equals(columnName, StringComparison.CurrentCultureIgnoreCase);
                 }
             }
+
+            _generatedDataMenuItem.DropDownItems.Clear();
+            foreach (var query in GetGeneratedTableAutoQueries())
+            {
+                var menuItem = new ToolStripMenuItem(query.Description);
+                menuItem.Click += GeneratedQueryMenuItem_Click;
+                menuItem.Tag = query;
+                _generatedDataMenuItem.DropDownItems.Add(menuItem);
+            }
+        }
+
+        private List<AutoQuery> GetGeneratedTableAutoQueries()
+        {
+            var res = new List<AutoQuery>();
+            if (_sqlResult == null || _sqlResult.DataTable == null)
+            {
+                return res;
+            }
+
+            foreach (DataColumn column in _sqlResult.DataTable.Columns)
+            {
+                if (column.ColumnName.Equals("table", StringComparison.CurrentCultureIgnoreCase) ||
+                    column.ColumnName.Equals("table_name", StringComparison.CurrentCultureIgnoreCase) ||
+                    column.ColumnName.Equals("tablename", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    res.Add(new AutoQuery { Description = "SELECT * FROM [table]", Command = "SELECT * FROM {" + column.ColumnName + "}", TableName = _sqlResult.TableName});
+                }
+
+                if (column.ColumnName.EndsWith("id", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    var tableName = column.ColumnName.Substring(0, column.ColumnName.Length - 2);
+                    foreach (var table in _databaseSchemaInfo.Tables)
+                    {
+                        if (table.TableName.Equals(table.TableName, StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            var col = table.Columns.FirstOrDefault(x => x.ColumnName.Equals("id", StringComparison.CurrentCultureIgnoreCase));
+                            if (col == null)
+                            {
+                                col = table.Columns.FirstOrDefault(x => x.ColumnName.Equals(column.ColumnName, StringComparison.CurrentCultureIgnoreCase));
+                            }
+
+                            if (col != null)
+                            {
+                                res.Add(new AutoQuery { Description = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} = [colVal]", 
+                                    Command = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} = " + "{" + column.ColumnName + "}", TableName = _sqlResult.TableName });
+                            }
+                        }
+                    }
+                }
+            }
+
+            return res;
         }
 
         void miFill_Click(object sender, EventArgs e)

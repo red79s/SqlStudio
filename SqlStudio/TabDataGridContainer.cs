@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using SqlExecute;
 using System.Drawing;
 using CfgDataStore;
+using Common;
 
 namespace SqlStudio
 {
@@ -19,9 +20,11 @@ namespace SqlStudio
         private List<TextBox> _filterControlls = null;
         private ISearchControl _searchControl = null;
 
-        public TabDataGridContainer(ConfigDataStore configDataStore, IExecuteQueryCallback executeQueryCallback)
+        public TabDataGridContainer(ConfigDataStore configDataStore, IExecuteQueryCallback executeQueryCallback, IDatabaseSchemaInfo databaseSchemaInfo)
         {
-            
+            _executeQueryCallback = executeQueryCallback;
+            _databaseSchemaInfo = databaseSchemaInfo;
+
             _filterControlls = new List<TextBox>();
 
             _searchControl = new SearchControl();
@@ -32,7 +35,7 @@ namespace SqlStudio
             _searchControl.IsVisible = true;
             Controls.Add(_searchControl as UserControl);
 
-            _tdg = new TabDataGrid(configDataStore, executeQueryCallback);
+            _tdg = new TabDataGrid(configDataStore, executeQueryCallback, _databaseSchemaInfo);
             _tdg.UpdatedResults += new TabDataGrid.UpdatedResultsDelegate(_tdg_UpdatedResults);
             _tdg.ColumnWidthChanged += new DataGridViewColumnEventHandler(_tdg_ColumnWidthChanged);
             _tdg.Scroll += new ScrollEventHandler(_tdg_Scroll);
@@ -42,11 +45,11 @@ namespace SqlStudio
             this.Controls.Add(_tdg);
 
             SetLayout();
-            _executeQueryCallback = executeQueryCallback;
         }
 
         const int WM_KEYDOWN = 0x100;
         private readonly IExecuteQueryCallback _executeQueryCallback;
+        private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
 
         protected override bool ProcessKeyPreview(ref Message m)
         {

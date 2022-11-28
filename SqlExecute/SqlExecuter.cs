@@ -538,6 +538,7 @@ namespace SqlExecute
 
             SqlResult result = new SqlResult(SqlResult.ResultType.SCHEMA_INFO);
             result.Success = true;
+            result.TableName = "SCHEMA_INFO_TABLES";
             result.StartExectionTimer();
 
             try
@@ -594,8 +595,9 @@ namespace SqlExecute
 
             SqlResult result = new SqlResult(SqlResult.ResultType.SCHEMA_INFO);
             result.Success = true;
+            result.TableName = "SCHEMA_INFO_COLUMNS";
             result.StartExectionTimer();
-
+            
             try
             {
                 result.DataTable = GetColumnsInternal(tableSearch, columnSearch);
