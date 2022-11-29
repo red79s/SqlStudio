@@ -1145,15 +1145,6 @@ namespace SqlStudio
                     menuItem.Enabled = autoQuery.ColumnName.Equals(columnName, StringComparison.CurrentCultureIgnoreCase);
                 }
             }
-
-            _generatedDataMenuItem.DropDownItems.Clear();
-            foreach (var query in GetGeneratedTableAutoQueries())
-            {
-                var menuItem = new ToolStripMenuItem(query.Description);
-                menuItem.Click += GeneratedQueryMenuItem_Click;
-                menuItem.Tag = query;
-                _generatedDataMenuItem.DropDownItems.Add(menuItem);
-            }
         }
 
         private List<AutoQuery> GetGeneratedTableAutoQueries()
@@ -1178,7 +1169,7 @@ namespace SqlStudio
                     var tableName = column.ColumnName.Substring(0, column.ColumnName.Length - 2);
                     foreach (var table in _databaseSchemaInfo.Tables)
                     {
-                        if (table.TableName.Equals(table.TableName, StringComparison.CurrentCultureIgnoreCase))
+                        if (table.TableName.Equals(tableName, StringComparison.CurrentCultureIgnoreCase))
                         {
                             var col = table.Columns.FirstOrDefault(x => x.ColumnName.Equals("id", StringComparison.CurrentCultureIgnoreCase));
                             if (col == null)
@@ -1296,13 +1287,23 @@ namespace SqlStudio
             if (_sqlResult == null)
                 return;
 
-            _view = new System.Data.DataView(_sqlResult.DataTable);
+            _view = new DataView(_sqlResult.DataTable);
             DataSource = _view;
             
             if (_sqlResult.DataAdapter == null)
             {
                 ReadOnly = true;
                 AllowUserToAddRows = false;
+            }
+
+            _generatedDataMenuItem.DropDownItems.Clear();
+            var generatedAutoQueries = GetGeneratedTableAutoQueries();
+            foreach (var query in generatedAutoQueries)
+            {
+                var menuItem = new ToolStripMenuItem(query.Description);
+                menuItem.Click += GeneratedQueryMenuItem_Click;
+                menuItem.Tag = query;
+                _generatedDataMenuItem.DropDownItems.Add(menuItem);
             }
         }
 
