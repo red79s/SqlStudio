@@ -181,6 +181,7 @@ namespace SqlStudio
         {
             var button = new ToolStripButton(drConnection.description);
             button.Tag = drConnection;
+            button.ToolTipText = $"{drConnection.db} - {drConnection.server}";
             button.Margin = new Padding(4, 1, 0, 2);
             button.Click += (sender, args) => conToolItem_OnConnectionClick(this, drConnection.p_key);
             toolStripMainWindow.Items.Add(button);
