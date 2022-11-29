@@ -66,6 +66,7 @@ namespace SqlStudio
 
             sqlOutput.SetConfig(_cfgDataStore);
             sqlOutput.SetExecuteCallback(this);
+            sqlOutput.SetDatabaseSchemaInfo(_executer.SqlExecuter);
             sqlOutput.UpdatedResults += new SqlOutputTabContainer.UpdatedResultsDelegate(sqlOutput_UpdatedResults);
             sqlOutput.VisibleRowsChanged += (s, e) => { visibleRowsToolStripStatusLabel.Text = $"{e}"; };
 
