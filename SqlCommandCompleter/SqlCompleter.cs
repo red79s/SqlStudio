@@ -367,28 +367,27 @@ namespace SqlCommandCompleter
 
             var tableAlias = GetColumnAlias(symbol);
             
-            foreach (var table in _databaseSchemaInfo.Tables)
+            if (possibleTables.Count > 0)
             {
-                if (possibleTables.Count > 0)
+                foreach (var table in possibleTables)
                 {
-                    var t = possibleTables.FirstOrDefault(x => x.TableName == table.TableName);
-                    
-                    if (t != null)
+                    var tableInfo = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName == table.TableName);
+                    if ((tableAlias == table.Alias) || tableAlias == "")
                     {
-                        if (tableAlias != "" && t.Alias == tableAlias)
+                        foreach (var column in tableInfo.Columns)
                         {
-                            foreach (var column in table.Columns)
+                            var columnName = tableAlias != "" ? tableAlias + "." + column.ColumnName : column.ColumnName;
+                            if (!ret.Contains(columnName))
                             {
-                                var columnName = tableAlias != "" ? tableAlias + "." + column.ColumnName : column.ColumnName;
-                                if (!ret.Contains(columnName))
-                                {
-                                    ret.Add(columnName);
-                                }
+                                ret.Add(columnName);
                             }
                         }
                     }
                 }
-                else
+            }
+            else
+            {
+                foreach (var table in _databaseSchemaInfo.Tables)
                 {
                     foreach (var column in table.Columns)
                     {
@@ -399,6 +398,7 @@ namespace SqlCommandCompleter
                     }
                 }
             }
+            
             return ret;
         }
 
