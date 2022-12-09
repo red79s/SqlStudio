@@ -43,11 +43,14 @@
   <ItemGroup>
     <Compile Include="ColumnInfo.cs" />
     <Compile Include="CommandCompletionResult.cs" />
+    <Compile Include="ICommandHistoryStore.cs" />
     <Compile Include="IDatabaseSchemaInfo.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ISqlCompleter.cs" />
+    <Compile Include="Model\CommandHistoryItem.cs" />
     <Compile Include="TableInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

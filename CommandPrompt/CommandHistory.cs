@@ -1,3 +1,4 @@
+using Common;
 using System;
 using System.Collections.Generic;
 
@@ -5,20 +6,18 @@ namespace CommandPrompt
 {
     public class CommandHistory
     {
-        private int _maxItems = 0;
         private List<string> _items = null;
         private int _curIndex = 0;
         private string _tmpItem = "";
         private bool _needsReset = true;
-        private bool _haveUnsavedChanges = false;
-        public bool HaveUnsavedChanges => _haveUnsavedChanges;
+        private readonly ICommandHistoryStore _commandHistoryStore;
 
-        public CommandHistory(int maxItems)
+        public CommandHistory(ICommandHistoryStore commandHistoryStore)
         {
-            if (maxItems < 1)
-                maxItems = 1;
-            _maxItems = maxItems;
             _items = new List<string>();
+            _commandHistoryStore = commandHistoryStore;
+
+            LoadHistoryItems();
         }
 
         public int Count
@@ -31,13 +30,13 @@ namespace CommandPrompt
             return _items;
         }
 
-        public void SetHistoryItems(List<string> items)
+        public void LoadHistoryItems()
         {
             Clear();
 
-            for (int i = 0; i < _maxItems && i < items.Count; i++)
+            foreach (var item in _commandHistoryStore.GetHistoryItems())
             {
-                Add(items[i]);
+                Add(item.Command);
             }
         }
 
@@ -47,7 +46,6 @@ namespace CommandPrompt
             _curIndex = 0;
             _tmpItem = "";
             _needsReset = true;
-            _haveUnsavedChanges = true;
         }
 
         public void Add(string text)
@@ -55,11 +53,10 @@ namespace CommandPrompt
             var trimedText = text.Trim().TrimEnd();
             Remove(trimedText);
 
-            if (_items.Count >= _maxItems)
+            if (_items.Count >= _commandHistoryStore.MaxHistoryItems)
                 _items.RemoveRange(0, 1);
             _items.Add(trimedText);
-            NeedsReset = true;
-            _haveUnsavedChanges = true;
+            _commandHistoryStore.AddHistoryItem(text);
         }
 
         public void Reset(string tmpText)
@@ -104,11 +101,6 @@ namespace CommandPrompt
             if (_items.Count > _curIndex)
                 return _items[_curIndex];
             return "";
-        }
-
-        public void IsSaved()
-        {
-            _haveUnsavedChanges = false;
         }
     }
 }

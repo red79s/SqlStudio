@@ -222,6 +222,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{4161310A-80E1-45E8-B5EF-61471316A7DC}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SqlExecute\SqlExecute.csproj">
       <Project>{70F21FC1-09EB-4E00-B132-339F1411B5B2}</Project>
       <Name>SqlExecute</Name>

@@ -27,7 +27,6 @@ namespace SqlStudio
         private BuiltInCommands _builtIn = null;
         private List<string> _cmdBuffer = null;
         private Timer _executeTimer = new Timer();
-        private Timer _autoSaveConfigTimer = new Timer();
         private string _userConfigDbFile;
         private ISqlCompleter _sqlCompleter = null;
 
@@ -60,8 +59,7 @@ namespace SqlStudio
             cmdLineControl.CommandReady += new CommandPrompt.CmdLineControl.CommandReadyDelegate(cmdLineControl_CommandReady);
             cmdLineControl.CommandCompletion += new CommandPrompt.CmdLineControl.CommandCompletionDelegate(cmdLineControl_CommandCompletion);
             cmdLineControl.TextInserted += new FormatTextControl.FormatTextControl.TextInsertedDelegate(cmdLineControl_TextInserted);
-            cmdLineControl.SetHistoryItems(_cfgDataStore.GetHistoryItems());
-            cmdLineControl.HistoryItemsIsSaved();
+            cmdLineControl.SetHistoryItems(_cfgDataStore);
             cmdLineControl.InsertSnipit += CmdLineControl_InsertSnipit;
 
             sqlOutput.SetConfig(_cfgDataStore);
@@ -76,10 +74,6 @@ namespace SqlStudio
 
             _executeTimer.Interval = 1000;
             _executeTimer.Tick += ExecuteTimerOnTick;
-
-            _autoSaveConfigTimer.Interval = 10000;
-            _autoSaveConfigTimer.Tick += AutoSaveConfigTimer_Tick;
-            _autoSaveConfigTimer.Start();
 
             InitMenues();
             cmdLineControl.GetCommand();
@@ -253,31 +247,8 @@ namespace SqlStudio
             cmdLineControl.ExecuteCommand(_cfgDataStore.GetConnectCommand(key));
         }
 
-        private void AutoSaveConfigTimer_Tick(object sender, EventArgs e)
-        {
-            _autoSaveConfigTimer.Stop();
-            SaveHistoryItems();
-            _autoSaveConfigTimer.Start();
-        }
-
-        private void SaveHistoryItems()
-        {
-           if (!cmdLineControl.HaveUnsavedHistoryItems)
-            {
-                return;
-            }
-
-            _cfgDataStore.SetHistoryItems(cmdLineControl.GetHistoryItems());
-            _cfgDataStore.Save();
-            cmdLineControl.HistoryItemsIsSaved();
-        }
-
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            _autoSaveConfigTimer.Stop();
-
-            SaveHistoryItems();
-
             _cfgDataStore.SetValue("window_size_x", (long)Width);
             _cfgDataStore.SetValue("window_size_y", (long)Height);
             if (Location.X < -10000 || Location.Y < -10000)

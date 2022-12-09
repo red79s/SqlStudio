@@ -91,11 +91,6 @@ namespace SqlStudio
                 _cfgDataStore.Save();
                 _cmdLineControl.ClearHistoryItems();
             }
-            else if (args.FlagIsSet('s'))
-            {
-                _cfgDataStore.SetHistoryItems(_cmdLineControl.GetHistoryItems());
-                _cfgDataStore.Save();
-            }
             return null;
         }
 
