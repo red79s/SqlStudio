@@ -303,22 +303,35 @@ namespace SqlStudio
 
             var columnName = m.Value.Substring(1, m.Value.Length - 2);
 
-            DataGridViewRow row = null;
-            if (SelectedCells.Count > 0)
-                row = SelectedCells[0].OwningRow;
-            else
-                row = SelectedRows[0];
-
-            foreach (DataGridViewCell cell in row.Cells)
+            var dbStrValues = new List<string>();
+            foreach (DataGridViewCell selectedCell in SelectedCells)
             {
-                if (cell.OwningColumn.Name.Equals(columnName, StringComparison.CurrentCultureIgnoreCase))
+                DataGridViewRow row = selectedCell.OwningRow;
+                foreach (DataGridViewCell cell in row.Cells)
                 {
-                    var dbStrValue = GetDbStringValue(cell.ValueType, cell.Value, false);
-                    return dbStrValue;
+                    if (cell.OwningColumn.Name.Equals(columnName, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        var dbStrValue = GetDbStringValue(cell.ValueType, cell.Value, false);
+                        if (!dbStrValues.Contains(dbStrValue))
+                        {
+                            dbStrValues.Add(dbStrValue);
+                        }
+                    }
                 }
             }
 
-            return "";
+            if (dbStrValues.Count == 0)
+            {
+                return " is null";
+            }
+            else if (dbStrValues.Count == 1)
+            {
+                return $" = {dbStrValues[0]}";
+            }
+            else
+            {
+                return $" IN({String.Join(", ", dbStrValues)})";
+            }
         }
         private void MiFindTimeDiffOnClick(object sender, EventArgs eventArgs)
         {
@@ -1180,7 +1193,7 @@ namespace SqlStudio
                             if (col != null)
                             {
                                 res.Add(new AutoQuery { Description = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} = [colVal]", 
-                                    Command = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} = " + "{" + column.ColumnName + "}", TableName = _sqlResult.TableName });
+                                    Command = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} " + "{" + column.ColumnName + "}", TableName = _sqlResult.TableName });
                             }
                         }
                     }
