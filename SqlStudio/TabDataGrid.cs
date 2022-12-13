@@ -322,15 +322,15 @@ namespace SqlStudio
 
             if (dbStrValues.Count == 0)
             {
-                return " is null";
+                return "is null";
             }
             else if (dbStrValues.Count == 1)
             {
-                return $" = {dbStrValues[0]}";
+                return $"{dbStrValues[0]}";
             }
             else
             {
-                return $" IN({String.Join(", ", dbStrValues)})";
+                return $"{String.Join(", ", dbStrValues)}";
             }
         }
         private void MiFindTimeDiffOnClick(object sender, EventArgs eventArgs)
@@ -1193,7 +1193,7 @@ namespace SqlStudio
                             if (col != null)
                             {
                                 res.Add(new AutoQuery { Description = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} = [colVal]", 
-                                    Command = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} " + "{" + column.ColumnName + "}", TableName = _sqlResult.TableName });
+                                    Command = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} IN (" + "{" + column.ColumnName + "})", TableName = _sqlResult.TableName });
                             }
                         }
                     }
