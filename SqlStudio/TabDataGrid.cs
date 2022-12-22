@@ -829,9 +829,9 @@ namespace SqlStudio
                 Type type = cells[i].ValueType;
                 Object value = cells[i].Value;
 
-                if (ExcludeColumnInInsert(colName))
+                if (ExcludeColumnInInsert(type, colName, includeBlobColumns))
                     continue;
-                if (!includeBlobColumns && IsBlobColumn(colName))
+                if (!includeBlobColumns && IsBlobColumn(type, colName))
                     continue;
                 if (value == null)
                     continue;
@@ -839,7 +839,7 @@ namespace SqlStudio
                     continue;
 
                 string strValue = GetDbStringValue(type, value, true);
-                if (IsBlobColumn(colName))
+                if (IsBlobColumn(type, colName))
                 {
                     if (blobId == null)
                         continue;
@@ -943,14 +943,14 @@ namespace SqlStudio
             return null;
         }
 
-        private bool ExcludeColumnInInsert(string columnName, bool allowBlobColumns = false)
+        private bool ExcludeColumnInInsert(Type columnType, string columnName, bool allowBlobColumns = false)
         {
-            if (columnName.Equals("agrtid", StringComparison.CurrentCultureIgnoreCase))
+            if (!allowBlobColumns && columnType == typeof(byte[]))
                 return true;
             return false;
         }
 
-        private bool IsBlobColumn(string columnName)
+        private bool IsBlobColumn(Type columnType, string columnName)
         {
             if (columnName.Equals("blob_image", StringComparison.CurrentCultureIgnoreCase))
                 return true;

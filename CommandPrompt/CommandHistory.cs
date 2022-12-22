@@ -57,6 +57,7 @@ namespace CommandPrompt
                 _items.RemoveRange(0, 1);
             _items.Add(trimedText);
             _commandHistoryStore.AddHistoryItem(text);
+            _curIndex = _items.Count;
         }
 
         public void Reset(string tmpText)
