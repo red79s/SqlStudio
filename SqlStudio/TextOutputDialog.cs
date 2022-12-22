@@ -8,6 +8,8 @@ namespace SqlStudio
         {
             InitializeComponent();
             textBoxContent.Text = content;
+            textBoxContent.SelectionStart = 0;
+            textBoxContent.SelectionLength = 0;
         }
     }
 }

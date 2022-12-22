@@ -1111,6 +1111,7 @@ namespace SqlStudio
             if (SelectedCells.Count < 1)
                 return;
             TextOutputDialog tod = new TextOutputDialog(SelectedCells[0].Value.ToString());
+            tod.Text = SelectedCells[0].OwningColumn.Name;
             tod.StartPosition = FormStartPosition.CenterParent;
             tod.ShowDialog();
         }
