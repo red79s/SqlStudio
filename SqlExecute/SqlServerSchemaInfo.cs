@@ -76,7 +76,7 @@ namespace SqlExecute
 
         public override List<string> GetDatabases()
         {
-            var query = "SELECT name from sys.databases";
+            var query = "SELECT name FROM sys.databases ORDER BY name";
             DbCommand command = ProviderFactory.CreateCommand();
             command.Connection = Connection;
             command.CommandText = query;
