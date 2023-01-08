@@ -586,7 +586,7 @@ namespace SqlStudio
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NewDBConnectionForm newConnection = new NewDBConnectionForm();
-            Connection con = _cfgDataStore.CreateNewConnection(SqlExecuter.DatabaseProvider.SQLSERVER);
+            Connection con = _cfgDataStore.CreateNewConnection("");
             newConnection.ConnectionRow = con;
             if (newConnection.ShowDialog() == DialogResult.OK)
             {
@@ -769,7 +769,7 @@ namespace SqlStudio
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NewDBConnectionForm ndbCon = new NewDBConnectionForm();
-            var connectRow = _cfgDataStore.CreateNewConnection(SqlExecuter.DatabaseProvider.SQLSERVER);
+            var connectRow = _cfgDataStore.CreateNewConnection("");
             ndbCon.ConnectionRow = connectRow;
 
             if (ndbCon.ShowDialog() == DialogResult.OK)

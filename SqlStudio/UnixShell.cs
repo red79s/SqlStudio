@@ -19,7 +19,7 @@ namespace SqlStudio
 		public event Completer CompleterEvent;
 
 		private enum KeyCodes {ENTER=13, BACKSPACE=8, TAB=9, UP_ARROW=38, DOWN_ARROW=40, LEFT_ARROW=37, RIGHT_ARROW=39, SPACE=32, SHIFT=16, CTRL=17, COPY=3, PASTE=22, CUT=24};
-		private enum CompleterState {UNINITALIZED=0, INITIALIZED=1, ASKING=2, ASKED=3};
+		
 		private string sPriProm = null;
 		private string sSecProm = null;
 		private char endChar = ';';
@@ -27,7 +27,6 @@ namespace SqlStudio
 		private int startCmd = 0;
 		private ArrayList alLinePos = null;
 		private History history = null;
-		private int completerState = (int)CompleterState.UNINITALIZED;
 		private int iDebug = 0;
         private bool bAccseptInput = true;
 
@@ -173,8 +172,6 @@ namespace SqlStudio
 			SelectionStart = curCursor;
 			curCursor++;
 			SelectionLength = 0;
-
-			completerState = (int)CompleterState.UNINITALIZED;
 		}
 
 		protected void InsertChar(char e)

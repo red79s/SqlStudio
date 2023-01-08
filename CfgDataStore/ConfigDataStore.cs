@@ -1,4 +1,3 @@
-using SqlExecute;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -176,11 +175,11 @@ namespace CfgDataStore
             return _dbContext.Connections.ToList();
         }
 
-        public Connection CreateNewConnection(SqlExecuter.DatabaseProvider provider)
+        public Connection CreateNewConnection(string providerName)
         {
             var con = new Connection
             {
-                provider = SqlExecuter.GetProviderName(provider),
+                provider = providerName,
                 description = "New Connection",
                 server = "",
                 db = "",
