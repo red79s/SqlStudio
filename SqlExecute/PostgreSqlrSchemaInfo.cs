@@ -15,14 +15,14 @@ namespace SqlExecute
 
         public override DataTable GetTableInfo(string tableSearch)
         {
-            DataTable dtTables = this.GetTablesTemplate();
+            DataTable dtTables = GetTablesTemplate();
 
             string query = "SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_type = 'BASE TABLE'";
             if (tableSearch != null && tableSearch != "")
                 query += string.Format(" AND table_name LIKE '{0}'", tableSearch);
 
-            DbCommand command = this.ProviderFactory.CreateCommand();
-            command.Connection = this.Connection;
+            DbCommand command = ProviderFactory.CreateCommand();
+            command.Connection = Connection;
             command.CommandText = query;
             DbDataReader reader = command.ExecuteReader();
 
@@ -39,7 +39,7 @@ namespace SqlExecute
 
         public override DataTable GetColumnsInfo(string tableSearch, string columnSearch)
         {
-            DataTable dtColumns = this.GetColumnsTemplate();
+            DataTable dtColumns = GetColumnsTemplate();
             
             string query = "SELECT table_name, column_name, ordinal_position, data_type, character_maximum_length, numeric_precision, is_nullable FROM INFORMATION_SCHEMA.COLUMNS WHERE (0 = 0)";
             if (tableSearch != null && tableSearch != "")
@@ -47,8 +47,8 @@ namespace SqlExecute
             if (columnSearch != null && columnSearch != "")
                 query += string.Format(" AND column_name LIKE '{0}'", columnSearch);
 
-            DbCommand command = this.ProviderFactory.CreateCommand();
-            command.Connection = this.Connection;
+            DbCommand command = ProviderFactory.CreateCommand();
+            command.Connection = Connection;
             command.CommandText = query;
             DbDataReader reader = command.ExecuteReader();
 

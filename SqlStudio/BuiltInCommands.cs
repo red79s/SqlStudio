@@ -13,8 +13,8 @@ namespace SqlStudio
 
         public BuiltInCommands(CommandPrompt.CmdLineControl cmdLineControl, ConfigDataStore cfgDataStore)
         {
-            this._cfgDataStore = cfgDataStore;
-            this._cmdLineControl = cmdLineControl;
+            _cfgDataStore = cfgDataStore;
+            _cmdLineControl = cmdLineControl;
         }
 
         public bool HandleBuiltIn(ref List<string> cmds)
@@ -26,7 +26,7 @@ namespace SqlStudio
             int i = 0;
             while (true)
             {
-                string newCmd = this.ProcessCommand(cmds[i]);
+                string newCmd = ProcessCommand(cmds[i]);
                 if (newCmd == null)
                     cmds.RemoveAt(i);
                 else

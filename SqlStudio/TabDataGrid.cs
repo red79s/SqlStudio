@@ -145,7 +145,7 @@ namespace SqlStudio
         {
             if (keyData == (Keys.Control | Keys.N))
             {
-                this.ProcessDownKey(Keys.Down);
+                ProcessDownKey(Keys.Down);
 
                 if (SelectedCells != null && SelectedCells.Count == 1)
                 {

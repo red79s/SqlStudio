@@ -23,17 +23,17 @@ namespace SqlStudio
 		{
 			try
 			{
-				int itemsToWrite = this.maxHistItems;
-				if(this.maxHistItems == 0)
-					itemsToWrite = this.alHist.Count;
+				int itemsToWrite = maxHistItems;
+				if(maxHistItems == 0)
+					itemsToWrite = alHist.Count;
 				
 				if(File.Exists(sFile))
 					File.Delete(sFile);
 
 				StreamWriter sr = File.CreateText(sFile);
-				for(int i=0; i<this.alHist.Count && itemsToWrite>0; i++,itemsToWrite--)
+				for(int i=0; i<alHist.Count && itemsToWrite>0; i++,itemsToWrite--)
 				{
-					sr.WriteLine((string)this.alHist[i]);
+					sr.WriteLine((string)alHist[i]);
 				}
 				sr.Close();
 			}
@@ -45,7 +45,7 @@ namespace SqlStudio
 
 		public void Load(string sFile)
 		{
-			this.alHist.Clear();
+			alHist.Clear();
 			try 
 			{
 				using (StreamReader sr = new StreamReader(sFile)) 
@@ -54,64 +54,64 @@ namespace SqlStudio
 					while ((line = sr.ReadLine()) != null) 
 					{
 						if(line.Length > 0)
-							this.alHist.Add(line);
+							alHist.Add(line);
 					}
 				}
 			}
 			catch (Exception) 
 			{
 			}
-			this.index = this.alHist.Count;
-			this.bTempItem = false;
+			index = alHist.Count;
+			bTempItem = false;
 		}
 
 		public void Add(string sEntry)
 		{
 			if(sEntry.Length>0)
 			{
-				if(this.bTempItem)
-					this.alHist[this.alHist.Count - 1] = this.RemoveNewLines(sEntry);
+				if(bTempItem)
+					alHist[alHist.Count - 1] = RemoveNewLines(sEntry);
 				else
-					this.alHist.Add(this.RemoveNewLines(sEntry));
+					alHist.Add(RemoveNewLines(sEntry));
 			}
-			this.RemoveDuplicates(); //keep new entry
-			this.index = this.alHist.Count;
-			this.bTempItem = false;
+			RemoveDuplicates(); //keep new entry
+			index = alHist.Count;
+			bTempItem = false;
 		}
 		
 		public void AddTemp(string sEntry)
 		{
-			this.alHist.Add(this.RemoveNewLines(sEntry));
-			this.index = this.alHist.Count - 1;
-			this.bTempItem = true;
+			alHist.Add(RemoveNewLines(sEntry));
+			index = alHist.Count - 1;
+			bTempItem = true;
 		}
 
 		public string getPrev()
 		{
-			this.index--;
-			if(this.index<0)
-				this.index = 0;
+			index--;
+			if(index<0)
+				index = 0;
 			
-			return (string)this.alHist[this.index];
+			return (string)alHist[index];
 		}
 
 		public string getNext()
 		{
 			string ret = "";
-			this.index++;
-			if(this.index>=this.alHist.Count)
-				this.index = this.alHist.Count;
+			index++;
+			if(index>=alHist.Count)
+				index = alHist.Count;
 			else
-				ret = (string)this.alHist[this.index];
+				ret = (string)alHist[index];
 			return ret;
 		}
 
 		public string[] getHist(string sSearch)
 		{
 			ArrayList alRet = new ArrayList();
-			for(int i=0; i<this.alHist.Count; i++)
+			for(int i=0; i<alHist.Count; i++)
 			{
-				string item = (string)this.alHist[i];
+				string item = (string)alHist[i];
 				if(sSearch == null)
 					alRet.Add(item);
 				else
@@ -128,29 +128,29 @@ namespace SqlStudio
 
 		public bool HaveTemp()
 		{
-			return this.bTempItem;
+			return bTempItem;
 		}
 		
 		public int MaxHistItems
 		{
 			get
 			{
-				return this.maxHistItems;
+				return maxHistItems;
 			}
 			set
 			{
-				this.maxHistItems = value;
+				maxHistItems = value;
 			}
 		}
 
 		private void RemoveDuplicates()
 		{
-			string search = (string)this.alHist[this.alHist.Count - 1];
-			for(int i=0; i<this.alHist.Count - 1; i++)
+			string search = (string)alHist[alHist.Count - 1];
+			for(int i=0; i<alHist.Count - 1; i++)
 			{
-				if(search == (string)this.alHist[i])
+				if(search == (string)alHist[i])
 				{
-					this.alHist.RemoveAt(i);
+					alHist.RemoveAt(i);
 					return;
 				}
 			}

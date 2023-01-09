@@ -20,7 +20,7 @@ namespace SqlStudio.SyntaxHighlight
 
         public SyntaxHighlightBase()
         {
-            this._regex = new Regex(_regexExpression, RegexOptions.Compiled | RegexOptions.Singleline);
+            _regex = new Regex(_regexExpression, RegexOptions.Compiled | RegexOptions.Singleline);
         }
 
         public List<Token> GetTokens(string text)
@@ -30,7 +30,7 @@ namespace SqlStudio.SyntaxHighlight
             int lineIndex = 0;
             for (int i = 0; i < lines.Length; i++)
             {
-                MatchCollection matches = this._regex.Matches(lines[i]);
+                MatchCollection matches = _regex.Matches(lines[i]);
 
                 foreach (Match match in matches)
                 {
@@ -43,7 +43,7 @@ namespace SqlStudio.SyntaxHighlight
                 }
             }
 
-            this.GetTokenTypes(ref ret);
+            GetTokenTypes(ref ret);
 
             return ret;
         }
@@ -58,57 +58,57 @@ namespace SqlStudio.SyntaxHighlight
                 if (IsKeyWord(token.Value))
                 {
                     token.TokenType = TokenType.KEYWORD;
-                    token.Color = this._colorKeyWords;
+                    token.Color = _colorKeyWords;
                 }
                 else if (token.Value[0] == '"' && token.Value[token.Value.Length - 1] == '"')
                 {
                     token.TokenType = TokenType.LITERAL_STRING;
-                    token.Color = this._colorStrings;
+                    token.Color = _colorStrings;
                 }
                 else if (token.Value[0] == '\'' && token.Value[token.Value.Length - 1] == '\'')
                 {
                     token.TokenType = TokenType.LITERAL_STRING;
-                    token.Color = this._colorStrings;
+                    token.Color = _colorStrings;
                 }
                 else if (token.Value == "-" || token.Value == "+" || token.Value == "+=" || token.Value == "-=")
                 {
                     token.TokenType = TokenType.MATH;
-                    token.Color = this._colorDefault;
+                    token.Color = _colorDefault;
                 }
                 else if (token.Value == "(")
                 {
                     token.TokenType = TokenType.PARENTHESIS_LEFT;
-                    token.Color = this._colorDefault;
+                    token.Color = _colorDefault;
                 }
                 else if (token.Value == ")")
                 {
                     token.TokenType = TokenType.PARENTHESIS_RIGHT;
-                    token.Color = this._colorDefault;
+                    token.Color = _colorDefault;
                 }
                 else if (token.Value == "[")
                 {
                     token.TokenType = TokenType.BRACKET_LEFT;
-                    token.Color = this._colorDefault;
+                    token.Color = _colorDefault;
                 }
                 else if (token.Value == "]")
                 {
                     token.TokenType = TokenType.BRACKET_RIGHT;
-                    token.Color = this._colorDefault;
+                    token.Color = _colorDefault;
                 }
                 else if (int.TryParse(token.Value, out iTest))
                 {
                     token.TokenType = TokenType.LITERAL_INT;
-                    token.Color = this._colorNumbers;
+                    token.Color = _colorNumbers;
                 }
                 else if (float.TryParse(token.Value, out fTest))
                 {
                     token.TokenType = TokenType.LITERNAL_NUMBERIC;
-                    token.Color = this._colorNumbers;
+                    token.Color = _colorNumbers;
                 }
                 else
                 {
                     token.TokenType = TokenType.IDENTIFIER;
-                    token.Color = this._colorIdentifiers;
+                    token.Color = _colorIdentifiers;
                 }
             }
         }
@@ -120,32 +120,32 @@ namespace SqlStudio.SyntaxHighlight
 
         public Color DefaultColor
         {
-            get { return this._colorDefault; }
-            set { this._colorDefault = value; }
+            get { return _colorDefault; }
+            set { _colorDefault = value; }
         }
 
         public Color NumbersColor
         {
-            get { return this._colorNumbers; }
-            set { this._colorNumbers = value; }
+            get { return _colorNumbers; }
+            set { _colorNumbers = value; }
         }
 
         public Color StringsColor
         {
-            get { return this._colorStrings; }
-            set { this._colorStrings = value; }
+            get { return _colorStrings; }
+            set { _colorStrings = value; }
         }
 
         public Color KeyWordsColor
         {
-            get { return this._colorKeyWords; }
-            set { this._colorKeyWords = value; }
+            get { return _colorKeyWords; }
+            set { _colorKeyWords = value; }
         }
 
         public Color IdentifiersColor
         {
-            get { return this._colorIdentifiers; }
-            set { this._colorIdentifiers = value; }
+            get { return _colorIdentifiers; }
+            set { _colorIdentifiers = value; }
         }
     }
 
@@ -164,53 +164,53 @@ namespace SqlStudio.SyntaxHighlight
 
         public Token(string value, TokenType tokenType, int line, int index)
         {
-            this._value = value;
-            this._tokenType = tokenType;
-            this._index = index;
-            this._line = line;
+            _value = value;
+            _tokenType = tokenType;
+            _index = index;
+            _line = line;
         }
 
         public Token(string value, TokenType tokenType, int index)
         {
-            this._value = value;
-            this._tokenType = tokenType;
-            this._index = index;
+            _value = value;
+            _tokenType = tokenType;
+            _index = index;
         }
 
         public string Value
         {
-            get { return this._value; }
-            set { this._value = value; }
+            get { return _value; }
+            set { _value = value; }
         }
 
         public int Line
         {
-            get { return this._line; }
-            set { this._line = value; }
+            get { return _line; }
+            set { _line = value; }
         }
 
         public int Index
         {
-            get { return this._index; }
-            set { this._index = value; }
+            get { return _index; }
+            set { _index = value; }
         }
 
         public int LineIndex
         {
-            get { return this._lineIndex; }
-            set { this._lineIndex = value; }
+            get { return _lineIndex; }
+            set { _lineIndex = value; }
         }
 
         public TokenType TokenType
         {
-            get { return this._tokenType; }
-            set { this._tokenType = value; }
+            get { return _tokenType; }
+            set { _tokenType = value; }
         }
 
         public Color Color
         {
-            get { return this._color; }
-            set { this._color = value; }
+            get { return _color; }
+            set { _color = value; }
         }
     }
 }

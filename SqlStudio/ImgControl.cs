@@ -32,27 +32,27 @@ namespace SqlStudio
 
 		public ImgControl()
 		{
-			this.SetStyle(ControlStyles.ResizeRedraw | ControlStyles.AllPaintingInWmPaint | ControlStyles.DoubleBuffer, true);
-			this.alShapes = new ArrayList();
-            this.dtLastRedraw = DateTime.Now.AddSeconds(10);
-            this.interpolationTimer = new Timer();
-            this.interpolationTimer.Tick += new EventHandler(interpolationTimer_Tick);
-            this.interpolationTimer.Interval = 1000;
-            this.interpolationTimer.Start();
+			SetStyle(ControlStyles.ResizeRedraw | ControlStyles.AllPaintingInWmPaint | ControlStyles.DoubleBuffer, true);
+			alShapes = new ArrayList();
+            dtLastRedraw = DateTime.Now.AddSeconds(10);
+            interpolationTimer = new Timer();
+            interpolationTimer.Tick += new EventHandler(interpolationTimer_Tick);
+            interpolationTimer.Interval = 1000;
+            interpolationTimer.Start();
 		}
 
         void interpolationTimer_Tick(object sender, EventArgs e)
         {
-            this.interpolationTimer.Stop();
-            if (!this.bDrawnInterpolated)
+            interpolationTimer.Stop();
+            if (!bDrawnInterpolated)
             {
-                if (this.dtLastRedraw.AddMilliseconds(2000) > DateTime.Now)
+                if (dtLastRedraw.AddMilliseconds(2000) > DateTime.Now)
                 {
-                    this.bDrawInterpolated = true;
-                    this.Invalidate();
+                    bDrawInterpolated = true;
+                    Invalidate();
                 }
             }
-            this.interpolationTimer.Start();
+            interpolationTimer.Start();
         }
 
 		//
@@ -63,13 +63,13 @@ namespace SqlStudio
 		{
 			get
 			{
-				return this.bm;
+				return bm;
 			}
 			set
 			{
-				this.bm = value;
-				this.SetScale();
-				this.Invalidate();
+				bm = value;
+				SetScale();
+				Invalidate();
 			}
 		}
 
@@ -77,13 +77,13 @@ namespace SqlStudio
 		{
 			set
 			{
-				Point p = this.BacktrackMouse(new Point(this.Width / 2, this.Height / 2));
-				this.zoomMode = ZoomMode.Zoom;
-				this.xZoom = value;
-				this.yZoom = value;
-				this.SetScale();
-				this.Invalidate();
-				this.PanTo(p);
+				Point p = BacktrackMouse(new Point(Width / 2, Height / 2));
+				zoomMode = ZoomMode.Zoom;
+				xZoom = value;
+				yZoom = value;
+				SetScale();
+				Invalidate();
+				PanTo(p);
 			}
 		}
 
@@ -91,14 +91,14 @@ namespace SqlStudio
 		{
 			set
 			{
-				this.zoomMode = ZoomMode.Zoom;
-				this.xZoom = value;
-				this.SetScale();
-				this.Invalidate();
+				zoomMode = ZoomMode.Zoom;
+				xZoom = value;
+				SetScale();
+				Invalidate();
 			}
 			get
 			{
-				return this.xZoom;
+				return xZoom;
 			}
 		}
 
@@ -106,14 +106,14 @@ namespace SqlStudio
 		{
 			set
 			{
-				this.zoomMode = ZoomMode.Zoom;
-				this.yZoom = value;
-				this.SetScale();
-				this.Invalidate();
+				zoomMode = ZoomMode.Zoom;
+				yZoom = value;
+				SetScale();
+				Invalidate();
 			}
 			get
 			{
-				return this.yZoom;
+				return yZoom;
 			}
 		}
 
@@ -121,13 +121,13 @@ namespace SqlStudio
 		{
 			set
 			{
-				this.zoomMode = value;
-				this.SetScale();
-				this.Invalidate();
+				zoomMode = value;
+				SetScale();
+				Invalidate();
 			}
 			get
 			{
-				return this.zoomMode;
+				return zoomMode;
 			}
 		}
 		#endregion
@@ -139,37 +139,37 @@ namespace SqlStudio
 
 		public void ZoomToRec(Rectangle rec)
 		{
-			float dx = (float)this.Width / (float)rec.Width;
-			float dy = (float)this.Height / (float)rec.Height;
+			float dx = (float)Width / (float)rec.Width;
+			float dy = (float)Height / (float)rec.Height;
 			if (dx > dy)
 				dx = dy;
-			this.Zoom = dx;
+			Zoom = dx;
 			Point p = new Point(rec.X + (int)(rec.Width / 2), rec.Y + (int)(rec.Height / 2));
 			//Point p = new Point(rec.X , rec.Y);
-			this.PanTo(p);
+			PanTo(p);
 		}
 
 		public void PanTo(Point p)
 		{
-			if (this.bm == null || !this.AutoScroll)
+			if (bm == null || !AutoScroll)
 				return;
 			if (p.X < 0)
 				p.X = 0;
-			if (p.X > this.bm.Width)
-				p.X = this.bm.Width;
+			if (p.X > bm.Width)
+				p.X = bm.Width;
 			if (p.Y < 0)
 				p.Y = 0;
-			if (p.Y > this.bm.Height)
-				p.Y = this.bm.Height;
+			if (p.Y > bm.Height)
+				p.Y = bm.Height;
 
-			float fx = (float)p.X / (float)this.bm.Width;
-			float fy = (float)p.Y / (float)this.bm.Height;
-			int x = (int)(this.bm.Width * this.xZoom * fx);
-			int y = (int)(this.bm.Height * this.yZoom * fy);
-			int dx = (int)(this.Width / 2.0f);
-			int dy = (int)(this.Height / 2.0f);
+			float fx = (float)p.X / (float)bm.Width;
+			float fy = (float)p.Y / (float)bm.Height;
+			int x = (int)(bm.Width * xZoom * fx);
+			int y = (int)(bm.Height * yZoom * fy);
+			int dx = (int)(Width / 2.0f);
+			int dy = (int)(Height / 2.0f);
 			
-			this.AutoScrollPosition = new Point(x - dx, y - dy);
+			AutoScrollPosition = new Point(x - dx, y - dy);
 		}
 
 		#endregion
@@ -181,33 +181,33 @@ namespace SqlStudio
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-            this.dtLastRedraw = DateTime.Now;
+            dtLastRedraw = DateTime.Now;
 
-			if (this.zoomMode == ZoomMode.Zoom)
+			if (zoomMode == ZoomMode.Zoom)
 			{
-				this.xOffset = this.AutoScrollPosition.X;
-				this.yOffset = this.AutoScrollPosition.Y;
+				xOffset = AutoScrollPosition.X;
+				yOffset = AutoScrollPosition.Y;
 			}
 
 			Matrix mx = new Matrix();
-			mx.Scale(this.xZoom, this.yZoom, MatrixOrder.Append);
-			mx.Translate(this.xOffset, this.yOffset, MatrixOrder.Append);
+			mx.Scale(xZoom, yZoom, MatrixOrder.Append);
+			mx.Translate(xOffset, yOffset, MatrixOrder.Append);
 
-			if (this.bm != null)
+			if (bm != null)
 			{
-                if (this.bDrawInterpolated && !this.bNewSelectionInProgress)
+                if (bDrawInterpolated && !bNewSelectionInProgress)
                 {
                     e.Graphics.InterpolationMode = InterpolationMode.HighQualityBilinear;
-                    this.bDrawInterpolated = false;
-                    this.bDrawnInterpolated = true;
+                    bDrawInterpolated = false;
+                    bDrawnInterpolated = true;
                 }
                 else
                 {
-                    this.bDrawnInterpolated = false;
+                    bDrawnInterpolated = false;
                 }
 
 				e.Graphics.Transform = mx;
-				e.Graphics.DrawImage(this.bm, new Rectangle(0, 0, bm.Width, bm.Height));
+				e.Graphics.DrawImage(bm, new Rectangle(0, 0, bm.Width, bm.Height));
 			}
 		}
 
@@ -219,8 +219,8 @@ namespace SqlStudio
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize (e);
-			this.SetScale();
-			this.Invalidate();
+			SetScale();
+			Invalidate();
 		}
 
 		#endregion
@@ -232,48 +232,48 @@ namespace SqlStudio
 
 		private void SetScale()
 		{
-			if (this.bm == null)
+			if (bm == null)
 				return;
 
-			if (this.zoomMode == ZoomMode.ScaleToFit)
+			if (zoomMode == ZoomMode.ScaleToFit)
 			{
-				this.xZoom = (float)this.Width / (float)this.bm.Width;
-				this.yZoom = (float)this.Height / (float)this.bm.Height;
-				if (this.xZoom < this.yZoom)
+				xZoom = (float)Width / (float)bm.Width;
+				yZoom = (float)Height / (float)bm.Height;
+				if (xZoom < yZoom)
 				{
-					this.yZoom = this.xZoom;
-					this.xOffset = 0;
-					this.yOffset = (this.Height - (int)(this.bm.Height * this.yZoom)) / 2; 
+					yZoom = xZoom;
+					xOffset = 0;
+					yOffset = (Height - (int)(bm.Height * yZoom)) / 2; 
 				}
 				else
 				{
-					this.xZoom = this.yZoom;
-					this.yOffset = 0;
-					this.xOffset = (this.Width - (int)(this.bm.Width * this.xZoom)) / 2;
+					xZoom = yZoom;
+					yOffset = 0;
+					xOffset = (Width - (int)(bm.Width * xZoom)) / 2;
 				}
 
-				if (this.AutoScroll)
+				if (AutoScroll)
 				{
-					this.AutoScrollMinSize = new Size(0, 0);
+					AutoScrollMinSize = new Size(0, 0);
 				}
 			}
-			else if (this.zoomMode == ZoomMode.Stretch)
+			else if (zoomMode == ZoomMode.Stretch)
 			{
-				this.xOffset = 0;
-				this.yOffset = 0;
-				this.xZoom = (float)this.Width / (float)this.bm.Width;
-				this.yZoom = (float)this.Height / (float)this.bm.Height;
+				xOffset = 0;
+				yOffset = 0;
+				xZoom = (float)Width / (float)bm.Width;
+				yZoom = (float)Height / (float)bm.Height;
 				
-				if (this.AutoScroll)
+				if (AutoScroll)
 				{
-					this.AutoScrollMinSize = new Size(0, 0);
+					AutoScrollMinSize = new Size(0, 0);
 				}
 			}
 			else // ZoomMode.Zoom
 			{
-				if (this.AutoScroll)
+				if (AutoScroll)
 				{
-					this.AutoScrollMinSize = new Size((int)(this.bm.Width * this.xZoom), (int)(this.bm.Height * this.yZoom));
+					AutoScrollMinSize = new Size((int)(bm.Width * xZoom), (int)(bm.Height * yZoom));
 				}
 			}
 		}
@@ -282,8 +282,8 @@ namespace SqlStudio
 		{
 			Point[] pts = new Point[]{p};
 			Matrix mx = new Matrix();
-			mx.Scale(this.xZoom, this.yZoom, MatrixOrder.Append);
-			mx.Translate(this.xOffset, this.yOffset, MatrixOrder.Append);
+			mx.Scale(xZoom, yZoom, MatrixOrder.Append);
+			mx.Translate(xOffset, yOffset, MatrixOrder.Append);
 			mx.Invert();
 			mx.TransformPoints(pts);
 			return pts[0];

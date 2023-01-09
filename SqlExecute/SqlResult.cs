@@ -13,89 +13,89 @@ namespace SqlExecute
         private System.Diagnostics.Stopwatch _sw = null;
         public SqlResult(ResultType resultType)
         {
-            this._resultType = resultType;
+            _resultType = resultType;
         }
 
         public SqlResult()
         {
-            this._resultType = ResultType.UNKNOWN;
+            _resultType = ResultType.UNKNOWN;
         }
 
         private ResultType _resultType = ResultType.UNKNOWN;
         public ResultType ResType
         {
-            get { return this._resultType; }
-            set { this._resultType = value; }
+            get { return _resultType; }
+            set { _resultType = value; }
         }
 
         private string _message = "";
         public string Message
         {
-            get { return this._message; }
-            set { this._message = value; }
+            get { return _message; }
+            set { _message = value; }
         }
 
         private bool _success = true;
         public bool Success
         {
-            get { return this._success; }
-            set { this._success = value; }
+            get { return _success; }
+            set { _success = value; }
         }
 
         private long _exectionTime = 0;
         public long ExecutionTimeMS
         {
-            get { return this._exectionTime; }
-            set { this._exectionTime = value; }
+            get { return _exectionTime; }
+            set { _exectionTime = value; }
         }
 
         private int _rowsAffected = 0;
         public int RowsAffected
         {
-            get { return this._rowsAffected; }
-            set { this._rowsAffected = value; }
+            get { return _rowsAffected; }
+            set { _rowsAffected = value; }
         }
 
         private DbDataAdapter _dbDataAdapter = null;
         public DbDataAdapter DataAdapter
         {
-            get { return this._dbDataAdapter; }
-            set { this._dbDataAdapter = value; }
+            get { return _dbDataAdapter; }
+            set { _dbDataAdapter = value; }
         }
 
         private string _tableName = "";
         public string TableName
         {
-            get { return this._tableName; }
-            set { this._tableName = value; }
+            get { return _tableName; }
+            set { _tableName = value; }
         }
 
         private string _serverName = "";
         public string ServerName
         {
-            get { return this._serverName; }
-            set { this._serverName = value; }
+            get { return _serverName; }
+            set { _serverName = value; }
         }
 
         private string _databaseName = "";
         public string DataBaseName
         {
-            get { return this._databaseName; }
-            set { this._databaseName = value; }
+            get { return _databaseName; }
+            set { _databaseName = value; }
         }
 
         private bool _displayAsText = false;
         public bool DisplayAsText
         {
-            get { return this._displayAsText; }
-            set { this._displayAsText = value; }
+            get { return _displayAsText; }
+            set { _displayAsText = value; }
         }
 
         private DataTable _dtTable = null;
         public DataTable DataTable
         {
-            get { return this._dtTable; }
-            set { this._dtTable = value; }
+            get { return _dtTable; }
+            set { _dtTable = value; }
         }
 
         private DbConnection _connection = null;
@@ -113,19 +113,19 @@ namespace SqlExecute
 
         public void StartExectionTimer()
         {
-            if (this._sw == null)
+            if (_sw == null)
             {
-                this._sw = new System.Diagnostics.Stopwatch();
+                _sw = new System.Diagnostics.Stopwatch();
             }
-            this._sw.Start();
+            _sw.Start();
         }
 
         public void StopExectionTimer()
         {
-            if (this._sw != null && this._sw.IsRunning)
+            if (_sw != null && _sw.IsRunning)
             {
-                this._sw.Stop();
-                this._exectionTime = this._sw.ElapsedMilliseconds;
+                _sw.Stop();
+                _exectionTime = _sw.ElapsedMilliseconds;
             }
         }
     }

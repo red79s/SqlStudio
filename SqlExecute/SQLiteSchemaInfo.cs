@@ -15,14 +15,14 @@ namespace SqlExecute
 
         public override System.Data.DataTable GetTableInfo(string tableSearch)
         {
-            DataTable dtTables = this.GetTablesTemplate();
+            DataTable dtTables = GetTablesTemplate();
 
             string query = "SELECT tbl_name FROM sqlite_master WHERE type = 'table'";
             if (tableSearch != null && tableSearch != "")
                 query += string.Format(" AND tbl_name LIKE '{0}'", tableSearch);
 
-            DbCommand command = this.ProviderFactory.CreateCommand();
-            command.Connection = this.Connection;
+            DbCommand command = ProviderFactory.CreateCommand();
+            command.Connection = Connection;
             command.CommandText = query;
             DbDataReader reader = command.ExecuteReader();
 
@@ -40,16 +40,16 @@ namespace SqlExecute
         public override DataTable GetColumnsInfo(string tableSearch, string columnSearch)
         {
             string columnRestriction = columnSearch.Replace("%", "");
-            DataTable dtColumns = this.GetColumnsTemplate();
+            DataTable dtColumns = GetColumnsTemplate();
 
-            DataTable dtTables = this.GetTableInfo(tableSearch);
+            DataTable dtTables = GetTableInfo(tableSearch);
 
             foreach (DataRow drTable in dtTables.Rows)
             {
                 string query = "SELECT * FROM " + drTable["table_name"];
 
-                DbCommand command = this.ProviderFactory.CreateCommand();
-                command.Connection = this.Connection;
+                DbCommand command = ProviderFactory.CreateCommand();
+                command.Connection = Connection;
                 command.CommandText = query;
                 DbDataReader reader = command.ExecuteReader(CommandBehavior.SchemaOnly);
                 DataTable schema = reader.GetSchemaTable();

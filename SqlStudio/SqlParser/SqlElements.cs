@@ -42,72 +42,72 @@ namespace SqlStudio.SqlParser
 
         public SqlElements(SqlElementType type)
         {
-            this._type = type;
-            this._subElements = new List<SqlElements>();
+            _type = type;
+            _subElements = new List<SqlElements>();
         }
 
         public SqlElements(SqlElementType type, int start, int length, string value)
         {
-            this._type = type;
-            this._startIndex = start;
-            this._length = length;
-            this._value = value;
-            this._subElements = new List<SqlElements>();
+            _type = type;
+            _startIndex = start;
+            _length = length;
+            _value = value;
+            _subElements = new List<SqlElements>();
         }
 
         public List<SqlElements> SubParts
         {
-            get { return this._subElements; }
-            set { this._subElements = value; }
+            get { return _subElements; }
+            set { _subElements = value; }
         }
 
         public string Value
         {
-            get { return this._value; }
-            set { this._value = value; }
+            get { return _value; }
+            set { _value = value; }
         }
 
         public int Index
         {
-            get { return this._startIndex; }
-            set { this._startIndex = value; }
+            get { return _startIndex; }
+            set { _startIndex = value; }
         }
 
         public int Length
         {
-            get { return this._length; }
-            set { this._length = value; }
+            get { return _length; }
+            set { _length = value; }
         }
 
         public SqlElementType ElementType
         {
-            get { return this._type; }
-            set { this._type = value; }
+            get { return _type; }
+            set { _type = value; }
         }
 
         public string Reference
         {
-            get { return this._ref; }
-            set { this._ref = value; }
+            get { return _ref; }
+            set { _ref = value; }
         }
 
         public string Alias
         {
-            get { return this._alias; }
-            set { this._alias = value; }
+            get { return _alias; }
+            set { _alias = value; }
         }
 
         public string AsString()
         {
             string ret = "";
-            if (this._type == SqlElementType.FROM || this._type == SqlElementType.WHERE || this._type == SqlElementType.SUB_QUERY)
+            if (_type == SqlElementType.FROM || _type == SqlElementType.WHERE || _type == SqlElementType.SUB_QUERY)
                 ret += Environment.NewLine;
 
-            ret += string.Format("([{0}][{1}], index={2}, len={3})", this._type.ToString(), this._value, this._startIndex, this._length);
-            if (this._alias != null)
-                ret += string.Format("(alias={0})", this._alias);
-            if (this._ref != null)
-                ret += string.Format("(ref={0})", this._ref);
+            ret += string.Format("([{0}][{1}], index={2}, len={3})", _type.ToString(), _value, _startIndex, _length);
+            if (_alias != null)
+                ret += string.Format("(alias={0})", _alias);
+            if (_ref != null)
+                ret += string.Format("(ref={0})", _ref);
 
             
 

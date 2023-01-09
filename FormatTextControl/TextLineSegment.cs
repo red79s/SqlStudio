@@ -15,53 +15,53 @@ namespace FormatTextControl
 
         public TextLineSegment(int index, string text, Color fgColor)
         {
-            this._index = index;
-            this._text = text;
-            this._fgColor = fgColor;
-            this._bgColorSet = false;
+            _index = index;
+            _text = text;
+            _fgColor = fgColor;
+            _bgColorSet = false;
         }
 
         public TextLineSegment(int index, string text, Color fgColor, Color bgColor)
         {
-            this._index = index;
-            this._text = text;
-            this._fgColor = fgColor;
-            this._bgColor = bgColor;
-            this._bgColorSet = true;
+            _index = index;
+            _text = text;
+            _fgColor = fgColor;
+            _bgColor = bgColor;
+            _bgColorSet = true;
         }
 
         public int Index
         {
-            get { return this._index; }
-            set { this._index = value; }
+            get { return _index; }
+            set { _index = value; }
         }
 
         public Color FgColor
         {
-            get { return this._fgColor; }
-            set { this._fgColor = value; }
+            get { return _fgColor; }
+            set { _fgColor = value; }
         }
 
         public Color BgColor
         {
-            get { return this._bgColor; }
+            get { return _bgColor; }
             set
             {
-                this._bgColor = value;
-                this._bgColorSet = true;
+                _bgColor = value;
+                _bgColorSet = true;
             }
         }
 
         public string Text
         {
-            get { return this._text; }
-            set { this._text = value; }
+            get { return _text; }
+            set { _text = value; }
         }
 
         public bool BgColorSet
         {
-            get { return this._bgColorSet; }
-            set { this._bgColorSet = value; }
+            get { return _bgColorSet; }
+            set { _bgColorSet = value; }
         }
     }
 }

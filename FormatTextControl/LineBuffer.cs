@@ -12,50 +12,50 @@ namespace FormatTextControl
 
         public LineBuffer(Color fgColor)
         {
-            this._defaultFgColor = fgColor;
-            this._lines = new List<TextLine>(100);
+            _defaultFgColor = fgColor;
+            _lines = new List<TextLine>(100);
         }
 
         public int Count
         {
-            get { return this._lines.Count; }
+            get { return _lines.Count; }
         }
 
         public void Clear()
         {
-            this._lines.Clear();
+            _lines.Clear();
         }
 
         public void ClearFormating()
         {
-            foreach (TextLine tl in this._lines)
+            foreach (TextLine tl in _lines)
                 tl.RemoveFormating();
         }
 
         public void DeleteLine(int line)
         {
-            this._lines.RemoveAt(line);
+            _lines.RemoveAt(line);
         }
 
         public TextLine GetLine(int line)
         {
-            return this._lines[line];
+            return _lines[line];
         }
 
         public TextLine InsertLine(int index)
         {
-            TextLine tl = new TextLine(this._defaultFgColor);
-            this._lines.Insert(index, tl);
+            TextLine tl = new TextLine(_defaultFgColor);
+            _lines.Insert(index, tl);
             return tl;
         }
 
         public Color ForeColor
         {
-            get { return this._defaultFgColor; }
+            get { return _defaultFgColor; }
             set 
             { 
-                this._defaultFgColor = value;
-                foreach (TextLine tl in this._lines)
+                _defaultFgColor = value;
+                foreach (TextLine tl in _lines)
                 {
                     tl.ForeColor = value;
                 }

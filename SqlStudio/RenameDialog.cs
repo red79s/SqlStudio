@@ -17,8 +17,8 @@ namespace SqlStudio
 
         public string NameText
         {
-            get { return this.textBoxName.Text; }
-            set { this.textBoxName.Text = value; }
+            get { return textBoxName.Text; }
+            set { textBoxName.Text = value; }
         }
 
         private void buttonOK_Click(object sender, EventArgs e)

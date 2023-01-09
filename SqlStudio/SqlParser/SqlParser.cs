@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace SqlStudio.SqlParser
@@ -14,37 +12,37 @@ namespace SqlStudio.SqlParser
 
         public void Parse(string query)
         {
-            List<SqlElements> queryElm = this.GetElements(query);
+            List<SqlElements> queryElm = GetElements(query);
             if (queryElm.Count < 1)
                 return;
 
             switch (queryElm[0].ElementType)
             {
                 case SqlElementType.SELECT:
-                    this._query = this.ParseSelect(queryElm);
+                    _query = ParseSelect(queryElm);
                     break;
                 case SqlElementType.UPDATE:
-                    this._query = this.ParseUpdate(queryElm);
+                    _query = ParseUpdate(queryElm);
                     break;
             }
         }
 
         public SqlElements Query
         {
-            get { return this._query; }
+            get { return _query; }
         }
 
         public string GetTreeString(SqlElements startElement)
         {
             if (startElement == null)
-                startElement = this._query;
+                startElement = _query;
 
             if (startElement == null)
                 return "";
 
             string ret = startElement.AsString();
             foreach (SqlElements elm in startElement.SubParts)
-                ret += this.GetTreeString(elm);
+                ret += GetTreeString(elm);
 
             return ret;
         }
@@ -73,7 +71,7 @@ namespace SqlStudio.SqlParser
                     }
                 }
                 if (type == SqlElementType.UNKNOWN)
-                    type = this.GetElementType(value);
+                    type = GetElementType(value);
 
                 SqlElements sqlElm = new SqlElements(type, m.Index, m.Length, value);
                 stack.Add(sqlElm);
@@ -124,19 +122,19 @@ namespace SqlStudio.SqlParser
             if (query.Count < 1)
                 return select;
 
-            select.Value = this.GetSubQueryString(query, 0, query.Count);
+            select.Value = GetSubQueryString(query, 0, query.Count);
             select.Index = query[0].Index;
             select.Length = (query[query.Count - 1].Index - query[0].Index) + query[query.Count - 1].Length;
 
-            SqlElements columns = this.ParseColumnList(query);
+            SqlElements columns = ParseColumnList(query);
             if (columns != null)
                 select.SubParts.Add(columns);
 
-            SqlElements from = this.ParseFrom(query);
+            SqlElements from = ParseFrom(query);
             if (from != null)
                 select.SubParts.Add(from);
 
-            SqlElements where = this.ParseWhere(query);
+            SqlElements where = ParseWhere(query);
             if (where != null)
                 select.SubParts.Add(where);
 
@@ -167,7 +165,7 @@ namespace SqlStudio.SqlParser
                 return null;
 
 
-            SqlElements columns = new SqlElements(SqlElementType.SELECT_COLUMN_LIST, query[0].Index, (query[endIndex].Index - query[0].Index) + query[endIndex].Length, this.GetSubQueryString(query, 0, endIndex + 1));
+            SqlElements columns = new SqlElements(SqlElementType.SELECT_COLUMN_LIST, query[0].Index, (query[endIndex].Index - query[0].Index) + query[endIndex].Length, GetSubQueryString(query, 0, endIndex + 1));
 
             for (int i = 0; i <= endIndex; i++)
             {
@@ -214,7 +212,7 @@ namespace SqlStudio.SqlParser
                 return null;
 
             SqlElements from = new SqlElements(SqlElementType.FROM);
-            from.Value = this.GetSubQueryString(query, 0, endIndex + 1);
+            from.Value = GetSubQueryString(query, 0, endIndex + 1);
             from.Index = query[0].Index;
             from.Length = (query[endIndex].Index - query[0].Index) + query[endIndex].Length;
 
@@ -263,7 +261,7 @@ namespace SqlStudio.SqlParser
                 return null;
 
             SqlElements where = new SqlElements(SqlElementType.WHERE);
-            where.Value = this.GetSubQueryString(query, 0, endIndex + 1);
+            where.Value = GetSubQueryString(query, 0, endIndex + 1);
             where.Index = query[0].Index;
             where.Length = (query[endIndex].Index - query[0].Index) + query[endIndex].Length;
 

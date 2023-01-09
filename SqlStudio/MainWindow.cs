@@ -584,13 +584,13 @@ namespace SqlStudio
             {
                 List<AliasesEditor.Alias> deleted = aliasEditor.GetDeleted();
                 foreach (AliasesEditor.Alias alias in deleted)
-                    _cfgDataStore.RemoveAlias(alias.name);
+                    _cfgDataStore.RemoveAlias(alias.Name);
                 List<AliasesEditor.Alias> modified = aliasEditor.GetModified();
                 foreach (AliasesEditor.Alias alias in modified)
-                    _cfgDataStore.ModifyAlias(alias.name, alias.value);
+                    _cfgDataStore.ModifyAlias(alias.Name, alias.Value);
                 List<AliasesEditor.Alias> added = aliasEditor.GetNew();
                 foreach (AliasesEditor.Alias alias in added)
-                    _cfgDataStore.AddAlias(alias.name, alias.value);
+                    _cfgDataStore.AddAlias(alias.Name, alias.Value);
 
                 _cfgDataStore.Save();
             }

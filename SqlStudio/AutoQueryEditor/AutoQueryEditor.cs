@@ -97,14 +97,14 @@ namespace SqlStudio.AutoQueryEditor
         private void OnOkButtonClick(object sender, EventArgs e)
         {
             PersistChanges();
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void OnCancelButtonClick(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
     }
 }

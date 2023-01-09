@@ -20,14 +20,14 @@ namespace FormatTextControl
         [DllImport("user32.dll")]
         public static extern int HideCaret(IntPtr hwnd);
 
-        private Control ctrl;
+        private Control _ctrl;
         private Size size;
         private Point pos;
         private bool bVisible;
 
         public TextCaret(Control ctrl)
         {
-            this.ctrl = ctrl;
+            _ctrl = ctrl;
             Position = Point.Empty;
             Size = new Size(1, ctrl.Font.Height);
             Control.GotFocus += new EventHandler(OnGotFocus);
@@ -39,7 +39,7 @@ namespace FormatTextControl
 
         public Control Control
         {
-            get { return ctrl; }
+            get { return _ctrl; }
         }
 
         public Size Size
@@ -57,7 +57,7 @@ namespace FormatTextControl
             set
             {
                 pos = value;
-                if (this.Visible)
+                if (Visible)
                 {
                     SetCaretPos(pos.X, pos.Y);
                 }
@@ -82,8 +82,8 @@ namespace FormatTextControl
 
         public void Dispose()
         {
-            if (ctrl.Focused)
-                OnLostFocus(ctrl, new EventArgs());
+            if (_ctrl.Focused)
+                OnLostFocus(_ctrl, new EventArgs());
             Control.GotFocus -= new EventHandler(OnGotFocus);
             Control.LostFocus -= new EventHandler(OnLostFocus);
         }
