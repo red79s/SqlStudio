@@ -121,7 +121,7 @@ namespace SqlCommandCompleterTests
         {
             var comp = CreateCompleter();
             var res = comp.GetPossibleCompletions("select * from ", 14);
-            Assert.AreEqual(2, res.PossibleCompletions.Count);
+            Assert.AreEqual(3, res.PossibleCompletions.Count);
         }
 
         [TestMethod]
