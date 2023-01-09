@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data.SqlServerCe;
 using System.Text;
 using System.Data;
 using System.Data.Common;
@@ -14,7 +13,7 @@ namespace SqlExecute
         public SqlServerSchemaInfo(DbConnection connection, DbProviderFactory factory)
             : base(connection, factory)
         {
-            TableType = factory is SqlCeProviderFactory ? "TABLE" : "BASE TABLE";
+            TableType = /*factory is SqlCeProviderFactory ? "TABLE" :*/ "BASE TABLE";
         }
 
         public override DataTable GetTableInfo(string tableSearch)

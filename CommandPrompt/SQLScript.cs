@@ -17,9 +17,9 @@ namespace CommandPrompt
         public SQLScript()
         {
             InitializeComponent();
-            MenuItem miRepeat = new MenuItem("Expand text");
+            var miRepeat = new ToolStripMenuItem("Expand text");
             miRepeat.Click += new EventHandler(miRepeat_Click);
-            formatTextControl.ContextMenu.MenuItems.Add(miRepeat);
+            formatTextControl.ContextMenuStrip.Items.Add(miRepeat);
         }
 
         void miRepeat_Click(object sender, EventArgs e)

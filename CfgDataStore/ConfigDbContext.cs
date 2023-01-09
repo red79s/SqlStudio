@@ -26,8 +26,8 @@ namespace CfgDataStore
 
         public void EnusureTablesExists()
         {
-            //EnsureTableExists("AutoQueries", "AutoQueryId INTEGER primary key , description nvarchar(255), tablename nvarchar(255), columnname nvarchar(255) , command nvarchar(5000)");
-            //EnsureTableExists("HistoryLogItems", "Id INTEGER Primary key, command nvarchar(1000), LastExecuted DateTime");
+            EnsureTableExists("AutoQueries", "AutoQueryId INTEGER primary key , description nvarchar(255), tablename nvarchar(255), columnname nvarchar(255) , command nvarchar(5000)");
+            EnsureTableExists("HistoryLogItems", "Id INTEGER Primary key, command nvarchar(1000), LastExecuted DateTime");
         }
 
         public void EnsureTableExists(string tablename, string tableCreateSql)

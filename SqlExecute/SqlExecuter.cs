@@ -7,7 +7,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Data.SQLite;
-using System.Data.SqlServerCe;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -360,12 +359,12 @@ namespace SqlExecute
             if (string.IsNullOrEmpty(database))
                 throw new Exception("No database file supplied to sql server CE open()");
 
-            _dbFactory = new SqlCeProviderFactory();
-            _connection = _dbFactory.CreateConnection();
-            SqlCeConnectionStringBuilder builder = new SqlCeConnectionStringBuilder() {DataSource = database};
-            _connectionString = builder.ConnectionString;
-            _connection.ConnectionString = builder.ConnectionString;
-            _provider = DatabaseProvider.SQLSERVERCE;
+            //_dbFactory = new SqlCeProviderFactory();
+            //_connection = _dbFactory.CreateConnection();
+            //SqlCeConnectionStringBuilder builder = new SqlCeConnectionStringBuilder() {DataSource = database};
+            //_connectionString = builder.ConnectionString;
+            //_connection.ConnectionString = builder.ConnectionString;
+            //_provider = DatabaseProvider.SQLSERVERCE;
         }
 
         private void CreateMySqlConnection(string server, string database, string user, string password)
