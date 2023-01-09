@@ -1,30 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net6</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ColumnInfo.cs" />
-    <Compile Include="CommandCompletionResult.cs" />
-    <Compile Include="ICommandHistoryStore.cs" />
-    <Compile Include="IDatabaseSchemaInfo.cs" />
-    <Compile Include="ILogger.cs" />
-    <Compile Include="ISqlCompleter.cs" />
-    <Compile Include="Model\CommandHistoryItem.cs" />
-    <Compile Include="TableInfo.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+ 
+  
 </Project>
