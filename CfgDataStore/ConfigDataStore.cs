@@ -1,3 +1,6 @@
+using Common;
+using Common.Model;
+using SqlExecute;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -5,8 +8,9 @@ using System.Linq;
 
 namespace CfgDataStore
 {
-    public class ConfigDataStore
+    public class ConfigDataStore : ICommandHistoryStore
     {
+        public int MaxHistoryItems { get; set; } = 100;
         ConfigDbContext _dbContext;
         public ConfigDataStore(string cfgFile)
         {
@@ -209,12 +213,12 @@ namespace CfgDataStore
         #endregion
 
         #region History
-        public List<string> GetHistoryItems()
+        public List<CommandHistoryItem> GetHistoryItems()
         {
-            List<string> ret = new List<string>();
+            List<CommandHistoryItem> ret = new List<CommandHistoryItem>();
             foreach (var item in _dbContext.HistoryLog.ToList())
             {
-                ret.Add(item.Command);
+                ret.Add(new CommandHistoryItem { Id = item.Id, Command = item.Command, LastExecuted = item.LastExecuted });
             }
             return ret;
         }
@@ -222,7 +226,7 @@ namespace CfgDataStore
         public void SetHistoryItems(List<string> items)
         {
             var existingItems = _dbContext.HistoryLog.ToList();
-            
+
             foreach (var item in items)
             {
                 var existing = existingItems.FirstOrDefault(x => x.Command == item);
@@ -241,6 +245,36 @@ namespace CfgDataStore
         public void ClearHistory()
         {
             _dbContext.HistoryLog.RemoveRange(_dbContext.HistoryLog);
+        }
+
+        public void AddHistoryItem(string command)
+        {
+            var items = _dbContext.HistoryLog.ToList();
+            int removedItems = 0;
+            foreach (var item in items)
+            {
+                if (item.Command == command)
+                {
+                    _dbContext.HistoryLog.Remove(item);
+                    removedItems++;
+                }
+            }
+
+            if (items.Count > MaxHistoryItems)
+            {
+                var numItemsToRemove = items.Count - MaxHistoryItems - removedItems;
+                if (numItemsToRemove > 0)
+                {
+                    for (int i = 0; i < numItemsToRemove; i++)
+                    {
+                        _dbContext.HistoryLog.Remove(items[i]);
+                    }
+                }
+            }
+
+            _dbContext.HistoryLog.Add(new HistoryLogItem { Command = command, LastExecuted = DateTime.Now });
+
+            _dbContext.SaveChanges();
         }
 
         #endregion

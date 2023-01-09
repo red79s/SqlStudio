@@ -371,15 +371,18 @@ namespace SqlCommandCompleter
             {
                 foreach (var table in possibleTables)
                 {
-                    var tableInfo = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName == table.TableName);
+                    var tableInfo = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName.Equals(table.TableName.Replace("[", "").Replace("]", ""), StringComparison.CurrentCultureIgnoreCase));
                     if ((tableAlias == table.Alias) || tableAlias == "")
                     {
-                        foreach (var column in tableInfo.Columns)
+                        if (tableInfo?.Columns != null)
                         {
-                            var columnName = tableAlias != "" ? tableAlias + "." + column.ColumnName : column.ColumnName;
-                            if (!ret.Contains(columnName))
+                            foreach (var column in tableInfo.Columns)
                             {
-                                ret.Add(columnName);
+                                var columnName = tableAlias != "" ? tableAlias + "." + column.ColumnName : column.ColumnName;
+                                if (!ret.Contains(columnName))
+                                {
+                                    ret.Add(columnName);
+                                }
                             }
                         }
                     }

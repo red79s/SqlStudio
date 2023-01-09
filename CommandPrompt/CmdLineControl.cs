@@ -24,17 +24,18 @@ namespace CommandPrompt
 
         private CommandHistory _cmdHistory = null;
         private CommandHistory _lineHistory = null;
+        private ICommandHistoryStore _commandHistoryStore;
 
         public CmdLineControl()
         {
             AcceptsKeyInput = false;
-            _cmdHistory = new CommandHistory(100);
-            _lineHistory = new CommandHistory(100);
         }
 
-        public void SetHistoryItems(List<string> items)
+        public void SetHistoryItems(ICommandHistoryStore commandHistoryStore)
         {
-            _cmdHistory.SetHistoryItems(items);
+            _commandHistoryStore = commandHistoryStore;
+            _cmdHistory = new CommandHistory(commandHistoryStore);
+            _lineHistory = new CommandHistory(commandHistoryStore);
         }
 
         public List<string> GetHistoryItems()
@@ -45,12 +46,6 @@ namespace CommandPrompt
         public void ClearHistoryItems()
         {
             _cmdHistory.Clear();
-        }
-
-        public bool HaveUnsavedHistoryItems => _cmdHistory.HaveUnsavedChanges;
-        public void HistoryItemsIsSaved()
-        {
-            _cmdHistory.IsSaved();
         }
 
         public void GetCommand()

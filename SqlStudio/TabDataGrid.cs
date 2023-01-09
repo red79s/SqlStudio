@@ -303,22 +303,35 @@ namespace SqlStudio
 
             var columnName = m.Value.Substring(1, m.Value.Length - 2);
 
-            DataGridViewRow row = null;
-            if (SelectedCells.Count > 0)
-                row = SelectedCells[0].OwningRow;
-            else
-                row = SelectedRows[0];
-
-            foreach (DataGridViewCell cell in row.Cells)
+            var dbStrValues = new List<string>();
+            foreach (DataGridViewCell selectedCell in SelectedCells)
             {
-                if (cell.OwningColumn.Name.Equals(columnName, StringComparison.CurrentCultureIgnoreCase))
+                DataGridViewRow row = selectedCell.OwningRow;
+                foreach (DataGridViewCell cell in row.Cells)
                 {
-                    var dbStrValue = GetDbStringValue(cell.ValueType, cell.Value, false);
-                    return dbStrValue;
+                    if (cell.OwningColumn.Name.Equals(columnName, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        var dbStrValue = GetDbStringValue(cell.ValueType, cell.Value, false);
+                        if (!dbStrValues.Contains(dbStrValue))
+                        {
+                            dbStrValues.Add(dbStrValue);
+                        }
+                    }
                 }
             }
 
-            return "";
+            if (dbStrValues.Count == 0)
+            {
+                return "is null";
+            }
+            else if (dbStrValues.Count == 1)
+            {
+                return $"{dbStrValues[0]}";
+            }
+            else
+            {
+                return $"{String.Join(", ", dbStrValues)}";
+            }
         }
         private void MiFindTimeDiffOnClick(object sender, EventArgs eventArgs)
         {
@@ -816,9 +829,9 @@ namespace SqlStudio
                 Type type = cells[i].ValueType;
                 Object value = cells[i].Value;
 
-                if (ExcludeColumnInInsert(colName))
+                if (ExcludeColumnInInsert(type, colName, includeBlobColumns))
                     continue;
-                if (!includeBlobColumns && IsBlobColumn(colName))
+                if (!includeBlobColumns && IsBlobColumn(type, colName))
                     continue;
                 if (value == null)
                     continue;
@@ -826,7 +839,7 @@ namespace SqlStudio
                     continue;
 
                 string strValue = GetDbStringValue(type, value, true);
-                if (IsBlobColumn(colName))
+                if (IsBlobColumn(type, colName))
                 {
                     if (blobId == null)
                         continue;
@@ -930,14 +943,14 @@ namespace SqlStudio
             return null;
         }
 
-        private bool ExcludeColumnInInsert(string columnName, bool allowBlobColumns = false)
+        private bool ExcludeColumnInInsert(Type columnType, string columnName, bool allowBlobColumns = false)
         {
-            if (columnName.Equals("agrtid", StringComparison.CurrentCultureIgnoreCase))
+            if (!allowBlobColumns && columnType == typeof(byte[]))
                 return true;
             return false;
         }
 
-        private bool IsBlobColumn(string columnName)
+        private bool IsBlobColumn(Type columnType, string columnName)
         {
             if (columnName.Equals("blob_image", StringComparison.CurrentCultureIgnoreCase))
                 return true;
@@ -1098,6 +1111,7 @@ namespace SqlStudio
             if (SelectedCells.Count < 1)
                 return;
             TextOutputDialog tod = new TextOutputDialog(SelectedCells[0].Value.ToString());
+            tod.Text = SelectedCells[0].OwningColumn.Name;
             tod.StartPosition = FormStartPosition.CenterParent;
             tod.ShowDialog();
         }
@@ -1180,7 +1194,7 @@ namespace SqlStudio
                             if (col != null)
                             {
                                 res.Add(new AutoQuery { Description = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} = [colVal]", 
-                                    Command = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} = " + "{" + column.ColumnName + "}", TableName = _sqlResult.TableName });
+                                    Command = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} IN (" + "{" + column.ColumnName + "})", TableName = _sqlResult.TableName });
                             }
                         }
                     }
