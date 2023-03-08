@@ -43,7 +43,7 @@ namespace SqlStudio
                     File.Copy(defaultCfgPath, _userConfigDbFile);
             }
             _cfgDataStore = new ConfigDataStore(_userConfigDbFile);
-            
+
             _executer = new Executer(cmdLineControl, _cfgDataStore);
             _executer.ExecutionFinished += new Executer.ExecutionFinishedDelegate(_executer_ExecutionFinished);
 
@@ -214,7 +214,7 @@ namespace SqlStudio
         {
             Connection con = _cfgDataStore.GetConnection(key);
             var button = GetToolStripButton(con);
-            
+
             NewDBConnectionForm dbConForm = new NewDBConnectionForm();
             dbConForm.ConnectionRow = con;
             if (dbConForm.ShowDialog() == DialogResult.OK)
@@ -375,7 +375,7 @@ namespace SqlStudio
                 {
                     string msg = "Error: " + res.Message;
                     cmdLineControl.InsertCommandOutput("\n" + msg);
-                    
+
                     if (!string.IsNullOrEmpty(res.SqlQuery))
                         msg += " (" + res.SqlQuery + ")";
                     toolStripMessageLabel.Text = msg;
@@ -394,7 +394,7 @@ namespace SqlStudio
                 }
             }
 
-            
+
             sqlOutput.DisplayResults(results);
 
             if (_bulkExecute && _cmdBuffer.Count < 1)
@@ -417,7 +417,7 @@ namespace SqlStudio
             }
 
             cmdLineControl.GetCommand();
-            
+
             if (_cmdBuffer.Count > 0)
             {
                 string cmd = _cmdBuffer[0];
@@ -448,11 +448,11 @@ namespace SqlStudio
                 MessageBox.Show("Not connected to server", "Error");
                 return;
             }
-            
-            var connectionCommand = _cfgDataStore.GetConnectCommand(_executer.CurrentConnection.ProviderName, 
-                _executer.CurrentConnection.Server, 
-                databaseName, 
-                _executer.CurrentConnection.User, 
+
+            var connectionCommand = _cfgDataStore.GetConnectCommand(_executer.CurrentConnection.ProviderName,
+                _executer.CurrentConnection.Server,
+                databaseName,
+                _executer.CurrentConnection.User,
                 _executer.CurrentConnection.Password);
             cmdLineControl.ExecuteCommand(connectionCommand);
 
@@ -468,7 +468,7 @@ namespace SqlStudio
                                     t.Minutes,
                                     t.Seconds,
                                     t.Milliseconds);
-            }    
+            }
             else if (t.Minutes > 0)
             {
                 return string.Format("{0:D2}m {1:D2}s {2:D3}ms",
@@ -569,7 +569,7 @@ namespace SqlStudio
 
         private void scriptsEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           
+
         }
 
         private void aliasesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -796,7 +796,7 @@ namespace SqlStudio
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                RunScriptFile(ofd.FileName);  
+                RunScriptFile(ofd.FileName);
             }
         }
 
@@ -804,25 +804,25 @@ namespace SqlStudio
         {
             BackgroundWorker runScriptWorker = new BackgroundWorker();
             runScriptWorker.DoWork += runScriptWorker_DoWork;
-            
-            
+
+
 
             runScriptWorker.RunWorkerAsync(fileName);
         }
 
         void runScriptWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            
+
         }
 
         void runScriptWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             string fileName = (string)e.Argument;
 
-            Invoke((MethodInvoker)(() => 
+            Invoke((MethodInvoker)(() =>
                 {
                     _executer.LockExecuter();
-                    cmdLineControl.InsertCommandOutput(string.Format("Executing script: {0}", fileName) + Environment.NewLine); 
+                    cmdLineControl.InsertCommandOutput(string.Format("Executing script: {0}", fileName) + Environment.NewLine);
                 }));
 
             var scriptExecuter = ScriptExecuterFactory.GetExecuter(fileName);
@@ -842,7 +842,7 @@ namespace SqlStudio
 
         void scriptExecuter_Progress(object sender, int numRowsExecuted)
         {
-            Invoke((MethodInvoker) (() => toolStripMessageLabel.Text = string.Format("Rows executed: {0}", numRowsExecuted)));
+            Invoke((MethodInvoker)(() => toolStripMessageLabel.Text = string.Format("Rows executed: {0}", numRowsExecuted)));
         }
 
 
@@ -961,7 +961,7 @@ namespace SqlStudio
                 _logSearchParametersDialog = new LogSearchParametersDialog();
                 _logSearchParametersDialog.StartPosition = FormStartPosition.CenterParent;
             }
-            
+
             if (_logSearchParametersDialog.ShowDialog() == DialogResult.OK)
             {
                 var queryString = _logSearchParametersDialog.QueryString;
@@ -1001,6 +1001,17 @@ namespace SqlStudio
         public void Log(LogLevel logLevel, string message, Exception ex)
         {
             toolStripMessageLabel.Text = $"{logLevel}: {message}, {ex.Message}";
+        }
+
+        private void copyConnectionStringToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var connectionString = _executer.GetConnectionString();
+            if (connectionString == null)
+            {
+                MessageBox.Show("Not able to get connection string", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            Clipboard.SetText(connectionString);
         }
     }
 }
