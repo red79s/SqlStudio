@@ -1005,13 +1005,12 @@ namespace SqlStudio
 
         private void copyConnectionStringToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var connectionString = _executer.GetConnectionString();
-            if (connectionString == null)
+            if (_executer?.SqlExecuter?.ConnectionString == null)
             {
                 MessageBox.Show("Not able to get connection string", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            Clipboard.SetText(connectionString);
+            Clipboard.SetText(_executer.SqlExecuter.ConnectionString);
         }
     }
 }
