@@ -315,7 +315,8 @@ namespace SqlExecute
                     DbSchemaCache.ColumnCacheDataRow drCol = _dbCache.ColumnCache.NewDBRow();
                     drCol.table_name = (string)dr["table_name"];
                     drCol.column_name = (string)dr["column_name"];
-                    drCol.data_type = (string)dr["data_type"];
+                    if (dr["data_type"] != DBNull.Value)
+                        drCol.data_type = (string)dr["data_type"];
                     if (dr["column_length"] != DBNull.Value)
                         drCol.column_length = (int)dr["column_length"];
                     else
