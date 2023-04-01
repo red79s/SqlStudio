@@ -15,6 +15,7 @@ namespace SqlExecute
 {
     public class SqlExecuter : IDatabaseSchemaInfo
     {
+        public string ConnectionString { get; private set; }
         public enum DatabaseProvider 
         { 
             SQLSERVER, 
@@ -424,6 +425,7 @@ namespace SqlExecute
                 sqlCSB.IntegratedSecurity = true;
             }
 
+            ConnectionString = sqlCSB.ConnectionString;
             _dbFactory = SqlClientFactory.Instance;
             _connection = _dbFactory.CreateConnection();
             _connection.ConnectionString = sqlCSB.ConnectionString;
@@ -456,6 +458,7 @@ namespace SqlExecute
                 connectionString += "Integrated Security;";
             }
 
+            ConnectionString = connectionString;
             _dbFactory = Npgsql.NpgsqlFactory.Instance;
             _connection = _dbFactory.CreateConnection();
             _connection.ConnectionString = connectionString;
@@ -487,6 +490,7 @@ namespace SqlExecute
                 connectionString += "Integrated Security;";
             }
 
+            ConnectionString = connectionString;
             _dbFactory = System.Data.Odbc.OdbcFactory.Instance;
             _connection = _dbFactory.CreateConnection();
             _connection.ConnectionString = connectionString;
@@ -496,6 +500,7 @@ namespace SqlExecute
  
         private void CreateODBCConnection(string connectionString)
         {
+            ConnectionString = ConnectionString;
             _dbFactory = System.Data.Odbc.OdbcFactory.Instance;
             _connection = _dbFactory.CreateConnection();
             _connection.ConnectionString = connectionString;
@@ -523,6 +528,7 @@ namespace SqlExecute
                 oracleCSB.Password = password;
             }
 
+            ConnectionString = oracleCSB.ConnectionString;
             _dbFactory = OracleClientFactory.Instance;
             _connection = _dbFactory.CreateConnection();
             _connection.ConnectionString = oracleCSB.ConnectionString;
