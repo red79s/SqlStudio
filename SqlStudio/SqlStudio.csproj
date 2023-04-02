@@ -63,6 +63,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BinaryFiles\BinaryFiles.csproj" />
     <ProjectReference Include="..\CfgDataStore\CfgDataStore.csproj" />
     <ProjectReference Include="..\CommandPrompt\CommandPrompt.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />

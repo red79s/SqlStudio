@@ -41,6 +41,12 @@ namespace SqlStudio
             {
                 if (File.Exists(defaultCfgPath))
                     File.Copy(defaultCfgPath, _userConfigDbFile);
+                else
+                {
+                    MessageBox.Show($"Config file is missing: {_userConfigDbFile} and default config file is not found: {defaultCfgPath}");
+                    Application.Exit();
+                    return;
+                }
             }
             _cfgDataStore = new ConfigDataStore(_userConfigDbFile);
 
@@ -191,7 +197,20 @@ namespace SqlStudio
                     ((ConnectToolStripItem)connectToolStripMenuItem.DropDownItems[i]).Key == key)
                 {
                     connectToolStripMenuItem.DropDownItems.RemoveAt(i);
-                    return;
+                    break;
+                }
+            }
+
+            foreach (var item in toolStripMainWindow.Items)
+            {
+                if (item is ToolStripButton)
+                {
+                    var con = ((ToolStripButton)item).Tag as Connection;
+                    if (con != null && con.p_key == key)
+                    {
+                        toolStripMainWindow.Items.Remove((ToolStripItem)item);
+                        break;
+                    }
                 }
             }
         }
@@ -289,6 +308,12 @@ namespace SqlStudio
 
         protected override void OnLoad(EventArgs e)
         {
+            if (_cfgDataStore == null)
+            {
+                Application.Exit();
+                return;
+            }
+
             base.OnLoad(e);
             int width = (int)_cfgDataStore.GetLongValue("window_size_x");
             int height = (int)_cfgDataStore.GetLongValue("window_size_y");
@@ -320,6 +345,8 @@ namespace SqlStudio
             if (results == null)
             {
                 toolStripMessageLabel.Text = "Invalid result, not processing";
+
+                cmdLineControl.ClearUndoHistory();
                 return;
             }
 
@@ -426,6 +453,8 @@ namespace SqlStudio
                     System.Threading.Thread.Sleep(1);
                 cmdLineControl.ExecuteCommand(cmd);
             }
+
+            cmdLineControl.ClearUndoHistory();
         }
 
         private void SetDatabasesOnToolsMenu(List<string> databases)
@@ -563,6 +592,7 @@ namespace SqlStudio
             {
                 _cfgDataStore.AddConnection(con);
                 AddConnectionToMenu(con);
+                AddConnectionToToolsMenu(con);
                 _cfgDataStore.Save();
             }
         }

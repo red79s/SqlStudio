@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
+using Common;
 
 namespace FormatTextControl
 {
@@ -24,6 +25,7 @@ namespace FormatTextControl
         private TextPos _selectionAnchor = new TextPos(0, 0);
         private TextPos _selectionLast = new TextPos(0, 0);
         private bool _bSelectionInProgress = false;
+        private IUndoHistoryManager _undoHistory;
 
         private float[] _charWidth = null;
         private int _lineHeight = 10;
@@ -50,6 +52,7 @@ namespace FormatTextControl
 
         public FormatTextControl()
         {
+            _undoHistory = new UndoHistoryManager();
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 
@@ -136,6 +139,11 @@ namespace FormatTextControl
         public void Paste()
         {
             OnPaste();
+        }
+
+        public void ClearUndoHistory()
+        {
+            _undoHistory.ClearUndoHistory();
         }
 
         public override Font Font
@@ -303,7 +311,7 @@ namespace FormatTextControl
             }
         }
 
-            public void Clear()
+        public void Clear()
         {
             _lineBuffer.Clear();
             _lineBuffer.InsertLine(0);
@@ -438,19 +446,13 @@ namespace FormatTextControl
         public TextPos SelectionStart
         {
             get { return _selectionStart; }
-            set 
-            { 
-                _selectionStart = value; 
-            }
+            set { _selectionStart = value; }
         }
 
         public TextPos SelectionEnd
         {
             get { return _selectionEnd; }
-            set 
-            { 
-                _selectionEnd = value; 
-            }
+            set { _selectionEnd = value; }
         }
 
         public void AddFormating(int line, int index, int length, Color textColor)
@@ -962,6 +964,7 @@ namespace FormatTextControl
         }
 
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
         private void DrawLine(Graphics g, int line, int x, int width)
         {
             int yOffset = (line * _lineHeight) + AutoScrollPosition.Y;
@@ -989,14 +992,14 @@ namespace FormatTextControl
                     {
                         if (IsTextPosInsideSelection(line, lineIndex))
                         {
-                            g.FillRectangle(_sbBackColorSelection, new RectangleF(xOffset, yOffset, GetCharWidth((int)s[i]), _lineHeight));
+                            g.FillRectangle(_sbBackColorSelection, new RectangleF(xOffset, yOffset, GetCharWidth(s[i]), _lineHeight));
                             sd.DrawString(s[i], Font, _sbBackColor, xOffset, yOffset);
                         }
                         else
                         {
                             if (tls.BgColorSet)
                             {
-                                g.FillRectangle(bg, new RectangleF(xOffset, yOffset, GetCharWidth((int)s[i]), _lineHeight));
+                                g.FillRectangle(bg, new RectangleF(xOffset, yOffset, GetCharWidth(s[i]), _lineHeight));
                             }
 
                             sd.DrawString(s[i], Font, fg, xOffset, yOffset);
@@ -1064,11 +1067,6 @@ namespace FormatTextControl
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             //base.OnPaintBackground(e);
-        }
-
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
         }
 
         private void PositionCaret()
@@ -1274,10 +1272,19 @@ namespace FormatTextControl
 
                 OnCut();
             }
-            if (!e.Control && !e.Alt)
+            else if (e.KeyCode == Keys.Z && e.Control)
             {
-                //InvalidateSelection();
-                //SelectionEnd = SelectionStart;
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+
+                OnUndo();
+            }
+            else if (e.KeyCode == Keys.Y && e.Control)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+
+                OnRedo();
             }
         }
 
@@ -1309,11 +1316,7 @@ namespace FormatTextControl
             }
             else
             {
-                TextLine tlCurrent = _lineBuffer.GetLine(CaretPos.Line);
-                tlCurrent.InsertText(CaretPos.Index, c.ToString());
-                CaretPos = new TextPos(CaretPos.Line, CaretPos.Index + 1);
-                MeasureLineWidth(CaretPos.Line, true);
-                InvalidateLine(CaretPos.Line);
+                InsertTextAtPos(CaretPos, c.ToString(), true, true);
             }
         }
 
@@ -1335,10 +1338,91 @@ namespace FormatTextControl
             if (IsTextSelected())
             {
                 OnCopy();
+                _undoHistory.AddUndoRecord(new UndoRecord(SelectionStart, SelectionEnd, "", false));
                 RemoveText(SelectionStart, SelectionEnd, true);
                 SelectionEnd = SelectionStart;
                 InvalidateSelection();
             }
+        }
+
+        protected virtual void OnUndo()
+        {
+            if (IsTextSelected())
+            {
+                SelectionEnd = SelectionStart;
+            }
+
+            var undoRecord = _undoHistory.GetNextUndo();
+            if (undoRecord == null)
+            {
+                return;
+            }
+
+            if (!IsValidTextPos(undoRecord.Start))
+            {
+                return;
+            }
+
+            if (undoRecord.IsInsert)
+            {
+                if (!IsValidTextPos(undoRecord.End))
+                {
+                    return;
+                }
+                RemoveText(undoRecord.Start, undoRecord.End, true, false);
+            }
+            else
+            {
+                InsertTextAtPos(undoRecord.Start, undoRecord.Text, false);
+            }
+        }
+
+        protected virtual void OnRedo()
+        {
+            if (IsTextSelected())
+            {
+                SelectionEnd = SelectionStart;
+            }
+
+            var redoRecord = _undoHistory.GetNextRedo();
+            if (redoRecord == null)
+            {
+                return;
+            }
+
+            if (!IsValidTextPos(redoRecord.Start))
+            {
+                return;
+            }
+
+            if (redoRecord.IsInsert)
+            {
+                InsertTextAtPos(redoRecord.Start, redoRecord.Text, false);
+            }
+            else
+            {
+                if (!IsValidTextPos(redoRecord.End))
+                {
+                    return;
+                }
+                RemoveText(redoRecord.Start, redoRecord.End, false);
+            }
+        }
+
+        private bool IsValidTextPos(TextPos pos)
+        {
+            if (pos.Line >= _lineBuffer.Count)
+            {
+                return false;
+            }
+                
+            var line = _lineBuffer.GetLine(pos.Line);
+            if (line.Length < pos.Index)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         protected virtual void OnPaste()
@@ -1394,10 +1478,15 @@ namespace FormatTextControl
             return "";
         }
 
-        public int RemoveText(TextPos startPos, TextPos endPos, bool invalidate)
+        public int RemoveText(TextPos startPos, TextPos endPos, bool invalidate, bool enableUndoRedo = true)
         {
             if (endPos <= startPos)
                 return 0;
+
+            if (enableUndoRedo)
+            {
+                _undoHistory.AddUndoRecord(new UndoRecord(startPos, endPos, "", false));
+            }
 
             for (int i = endPos.Line; i >= startPos.Line; i--)
             {
@@ -1444,10 +1533,12 @@ namespace FormatTextControl
             return linesInvolved + 1;
         }
 
-        public int ReplaceText(TextPos startPos, TextPos endPos, string text, bool invalidate)
+        public int ReplaceText(TextPos startPos, TextPos endPos, string text, bool invalidate, bool enableUndoRedo = true)
         {
-            int linesRemoved = RemoveText(startPos, endPos, false);
-            int linesInserted = InsertTextAtPos(startPos, text, false);
+            int linesRemoved = RemoveText(startPos, endPos, false, enableUndoRedo);
+            
+            var newEndPos = InsertTextAtPos(startPos, text, false, enableUndoRedo);
+            int linesInserted = GetNumLines(startPos, newEndPos);
             if (invalidate)
             {
                 if (linesRemoved > 1 || linesInserted > 1)
@@ -1462,10 +1553,15 @@ namespace FormatTextControl
             return linesRemoved;
         }
 
-        public int InsertTextAtPos(TextPos pos, string text, bool invalidate)
+        private int GetNumLines(TextPos startPos, TextPos endPos)
+        {
+            return endPos.Line - startPos.Line;
+        }
+
+        public TextPos InsertTextAtPos(TextPos pos, string text, bool invalidate, bool enableUndoRedo = true)
         {
             if (text == null || text.Length < 1)
-                return 0;
+                return pos;
 
             TextPos posStart = pos;
             
@@ -1502,8 +1598,13 @@ namespace FormatTextControl
             if (TextInserted != null)
                 TextInserted(this, posStart, pos, text);
 
+            if (enableUndoRedo)
+            {
+                _undoHistory.AddUndoRecord(new UndoRecord(posStart, pos, text, true));
+            }
+
             CaretPos = pos;
-            return insText.Length;
+            return pos;
         }
 
         public bool IsTextSelected()
@@ -1610,7 +1711,7 @@ namespace FormatTextControl
         {
             if (IsTextSelected())
             {
-                ReplaceText(SelectionStart, SelectionEnd, "", true);
+                ReplaceText(SelectionStart, SelectionEnd, "", true, true);
                 CaretPos = SelectionStart;
                 SelectionEnd = SelectionStart;
             }
@@ -1618,21 +1719,11 @@ namespace FormatTextControl
             {
                 if (CaretPos.Index > 0)
                 {
-                    CaretPos = new TextPos(CaretPos.Line, CaretPos.Index - 1);
-                    _lineBuffer.GetLine(CaretPos.Line).RemoveText(CaretPos.Index, 1);
-                    InvalidateLine(CaretPos.Line);
+                    RemoveText(new TextPos(CaretPos.Line, CaretPos.Index - 1), CaretPos, true, true);
                 }
                 else if (CaretPos.Line > 0)
                 {
-                    TextLine tlRemLine = _lineBuffer.GetLine(CaretPos.Line);
-                    _lineBuffer.DeleteLine(CaretPos.Line);
-                    CaretPos = new TextPos(CaretPos.Line - 1, _lineBuffer.GetLine(CaretPos.Line - 1).Length);
-                    _lineBuffer.GetLine(CaretPos.Line).AppendText(tlRemLine);
-
-                    SetAutoScrollMinSize();
-                    InvalidateFromLine(CaretPos.Line);
-                    if (!IsCaretInsideScreen())
-                        ScrollLines(-1);
+                    RemoveText(new TextPos(CaretPos.Line - 1, GetLineLength(CaretPos.Line - 1)), CaretPos, true, true);
                 }
                 else
                 {
