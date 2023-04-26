@@ -26,12 +26,17 @@ namespace SqlStudio
         private ConfigDataStore _configDataStore;
         private readonly IExecuteQueryCallback _executeQueryCallback;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
+        private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
 
-        public TabDataGrid(ConfigDataStore configDataStore, IExecuteQueryCallback executeQueryCallback, IDatabaseSchemaInfo databaseSchemaInfo)
+        public TabDataGrid(ConfigDataStore configDataStore, 
+            IExecuteQueryCallback executeQueryCallback, 
+            IDatabaseSchemaInfo databaseSchemaInfo, 
+            IDatabaseKeywordEscape databaseKeywordEscape)
         {
             _configDataStore = configDataStore;
             _executeQueryCallback = executeQueryCallback;
             _databaseSchemaInfo = databaseSchemaInfo;
+            _databaseKeywordEscape = databaseKeywordEscape;
             BackgroundColor = Color.WhiteSmoke;
             ContextMenuStrip = new ContextMenuStrip();
 
@@ -823,9 +828,12 @@ namespace SqlStudio
                 blobId = GetBlobId(GetBlobIdCell(cells));
             }
 
+            tableName = _databaseKeywordEscape.EscapeObject(tableName);
+
             for (int i = 0; i < cells.Count; i++)
             {
                 string colName = cells[i].OwningColumn.Name;
+                colName = _databaseKeywordEscape.EscapeObject(colName);
                 Type type = cells[i].ValueType;
                 Object value = cells[i].Value;
 

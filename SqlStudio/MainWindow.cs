@@ -29,11 +29,12 @@ namespace SqlStudio
         private Timer _executeTimer = new Timer();
         private string _userConfigDbFile;
         private ISqlCompleter _sqlCompleter = null;
-
+        private IDatabaseKeywordEscape _databaseKeywordEscape = null;
         public MainWindow()
         {
             InitializeComponent();
 
+            _databaseKeywordEscape = new DatabaseKeywordEscapeManager();
             _cmdBuffer = new List<string>();
             _userConfigDbFile = Directory.GetParent(Application.UserAppDataPath) + @"\sqlstudio.cfg";
             string defaultCfgPath = Application.StartupPath + @"\sqlstudio.cfg";
@@ -53,7 +54,7 @@ namespace SqlStudio
             _executer = new Executer(cmdLineControl, _cfgDataStore);
             _executer.ExecutionFinished += new Executer.ExecutionFinishedDelegate(_executer_ExecutionFinished);
 
-            _sqlCompleter = new SqlCompleter(this, _executer.SqlExecuter);
+            _sqlCompleter = new SqlCompleter(this, _executer.SqlExecuter, _databaseKeywordEscape);
 
             _syntaxHighLight = new SyntaxHighlight.SQLSyntaxHighlight();
             _syntaxHighLight.DefaultColor = cmdLineControl.ForeColor;
@@ -68,9 +69,7 @@ namespace SqlStudio
             cmdLineControl.SetHistoryItems(_cfgDataStore);
             cmdLineControl.InsertSnipit += CmdLineControl_InsertSnipit;
 
-            sqlOutput.SetConfig(_cfgDataStore);
-            sqlOutput.SetExecuteCallback(this);
-            sqlOutput.SetDatabaseSchemaInfo(_executer.SqlExecuter);
+            sqlOutput.SetDependencyObjects(_cfgDataStore, this, _executer.SqlExecuter, _databaseKeywordEscape);
             sqlOutput.UpdatedResults += new SqlOutputTabContainer.UpdatedResultsDelegate(sqlOutput_UpdatedResults);
             sqlOutput.VisibleRowsChanged += (s, e) => { visibleRowsToolStripStatusLabel.Text = $"{e}"; };
 

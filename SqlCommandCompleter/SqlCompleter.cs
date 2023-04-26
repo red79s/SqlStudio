@@ -21,6 +21,7 @@ namespace SqlCommandCompleter
     {
         private readonly ILogger _logger;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
+        private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
         private List<string> _sqlKeywords = new List<string>
         {
             "SELECT",
@@ -62,10 +63,11 @@ namespace SqlCommandCompleter
             "DATEADD(year, "
         };
 
-        public SqlCompleter(ILogger logger, IDatabaseSchemaInfo databaseSchemaInfo)
+        public SqlCompleter(ILogger logger, IDatabaseSchemaInfo databaseSchemaInfo, IDatabaseKeywordEscape databaseKeywordEscape)
         {
             _logger = logger;
             _databaseSchemaInfo = databaseSchemaInfo;
+            _databaseKeywordEscape = databaseKeywordEscape;
         }
 
         public CommandCompletionResult GetPossibleCompletions(string sqlCommand, int index)
@@ -155,6 +157,10 @@ namespace SqlCommandCompleter
             foreach (var item in possibleCompletions)
             {
                 if (item.IndexOf(symbol.Text, StringComparison.CurrentCultureIgnoreCase) == 0)
+                {
+                    ret.PossibleCompletions.Add(item);
+                }
+                else if (item.IndexOf($"[{symbol.Text}", StringComparison.CurrentCultureIgnoreCase) == 0)
                 {
                     ret.PossibleCompletions.Add(item);
                 }
@@ -352,7 +358,8 @@ namespace SqlCommandCompleter
             List<string> ret = new List<string>();
             foreach (var table in _databaseSchemaInfo.Tables)
             {
-                ret.Add(table.TableName);
+                var tableName = _databaseKeywordEscape.EscapeObject(table.TableName);
+                ret.Add(tableName);
             }
             return ret;
         }
@@ -379,6 +386,7 @@ namespace SqlCommandCompleter
                             foreach (var column in tableInfo.Columns)
                             {
                                 var columnName = tableAlias != "" ? tableAlias + "." + column.ColumnName : column.ColumnName;
+                                columnName = _databaseKeywordEscape.EscapeObject(columnName);
                                 if (!ret.Contains(columnName))
                                 {
                                     ret.Add(columnName);
@@ -394,9 +402,10 @@ namespace SqlCommandCompleter
                 {
                     foreach (var column in table.Columns)
                     {
-                        if (!ret.Contains(column.ColumnName))
+                        var columnName = _databaseKeywordEscape.EscapeObject(column.ColumnName);
+                        if (!ret.Contains(columnName))
                         {
-                            ret.Add(column.ColumnName);
+                            ret.Add(columnName);
                         }
                     }
                 }
