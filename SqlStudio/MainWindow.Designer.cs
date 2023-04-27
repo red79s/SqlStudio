@@ -69,6 +69,7 @@ namespace SqlStudio
             copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             formatQueryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyConnectionStringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             displayFilterRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,7 +97,7 @@ namespace SqlStudio
             saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            copyConnectionStringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.generatePasswordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -431,6 +432,13 @@ namespace SqlStudio
             formatQueryToolStripMenuItem.Text = "Format Query...";
             formatQueryToolStripMenuItem.Click += formatQueryToolStripMenuItem_Click;
             // 
+            // copyConnectionStringToolStripMenuItem
+            // 
+            copyConnectionStringToolStripMenuItem.Name = "copyConnectionStringToolStripMenuItem";
+            copyConnectionStringToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            copyConnectionStringToolStripMenuItem.Text = "Copy ConnectionString";
+            copyConnectionStringToolStripMenuItem.Click += copyConnectionStringToolStripMenuItem_Click;
+            // 
             // viewToolStripMenuItem
             // 
             viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { displayFilterRowToolStripMenuItem });
@@ -448,7 +456,7 @@ namespace SqlStudio
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, uploadSBDZipFileToolStripMenuItem, logSearchToolStripMenuItem, logImportToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, uploadSBDZipFileToolStripMenuItem, logSearchToolStripMenuItem, logImportToolStripMenuItem, this.generatePasswordToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             toolsToolStripMenuItem.Text = "Tools";
@@ -628,12 +636,12 @@ namespace SqlStudio
             runToolStripMenuItem.Text = "Run";
             runToolStripMenuItem.Click += toolStripButtonRunScript_Click;
             // 
-            // copyConnectionStringToolStripMenuItem
+            // generatePasswordToolStripMenuItem
             // 
-            copyConnectionStringToolStripMenuItem.Name = "copyConnectionStringToolStripMenuItem";
-            copyConnectionStringToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            copyConnectionStringToolStripMenuItem.Text = "Copy ConnectionString";
-            copyConnectionStringToolStripMenuItem.Click += copyConnectionStringToolStripMenuItem_Click;
+            this.generatePasswordToolStripMenuItem.Name = "generatePasswordToolStripMenuItem";
+            this.generatePasswordToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.generatePasswordToolStripMenuItem.Text = "Generate password";
+            this.generatePasswordToolStripMenuItem.Click += this.generatePasswordToolStripMenuItem_Click;
             // 
             // MainWindow
             // 
@@ -734,6 +742,7 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripDropDownButton toolStripDatabaseConnectionsDropDownButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem copyConnectionStringToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem generatePasswordToolStripMenuItem;
     }
 }
 

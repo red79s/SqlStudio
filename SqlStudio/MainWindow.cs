@@ -1,5 +1,8 @@
 using CfgDataStore;
 using Common;
+using Common.Model;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.VisualBasic.ApplicationServices;
 using SqlCommandCompleter;
 using SqlExecute;
 using SqlStudio.Converters;
@@ -1040,6 +1043,12 @@ namespace SqlStudio
                 return;
             }
             Clipboard.SetText(_executer.SqlExecuter.ConnectionString);
+        }
+
+        private void generatePasswordToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var generatePasswordDialog = new GeneratePasswordForm();
+            generatePasswordDialog.ShowDialog();
         }
     }
 }
