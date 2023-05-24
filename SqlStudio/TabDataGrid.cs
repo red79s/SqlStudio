@@ -11,6 +11,7 @@ using CfgDataStore;
 using System.Text.RegularExpressions;
 using Common;
 using System.Linq;
+using SqlStudio.AutoLayoutForm;
 
 namespace SqlStudio
 {
@@ -43,6 +44,10 @@ namespace SqlStudio
             ToolStripMenuItem miCopy = new ToolStripMenuItem("Copy");
             miCopy.Click += miCopy_Click;
             ContextMenuStrip.Items.Add(miCopy);
+
+            var miEdit = new ToolStripMenuItem("Edit");
+            miEdit.Click += MiEdit_Click;
+            ContextMenuStrip.Items.Add(miEdit);
 
             ToolStripMenuItem miSave = new ToolStripMenuItem("Save");
             miSave.Click += miSave_Click;
@@ -144,6 +149,28 @@ namespace SqlStudio
             ContextMenuStrip.Items.Add(miFindTimeDiff);
 
             ContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(ContextMenuStrip_Opening);
+        }
+
+        private void MiEdit_Click(object sender, EventArgs e)
+        {
+            var cells = SelectedCells;
+
+            var fieldInfos = new List<FieldInfo>();
+            foreach (DataGridViewCell cell in cells )
+            {
+                fieldInfos.Add(new FieldInfo
+                {
+                    Name = cell.OwningColumn.Name,
+                    Value = cell.Value,
+                    ValueType = cell.ValueType
+                });
+            }
+
+            var form = new AutoLayoutForm.AutoLayoutForm(fieldInfos);
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+
+            }
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
