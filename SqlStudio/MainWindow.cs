@@ -1050,5 +1050,11 @@ namespace SqlStudio
             var generatePasswordDialog = new GeneratePasswordForm();
             generatePasswordDialog.ShowDialog();
         }
+
+        private void generateDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var gdf = new GenerateDataForm(_executer.SqlExecuter);
+            gdf.ShowDialog();
+        }
     }
 }
