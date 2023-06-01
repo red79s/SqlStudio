@@ -8,6 +8,7 @@ using System.Data.Entity.Core.Mapping;
 using System.Drawing;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace SqlStudio
 
         private async void btnRun_Click(object sender, EventArgs e)
         {
-            var sqlCmd = sqlScriptComponent.GetSelectedText();
+            var sqlCmd = sqlScriptComponent.GetSelectedText().Trim(new char[] { ';', ' ', '\n', '\r' });
             int startRowNo = StartIndex;
             int endRowNo = StartIndex + NumberOfInserts;
             int batchNumberOfRows = BatchNumberOfRows;

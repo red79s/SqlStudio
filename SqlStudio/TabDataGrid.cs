@@ -653,12 +653,18 @@ namespace SqlStudio
         void miCreateScript_Click(object sender, EventArgs e)
         {
             List<string> insertStatements = CreateScript();
-            PrintScripts(insertStatements, "{0};" + Environment.NewLine);
+            //PrintScripts(insertStatements, "{0};" + Environment.NewLine);
 
             var insertText = "";
+            bool firstRow = true;
             foreach (var stmt in insertStatements)
             {
-                insertText += $"{stmt};{Environment.NewLine}";
+                if (!firstRow)
+                {
+                    insertText += Environment.NewLine;
+                }
+                insertText += $"{stmt};";
+                firstRow = false;
             }
 
             Clipboard.SetText(insertText);
