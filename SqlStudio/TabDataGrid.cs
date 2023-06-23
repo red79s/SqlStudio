@@ -12,6 +12,9 @@ using System.Text.RegularExpressions;
 using Common;
 using System.Linq;
 using SqlStudio.AutoLayoutForm;
+using System.Diagnostics;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace SqlStudio
 {
@@ -1209,7 +1212,8 @@ namespace SqlStudio
             {
                 return res;
             }
-
+            var sw = new Stopwatch();
+            sw.Start();
             foreach (DataColumn column in _sqlResult.DataTable.Columns)
             {
                 if (column.ColumnName.Equals("table", StringComparison.CurrentCultureIgnoreCase) ||
@@ -1219,7 +1223,22 @@ namespace SqlStudio
                     res.Add(new AutoQuery { Description = "SELECT * FROM [table]", Command = "SELECT * FROM {" + column.ColumnName + "}", TableName = _sqlResult.TableName});
                 }
 
-                if (column.ColumnName.EndsWith("id", StringComparison.CurrentCultureIgnoreCase))
+                if (column.ColumnName.Equals("id", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    foreach (var table in _databaseSchemaInfo.Tables)
+                    {
+                        if (table.Columns.FirstOrDefault(x => x.ColumnName.Equals($"{_sqlResult.TableName}id", StringComparison.CurrentCultureIgnoreCase)) != null)
+                        {
+                            res.Add(new AutoQuery
+                            {
+                                Description = $"SELECT * FROM {table.TableName} WHERE {_sqlResult.TableName}Id = [colVal]",
+                                Command = $"SELECT * FROM {table.TableName} WHERE {_sqlResult.TableName}Id = " + "{" + column.ColumnName + "}",
+                                TableName = _sqlResult.TableName
+                            });
+                        }
+                    }
+                }
+                else if (column.ColumnName.EndsWith("id", StringComparison.CurrentCultureIgnoreCase))
                 {
                     var tableName = column.ColumnName.Substring(0, column.ColumnName.Length - 2);
                     foreach (var table in _databaseSchemaInfo.Tables)
@@ -1234,14 +1253,18 @@ namespace SqlStudio
 
                             if (col != null)
                             {
-                                res.Add(new AutoQuery { Description = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} = [colVal]", 
-                                    Command = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} IN (" + "{" + column.ColumnName + "})", TableName = _sqlResult.TableName });
+                                res.Add(new AutoQuery
+                                {
+                                    Description = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} = [colVal]",
+                                    Command = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} IN (" + "{" + column.ColumnName + "})",
+                                    TableName = _sqlResult.TableName
+                                });
                             }
                         }
                     }
                 }
             }
-
+            sw.Stop();
             return res;
         }
 
