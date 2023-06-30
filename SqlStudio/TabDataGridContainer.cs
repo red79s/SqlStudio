@@ -23,11 +23,13 @@ namespace SqlStudio
         public TabDataGridContainer(ConfigDataStore configDataStore, 
             IExecuteQueryCallback executeQueryCallback, 
             IDatabaseSchemaInfo databaseSchemaInfo,
-            IDatabaseKeywordEscape databaseKeywordEscape)
+            IDatabaseKeywordEscape databaseKeywordEscape, 
+            IColumnMetadataInfo columnMetadataInfo)
         {
             _executeQueryCallback = executeQueryCallback;
             _databaseSchemaInfo = databaseSchemaInfo;
             _databaseKeywordEscape = databaseKeywordEscape;
+            _columnMetadataInfo = columnMetadataInfo;
             _filterControlls = new List<TextBox>();
 
             _searchControl = new SearchControl();
@@ -38,7 +40,7 @@ namespace SqlStudio
             _searchControl.IsVisible = true;
             Controls.Add(_searchControl as UserControl);
 
-            _tdg = new TabDataGrid(configDataStore, executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape);
+            _tdg = new TabDataGrid(configDataStore, executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
             _tdg.UpdatedResults += new TabDataGrid.UpdatedResultsDelegate(_tdg_UpdatedResults);
             _tdg.ColumnWidthChanged += new DataGridViewColumnEventHandler(_tdg_ColumnWidthChanged);
             _tdg.Scroll += new ScrollEventHandler(_tdg_Scroll);
@@ -54,6 +56,7 @@ namespace SqlStudio
         private readonly IExecuteQueryCallback _executeQueryCallback;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
         private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
+        private readonly IColumnMetadataInfo _columnMetadataInfo;
 
         protected override bool ProcessKeyPreview(ref Message m)
         {

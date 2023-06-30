@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualBasic.ApplicationServices;
 using SqlCommandCompleter;
 using SqlExecute;
+using SqlStudio.ColumnMetaDataInfo;
 using SqlStudio.Converters;
 using SqlStudio.CvsImport;
+using SqlStudio.EnumImporter;
 using SqlStudio.ScriptExecuter;
 using System;
 using System.Collections.Generic;
@@ -33,11 +35,15 @@ namespace SqlStudio
         private string _userConfigDbFile;
         private ISqlCompleter _sqlCompleter = null;
         private IDatabaseKeywordEscape _databaseKeywordEscape = null;
+        private IColumnMetadataInfo _columnMetadataInfo = null;
+
         public MainWindow()
         {
             InitializeComponent();
 
             _databaseKeywordEscape = new DatabaseKeywordEscapeManager();
+            _columnMetadataInfo = new ColumnMetaDataInfoManager();
+
             _cmdBuffer = new List<string>();
             _userConfigDbFile = Directory.GetParent(Application.UserAppDataPath) + @"\sqlstudio.cfg";
             string defaultCfgPath = Application.StartupPath + @"\sqlstudio.cfg";
@@ -72,7 +78,7 @@ namespace SqlStudio
             cmdLineControl.SetHistoryItems(_cfgDataStore);
             cmdLineControl.InsertSnipit += CmdLineControl_InsertSnipit;
 
-            sqlOutput.SetDependencyObjects(_cfgDataStore, this, _executer.SqlExecuter, _databaseKeywordEscape);
+            sqlOutput.SetDependencyObjects(_cfgDataStore, this, _executer.SqlExecuter, _databaseKeywordEscape, _columnMetadataInfo);
             sqlOutput.UpdatedResults += new SqlOutputTabContainer.UpdatedResultsDelegate(sqlOutput_UpdatedResults);
             sqlOutput.VisibleRowsChanged += (s, e) => { visibleRowsToolStripStatusLabel.Text = $"{e}"; };
 
@@ -1055,6 +1061,17 @@ namespace SqlStudio
         {
             var gdf = new GenerateDataForm(_executer.SqlExecuter);
             gdf.ShowDialog();
+        }
+
+        private void importEnumValuesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() != DialogResult.OK)
+                return;
+            
+            var importer = new EfEnumImporter();
+            var data = importer.Import(ofd.FileName);
+            
         }
     }
 }

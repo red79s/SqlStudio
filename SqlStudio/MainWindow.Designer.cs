@@ -79,6 +79,7 @@ namespace SqlStudio
             logSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             logImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             generatePasswordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            generateDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             windowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             dataTabsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,7 +99,7 @@ namespace SqlStudio
             saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            generateDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            importEnumValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -271,48 +272,48 @@ namespace SqlStudio
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            openToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             openToolStripMenuItem.Text = "Open...";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // openSQLiteToolStripMenuItem
             // 
             openSQLiteToolStripMenuItem.Name = "openSQLiteToolStripMenuItem";
-            openSQLiteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            openSQLiteToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             openSQLiteToolStripMenuItem.Text = "Open SQLite...";
             openSQLiteToolStripMenuItem.Click += openSQLiteToolStripMenuItem_Click;
             // 
             // openSqlCEToolStripMenuItem
             // 
             openSqlCEToolStripMenuItem.Name = "openSqlCEToolStripMenuItem";
-            openSqlCEToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            openSqlCEToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             openSqlCEToolStripMenuItem.Text = "Open SqlCE...";
             openSqlCEToolStripMenuItem.Click += openSqlCEToolStripMenuItem_Click;
             // 
             // openConfigDbToolStripMenuItem
             // 
             openConfigDbToolStripMenuItem.Name = "openConfigDbToolStripMenuItem";
-            openConfigDbToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            openConfigDbToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             openConfigDbToolStripMenuItem.Text = "Open config db";
             openConfigDbToolStripMenuItem.Click += openConfigDbToolStripMenuItem_Click;
             // 
             // openCvsToolStripMenuItem
             // 
             openCvsToolStripMenuItem.Name = "openCvsToolStripMenuItem";
-            openCvsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            openCvsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             openCvsToolStripMenuItem.Text = "Open csv...";
             openCvsToolStripMenuItem.Click += openCsvToolStripMenuItem_Click;
             // 
             // toolStripMenuItem6
             // 
             toolStripMenuItem6.Name = "toolStripMenuItem6";
-            toolStripMenuItem6.Size = new System.Drawing.Size(177, 6);
+            toolStripMenuItem6.Size = new System.Drawing.Size(163, 6);
             // 
             // connectToolStripMenuItem
             // 
             connectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMenuItem1, newToolStripMenuItem });
             connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            connectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            connectToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             connectToolStripMenuItem.Text = "Connect";
             // 
             // toolStripMenuItem1
@@ -330,71 +331,71 @@ namespace SqlStudio
             // closeConnectionToolStripMenuItem
             // 
             closeConnectionToolStripMenuItem.Name = "closeConnectionToolStripMenuItem";
-            closeConnectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            closeConnectionToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             closeConnectionToolStripMenuItem.Text = "Close connection";
             closeConnectionToolStripMenuItem.Click += closeConnectionToolStripMenuItem_Click;
             // 
             // toolStripMenuItem3
             // 
             toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new System.Drawing.Size(177, 6);
+            toolStripMenuItem3.Size = new System.Drawing.Size(163, 6);
             // 
             // newScriptToolStripMenuItem
             // 
             newScriptToolStripMenuItem.Name = "newScriptToolStripMenuItem";
-            newScriptToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            newScriptToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             newScriptToolStripMenuItem.Text = "New script";
             newScriptToolStripMenuItem.Click += newScriptToolStripMenuItem_Click;
             // 
             // openScriptToolStripMenuItem
             // 
             openScriptToolStripMenuItem.Name = "openScriptToolStripMenuItem";
-            openScriptToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            openScriptToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             openScriptToolStripMenuItem.Text = "Open script...";
             openScriptToolStripMenuItem.Click += openScriptToolStripMenuItem_Click;
             // 
             // saveScriptToolStripMenuItem
             // 
             saveScriptToolStripMenuItem.Name = "saveScriptToolStripMenuItem";
-            saveScriptToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveScriptToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             saveScriptToolStripMenuItem.Text = "Save script";
             saveScriptToolStripMenuItem.Click += saveScriptToolStripMenuItem_Click;
             // 
             // saveScriptAsToolStripMenuItem
             // 
             saveScriptAsToolStripMenuItem.Name = "saveScriptAsToolStripMenuItem";
-            saveScriptAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveScriptAsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             saveScriptAsToolStripMenuItem.Text = "Save script as...";
             saveScriptAsToolStripMenuItem.Click += saveScriptAsToolStripMenuItem_Click;
             // 
             // runScriptToolStripMenuItem
             // 
             runScriptToolStripMenuItem.Name = "runScriptToolStripMenuItem";
-            runScriptToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            runScriptToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             runScriptToolStripMenuItem.Text = "Run script...";
             runScriptToolStripMenuItem.Click += runScriptToolStripMenuItem_Click;
             // 
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
+            toolStripMenuItem2.Size = new System.Drawing.Size(163, 6);
             // 
             // cancelExecutionToolStripMenuItem
             // 
             cancelExecutionToolStripMenuItem.Name = "cancelExecutionToolStripMenuItem";
-            cancelExecutionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            cancelExecutionToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             cancelExecutionToolStripMenuItem.Text = "Cancel execution";
             cancelExecutionToolStripMenuItem.Click += cancelExecutionToolStripMenuItem_Click;
             // 
             // toolStripMenuItem7
             // 
             toolStripMenuItem7.Name = "toolStripMenuItem7";
-            toolStripMenuItem7.Size = new System.Drawing.Size(177, 6);
+            toolStripMenuItem7.Size = new System.Drawing.Size(163, 6);
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            exitToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
@@ -457,7 +458,7 @@ namespace SqlStudio
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, uploadSBDZipFileToolStripMenuItem, logSearchToolStripMenuItem, logImportToolStripMenuItem, generatePasswordToolStripMenuItem, generateDataToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, uploadSBDZipFileToolStripMenuItem, logSearchToolStripMenuItem, logImportToolStripMenuItem, generatePasswordToolStripMenuItem, generateDataToolStripMenuItem, importEnumValuesToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             toolsToolStripMenuItem.Text = "Tools";
@@ -465,44 +466,51 @@ namespace SqlStudio
             // aliasesToolStripMenuItem
             // 
             aliasesToolStripMenuItem.Name = "aliasesToolStripMenuItem";
-            aliasesToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            aliasesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             aliasesToolStripMenuItem.Text = "Aliases...";
             aliasesToolStripMenuItem.Click += aliasesToolStripMenuItem_Click;
             // 
             // autoQueriesToolStripMenuItem
             // 
             autoQueriesToolStripMenuItem.Name = "autoQueriesToolStripMenuItem";
-            autoQueriesToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            autoQueriesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             autoQueriesToolStripMenuItem.Text = "Auto Queries...";
             autoQueriesToolStripMenuItem.Click += autoQueriesToolStripMenuItem_Click;
             // 
             // uploadSBDZipFileToolStripMenuItem
             // 
             uploadSBDZipFileToolStripMenuItem.Name = "uploadSBDZipFileToolStripMenuItem";
-            uploadSBDZipFileToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            uploadSBDZipFileToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             uploadSBDZipFileToolStripMenuItem.Text = "Upload SBD zip file...";
             uploadSBDZipFileToolStripMenuItem.Click += uploadSBDZipFileToolStripMenuItem_Click;
             // 
             // logSearchToolStripMenuItem
             // 
             logSearchToolStripMenuItem.Name = "logSearchToolStripMenuItem";
-            logSearchToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            logSearchToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             logSearchToolStripMenuItem.Text = "LogSearch...";
             logSearchToolStripMenuItem.Click += logSearchToolStripMenuItem_Click;
             // 
             // logImportToolStripMenuItem
             // 
             logImportToolStripMenuItem.Name = "logImportToolStripMenuItem";
-            logImportToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            logImportToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             logImportToolStripMenuItem.Text = "LogImport...";
             logImportToolStripMenuItem.Click += logImportToolStripMenuItem_Click;
             // 
             // generatePasswordToolStripMenuItem
             // 
             generatePasswordToolStripMenuItem.Name = "generatePasswordToolStripMenuItem";
-            generatePasswordToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            generatePasswordToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             generatePasswordToolStripMenuItem.Text = "Generate password";
             generatePasswordToolStripMenuItem.Click += generatePasswordToolStripMenuItem_Click;
+            // 
+            // generateDataToolStripMenuItem
+            // 
+            generateDataToolStripMenuItem.Name = "generateDataToolStripMenuItem";
+            generateDataToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            generateDataToolStripMenuItem.Text = "Generate data";
+            generateDataToolStripMenuItem.Click += generateDataToolStripMenuItem_Click;
             // 
             // windowsToolStripMenuItem
             // 
@@ -644,12 +652,12 @@ namespace SqlStudio
             runToolStripMenuItem.Text = "Run";
             runToolStripMenuItem.Click += toolStripButtonRunScript_Click;
             // 
-            // generateDataToolStripMenuItem
+            // importEnumValuesToolStripMenuItem
             // 
-            generateDataToolStripMenuItem.Name = "generateDataToolStripMenuItem";
-            generateDataToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            generateDataToolStripMenuItem.Text = "Generate data";
-            generateDataToolStripMenuItem.Click += generateDataToolStripMenuItem_Click;
+            importEnumValuesToolStripMenuItem.Name = "importEnumValuesToolStripMenuItem";
+            importEnumValuesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            importEnumValuesToolStripMenuItem.Text = "Import enum values...";
+            importEnumValuesToolStripMenuItem.Click += importEnumValuesToolStripMenuItem_Click;
             // 
             // MainWindow
             // 
@@ -752,6 +760,7 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripMenuItem copyConnectionStringToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generatePasswordToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importEnumValuesToolStripMenuItem;
     }
 }
 

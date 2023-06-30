@@ -24,6 +24,7 @@ namespace SqlStudio
         private IExecuteQueryCallback _executeCallback;
         private IDatabaseSchemaInfo _databaseSchemaInfo;
         private IDatabaseKeywordEscape _databaseKeywordEscape;
+        private IColumnMetadataInfo _columnMetadataInfo;
 
         public SqlOutputTabContainer()
         {
@@ -56,12 +57,17 @@ namespace SqlStudio
             TabPages.Add(addTabPage);
         }
 
-        public void SetDependencyObjects(ConfigDataStore configDataStore, IExecuteQueryCallback executeCallback, IDatabaseSchemaInfo databaseSchemaInfo, IDatabaseKeywordEscape databaseKeywordEscape)
+        public void SetDependencyObjects(ConfigDataStore configDataStore, 
+            IExecuteQueryCallback executeCallback, 
+            IDatabaseSchemaInfo databaseSchemaInfo, 
+            IDatabaseKeywordEscape databaseKeywordEscape,
+            IColumnMetadataInfo columnMetadataInfo)
         {
             _configDataStore = configDataStore;
             _executeCallback = executeCallback;
             _databaseSchemaInfo = databaseSchemaInfo;
             _databaseKeywordEscape = databaseKeywordEscape;
+            _columnMetadataInfo = columnMetadataInfo;
         }
 
         private ContextMenuStrip CreateDataTabsContextMenu()
@@ -241,7 +247,7 @@ namespace SqlStudio
 
         private DataSetTabPage InsertNewDataTab(string label)
         {
-            DataSetTabPage dstp = new DataSetTabPage(_configDataStore, _executeCallback, _databaseSchemaInfo, _databaseKeywordEscape);
+            DataSetTabPage dstp = new DataSetTabPage(_configDataStore, _executeCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
             dstp.DisplayFilterRow = DisplayFilterRow;
             dstp.UpdatedResults += new DataSetTabPage.UpdatedResultsDelegate(_currentDataTab_UpdatedResults);
             dstp.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
@@ -293,16 +299,19 @@ namespace SqlStudio
         private readonly IExecuteQueryCallback _executeQueryCallback;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
         private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
+        private readonly IColumnMetadataInfo _columnMetadataInfo;
         private List<SqlResult> _results;
         public DataSetTabPage(ConfigDataStore configDataStore, 
             IExecuteQueryCallback executeQueryCallback, 
             IDatabaseSchemaInfo databaseSchemaInfo, 
-            IDatabaseKeywordEscape databaseKeywordEscape)
+            IDatabaseKeywordEscape databaseKeywordEscape,
+            IColumnMetadataInfo columnMetadataInfo)
         {
             _configDataStore = configDataStore;
             _executeQueryCallback = executeQueryCallback;
             _databaseSchemaInfo = databaseSchemaInfo;
             _databaseKeywordEscape = databaseKeywordEscape;
+            _columnMetadataInfo = columnMetadataInfo;
         }
 
         private bool _dispFilterRow = false;
@@ -356,7 +365,7 @@ namespace SqlStudio
                     lastSplit.Orientation = Orientation.Horizontal;
                     lastSplit.Dock = DockStyle.Fill;
                     Controls.Add(lastSplit);
-                    TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape);
+                    TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
                     tgrid.FilterRow = DisplayFilterRow;
                     tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
                     tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
@@ -366,7 +375,7 @@ namespace SqlStudio
                 }
                 else if (i == 0)
                 {
-                    TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape);
+                    TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
                     tgrid.FilterRow = DisplayFilterRow;
                     tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
                     tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
@@ -383,7 +392,7 @@ namespace SqlStudio
                         sc.Dock = DockStyle.Fill;
                         lastSplit.Panel2.Controls.Add(sc);
                         lastSplit = sc;
-                        TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape);
+                        TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
                         tgrid.FilterRow = DisplayFilterRow;
                         tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
                         tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
@@ -393,7 +402,7 @@ namespace SqlStudio
                     }
                     else
                     {
-                        TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape);
+                        TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
                         tgrid.FilterRow = DisplayFilterRow;
                         tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
                         tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
