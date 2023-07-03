@@ -24,7 +24,7 @@ namespace SqlStudio
             IExecuteQueryCallback executeQueryCallback, 
             IDatabaseSchemaInfo databaseSchemaInfo,
             IDatabaseKeywordEscape databaseKeywordEscape, 
-            IColumnMetadataInfo columnMetadataInfo)
+            IColumnValueDescriptionProvider columnMetadataInfo)
         {
             _executeQueryCallback = executeQueryCallback;
             _databaseSchemaInfo = databaseSchemaInfo;
@@ -56,7 +56,7 @@ namespace SqlStudio
         private readonly IExecuteQueryCallback _executeQueryCallback;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
         private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
-        private readonly IColumnMetadataInfo _columnMetadataInfo;
+        private readonly IColumnValueDescriptionProvider _columnMetadataInfo;
 
         protected override bool ProcessKeyPreview(ref Message m)
         {

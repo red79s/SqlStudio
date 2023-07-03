@@ -31,13 +31,13 @@ namespace SqlStudio
         private readonly IExecuteQueryCallback _executeQueryCallback;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
         private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
-        private readonly IColumnMetadataInfo _columnMetadataInfo;
+        private readonly IColumnValueDescriptionProvider _columnMetadataInfo;
 
         public TabDataGrid(ConfigDataStore configDataStore, 
             IExecuteQueryCallback executeQueryCallback, 
             IDatabaseSchemaInfo databaseSchemaInfo, 
             IDatabaseKeywordEscape databaseKeywordEscape, 
-            IColumnMetadataInfo columnMetadataInfo)
+            IColumnValueDescriptionProvider columnMetadataInfo)
         {
             _configDataStore = configDataStore;
             _executeQueryCallback = executeQueryCallback;
@@ -72,7 +72,7 @@ namespace SqlStudio
             miGetTitles.Click += miGetTitles_Click;
             ContextMenuStrip.Items.Add(miGetTitles);
 
-            ToolStripMenuItem miGetColumnInfo = new ToolStripMenuItem("Get column info");
+            ToolStripMenuItem miGetColumnInfo = new ToolStripMenuItem("Get Column Info");
             miGetColumnInfo.Click += GetColumnInfo_MenuItemClick;
             ContextMenuStrip.Items.Add(miGetColumnInfo);
 
@@ -1036,26 +1036,15 @@ namespace SqlStudio
 
         private void GetColumnInfo_MenuItemClick(object sender, EventArgs e)
         {
-            int numTitlesFetched = 0;
+            if (SelectedCells == null || SelectedCells.Count == 0)
+                return;
 
-            DataGridViewCell cell = SelectedCells[0];
-            for (int i = 0; i < Rows.Count; i++)
+            foreach (DataGridViewCell cell in SelectedCells)
             {
-                DataGridViewCell currentCell = Rows[i].Cells[cell.ColumnIndex];
-                if (currentCell.Value == null)
+                if (cell.Value == null)
                     continue;
 
-                if (currentCell.ValueType != typeof(byte) && 
-                    currentCell.ValueType != typeof(short) && 
-                    currentCell.ValueType != typeof(int))
-                {
-                    continue;
-                }
-
-                int titleNo = (int)Convert.ChangeType(currentCell.Value, typeof(int));
-                
-                currentCell.ToolTipText = _columnMetadataInfo.GetDescriptionForValue(_sqlResult.TableName, currentCell.OwningColumn.Name, titleNo);
-                numTitlesFetched++;
+                cell.ToolTipText = _columnMetadataInfo.GetDescriptionForValue(_sqlResult.TableName, cell.OwningColumn.Name, cell.Value.ToString());
             }
         }
 

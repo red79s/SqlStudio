@@ -35,14 +35,15 @@ namespace SqlStudio
         private string _userConfigDbFile;
         private ISqlCompleter _sqlCompleter = null;
         private IDatabaseKeywordEscape _databaseKeywordEscape = null;
-        private IColumnMetadataInfo _columnMetadataInfo = null;
+        private IColumnValueDescriptionProvider _columnMetadataInfo = null;
 
         public MainWindow()
         {
             InitializeComponent();
 
             _databaseKeywordEscape = new DatabaseKeywordEscapeManager();
-            _columnMetadataInfo = new ColumnMetaDataInfoManager();
+            _columnMetadataInfo = new ColumnValueDescriptionManager();
+            _columnMetadataInfo.Load();
 
             _cmdBuffer = new List<string>();
             _userConfigDbFile = Directory.GetParent(Application.UserAppDataPath) + @"\sqlstudio.cfg";
@@ -1070,8 +1071,30 @@ namespace SqlStudio
                 return;
             
             var importer = new EfEnumImporter();
-            var data = importer.Import(ofd.FileName);
+            var colDesc = importer.Import(ofd.FileName);
             
+            if (colDesc != null && colDesc.Count > 0)
+            {
+                var source = colDesc[0].AssemblyName;
+                var cvd = new List<ColumnValueDescription>();
+                foreach (var cd in colDesc)
+                {
+                    foreach (var enumVal in cd.EnumValues)
+                    {
+                        cvd.Add(
+                            new ColumnValueDescription 
+                            { 
+                                Source = source, 
+                                TableName = cd.TableName, 
+                                ColumnName = cd.ColumnName, 
+                                Value = enumVal.Value.ToString(), 
+                                Description = enumVal.Name 
+                            });
+                    }
+                }
+                _columnMetadataInfo.AddColumnMetadataInfo(source, cvd);
+                _columnMetadataInfo.Save();
+            }
         }
     }
 }

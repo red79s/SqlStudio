@@ -24,7 +24,7 @@ namespace SqlStudio
         private IExecuteQueryCallback _executeCallback;
         private IDatabaseSchemaInfo _databaseSchemaInfo;
         private IDatabaseKeywordEscape _databaseKeywordEscape;
-        private IColumnMetadataInfo _columnMetadataInfo;
+        private IColumnValueDescriptionProvider _columnMetadataInfo;
 
         public SqlOutputTabContainer()
         {
@@ -61,7 +61,7 @@ namespace SqlStudio
             IExecuteQueryCallback executeCallback, 
             IDatabaseSchemaInfo databaseSchemaInfo, 
             IDatabaseKeywordEscape databaseKeywordEscape,
-            IColumnMetadataInfo columnMetadataInfo)
+            IColumnValueDescriptionProvider columnMetadataInfo)
         {
             _configDataStore = configDataStore;
             _executeCallback = executeCallback;
@@ -299,13 +299,13 @@ namespace SqlStudio
         private readonly IExecuteQueryCallback _executeQueryCallback;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
         private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
-        private readonly IColumnMetadataInfo _columnMetadataInfo;
+        private readonly IColumnValueDescriptionProvider _columnMetadataInfo;
         private List<SqlResult> _results;
         public DataSetTabPage(ConfigDataStore configDataStore, 
             IExecuteQueryCallback executeQueryCallback, 
             IDatabaseSchemaInfo databaseSchemaInfo, 
             IDatabaseKeywordEscape databaseKeywordEscape,
-            IColumnMetadataInfo columnMetadataInfo)
+            IColumnValueDescriptionProvider columnMetadataInfo)
         {
             _configDataStore = configDataStore;
             _executeQueryCallback = executeQueryCallback;
