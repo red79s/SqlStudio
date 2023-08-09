@@ -164,22 +164,27 @@ namespace SqlStudio
         private void MiEdit_Click(object sender, EventArgs e)
         {
             var cells = SelectedCells;
-
+            var fieldCells = new Dictionary<FieldInfo, DataGridViewCell>();
             var fieldInfos = new List<FieldInfo>();
             foreach (DataGridViewCell cell in cells )
             {
-                fieldInfos.Add(new FieldInfo
+                var fieldInfo = new FieldInfo
                 {
                     Name = cell.OwningColumn.Name,
                     Value = cell.Value,
                     ValueType = cell.ValueType
-                });
+                };
+                fieldInfos.Add(fieldInfo);
+                fieldCells.Add(fieldInfo, cell);
             }
 
             var form = new AutoLayoutForm.AutoLayoutForm(fieldInfos);
             if (form.ShowDialog() == DialogResult.OK)
             {
-
+                foreach(var fieldCell in fieldCells)
+                {
+                    fieldCell.Value.Value = fieldCell.Key.Value;
+                }
             }
         }
 

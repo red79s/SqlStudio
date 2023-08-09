@@ -7,6 +7,7 @@ namespace SqlStudio.AutoLayoutForm
 {
     public partial class AutoLayoutForm : Form
     {
+        private Dictionary<FieldInfo, IFieldUserControl> _fieldControls = new Dictionary<FieldInfo, IFieldUserControl>();
         public AutoLayoutForm(List<FieldInfo> fieldInfos)
         {
             InitializeComponent();
@@ -16,7 +17,7 @@ namespace SqlStudio.AutoLayoutForm
         private void InitFields(List<FieldInfo> fieldInfos, int columns)
         {
             var columnWith = (Width - 10) / columns;
-            var rowHeight = 30;
+            var rowHeight = 50;
 
             var currentY = 5 - rowHeight;
 
@@ -30,6 +31,7 @@ namespace SqlStudio.AutoLayoutForm
 
                 var fieldInfo = fieldInfos[i];
                 var control = CreateFieldUserControl(fieldInfo);
+                _fieldControls.Add(fieldInfo, (IFieldUserControl)control);
                 control.Left = (columnWith * col) + 5;
                 control.Width = columnWith - 10;
                 control.Top = currentY;
@@ -42,10 +44,17 @@ namespace SqlStudio.AutoLayoutForm
         {
             if (fieldInfo.ValueType == typeof(DateTime))
             {
-                return new UserControlDateTime(fieldInfo);
+                return new FieldUserControlDateTime(fieldInfo);
             }
 
-            return new FieldUserControlDefault(fieldInfo);
+            if (fieldInfo.ValueType == typeof(int)) 
+            {
+                return new FieldUserControlInt(fieldInfo);
+            }
+
+            return new FieldUserControlBase(fieldInfo);
+
+            //return new FieldUserControlDefault(fieldInfo);
         }
         private void CancelButton_Click(object sender, System.EventArgs e)
         {
@@ -55,6 +64,11 @@ namespace SqlStudio.AutoLayoutForm
 
         private void SaveButton_Click(object sender, System.EventArgs e)
         {
+            foreach (var field in _fieldControls)
+            {
+                field.Key.Value = field.Value.Value;
+            }
+
             DialogResult = DialogResult.OK;
             Close();
         }

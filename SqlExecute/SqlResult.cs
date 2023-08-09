@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using System.Data.Common;
 
@@ -28,19 +25,9 @@ namespace SqlExecute
             set { _resultType = value; }
         }
 
-        private string _message = "";
-        public string Message
-        {
-            get { return _message; }
-            set { _message = value; }
-        }
+        public string Message { get; set; } = "";
 
-        private bool _success = true;
-        public bool Success
-        {
-            get { return _success; }
-            set { _success = value; }
-        }
+        public bool Success { get; set; } = true;
 
         private long _exectionTime = 0;
         public long ExecutionTimeMS
@@ -49,61 +36,14 @@ namespace SqlExecute
             set { _exectionTime = value; }
         }
 
-        private int _rowsAffected = 0;
-        public int RowsAffected
-        {
-            get { return _rowsAffected; }
-            set { _rowsAffected = value; }
-        }
-
-        private DbDataAdapter _dbDataAdapter = null;
-        public DbDataAdapter DataAdapter
-        {
-            get { return _dbDataAdapter; }
-            set { _dbDataAdapter = value; }
-        }
-
-        private string _tableName = "";
-        public string TableName
-        {
-            get { return _tableName; }
-            set { _tableName = value; }
-        }
-
-        private string _serverName = "";
-        public string ServerName
-        {
-            get { return _serverName; }
-            set { _serverName = value; }
-        }
-
-        private string _databaseName = "";
-        public string DataBaseName
-        {
-            get { return _databaseName; }
-            set { _databaseName = value; }
-        }
-
-        private bool _displayAsText = false;
-        public bool DisplayAsText
-        {
-            get { return _displayAsText; }
-            set { _displayAsText = value; }
-        }
-
-        private DataTable _dtTable = null;
-        public DataTable DataTable
-        {
-            get { return _dtTable; }
-            set { _dtTable = value; }
-        }
-
-        private DbConnection _connection = null;
-        public DbConnection Connection
-        {
-            get { return _connection; }
-            set { _connection = value; }
-        }
+        public int RowsAffected { get; set; } = 0;
+        public DbDataAdapter DataAdapter { get; set; } = null;
+        public string TableName { get; set; } = "";
+        public string ServerName { get; set; } = "";
+        public string DataBaseName { get; set; } = "";
+        public bool DisplayAsText { get; set; } = false;
+        public DataTable DataTable { get; set; } = null;
+        public DbConnection Connection { get; set; } = null;
 
         public string SqlQuery
         {

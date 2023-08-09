@@ -31,6 +31,9 @@
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="AutoLayoutForm\FieldUserControlInt.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="ConnectToolStripItem.cs">
       <SubType>Component</SubType>
     </Compile>

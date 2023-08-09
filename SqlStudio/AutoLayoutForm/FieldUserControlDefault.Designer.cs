@@ -30,33 +30,44 @@
         {
             FieldLabel = new System.Windows.Forms.Label();
             tbValue = new System.Windows.Forms.TextBox();
+            cbDbNull = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
             // FieldLabel
             // 
-            FieldLabel.AutoSize = true;
-            FieldLabel.Location = new System.Drawing.Point(0, 0);
+            FieldLabel.Location = new System.Drawing.Point(0, 5);
             FieldLabel.Name = "FieldLabel";
-            FieldLabel.Size = new System.Drawing.Size(41, 15);
+            FieldLabel.Size = new System.Drawing.Size(100, 15);
             FieldLabel.TabIndex = 0;
-            FieldLabel.Text = "Field 1";
+            FieldLabel.Text = "Name";
             // 
             // tbValue
             // 
             tbValue.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            tbValue.Location = new System.Drawing.Point(82, 0);
+            tbValue.Location = new System.Drawing.Point(103, 2);
             tbValue.Name = "tbValue";
-            tbValue.Size = new System.Drawing.Size(197, 23);
+            tbValue.Size = new System.Drawing.Size(150, 23);
             tbValue.TabIndex = 1;
             // 
-            // UserControl1
+            // cbDbNull
+            // 
+            cbDbNull.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            cbDbNull.Location = new System.Drawing.Point(259, 4);
+            cbDbNull.Name = "cbDbNull";
+            cbDbNull.Size = new System.Drawing.Size(50, 19);
+            cbDbNull.TabIndex = 2;
+            cbDbNull.Text = "Null";
+            cbDbNull.UseVisualStyleBackColor = true;
+            // 
+            // FieldUserControlDefault
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(cbDbNull);
             Controls.Add(tbValue);
             Controls.Add(FieldLabel);
-            Name = "UserControl1";
-            Size = new System.Drawing.Size(282, 24);
+            Name = "FieldUserControlDefault";
+            Size = new System.Drawing.Size(312, 31);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -65,5 +76,6 @@
 
         private System.Windows.Forms.Label FieldLabel;
         private System.Windows.Forms.TextBox tbValue;
+        private System.Windows.Forms.CheckBox cbDbNull;
     }
 }
