@@ -5,17 +5,15 @@ using System.Windows.Forms;
 
 namespace SqlStudio.AutoLayoutForm
 {
-    public partial class FieldUserControlInt : FieldUserControlBase
+    public class FieldUserControlDecimal : FieldUserControlBase
     {
         private TextBox _valueControl;
         private ErrorProvider _errorProvider;
 
-        public FieldUserControlInt(FieldInfo fieldInfo)
+        public FieldUserControlDecimal(FieldInfo fieldInfo)
             : base(fieldInfo)
         {
             Value = fieldInfo.Value;
-
-            
         }
 
         protected override void CreateControls()
@@ -25,16 +23,16 @@ namespace SqlStudio.AutoLayoutForm
             _valueControl = new TextBox { TextAlign = HorizontalAlignment.Right };
             _groupBox.Controls.Add(_valueControl);
 
-            _errorProvider = new System.Windows.Forms.ErrorProvider();
+            _errorProvider = new ErrorProvider();
             _errorProvider.SetIconAlignment(_valueControl, ErrorIconAlignment.MiddleRight);
             _errorProvider.SetIconPadding(_valueControl, 2);
             _errorProvider.BlinkRate = 1000;
-            _errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.AlwaysBlink;
+            _errorProvider.BlinkStyle = ErrorBlinkStyle.AlwaysBlink;
 
             _valueControl.Validating += _valueControl_Validating;
         }
 
-        private Regex _validateRegex = new Regex("[0-9 ]+");
+        private Regex _validateRegex = new Regex("[0-9. ]+");
         private void _valueControl_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!_validateRegex.IsMatch(_valueControl.Text))
@@ -70,15 +68,15 @@ namespace SqlStudio.AutoLayoutForm
                 _valueControl.Enabled = false;
             }
         }
-        
-        private int GetValue(string text)
+
+        private decimal GetValue(string text)
         {
-            if (text == null) 
+            if (text == null)
                 return 0;
 
             if (int.TryParse(text, out var value))
                 return value;
-            
+
             return 0;
         }
 

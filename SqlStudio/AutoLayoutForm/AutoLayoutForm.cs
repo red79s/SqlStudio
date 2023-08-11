@@ -52,6 +52,16 @@ namespace SqlStudio.AutoLayoutForm
                 return new FieldUserControlInt(fieldInfo);
             }
 
+            if (fieldInfo.ValueType == typeof(long))
+            {
+                return new FieldUserControlLong(fieldInfo);
+            }
+
+            if (fieldInfo.ValueType == typeof(float))
+            {
+                return new FieldUserControlDecimal(fieldInfo);
+            }
+
             return new FieldUserControlBase(fieldInfo);
 
             //return new FieldUserControlDefault(fieldInfo);
