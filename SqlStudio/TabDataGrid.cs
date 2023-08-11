@@ -1255,10 +1255,11 @@ namespace SqlStudio
                     {
                         if (table.Columns.FirstOrDefault(x => x.ColumnName.Equals($"{_sqlResult.TableName}id", StringComparison.CurrentCultureIgnoreCase)) != null)
                         {
+                            
                             res.Add(new AutoQuery
                             {
-                                Description = $"SELECT * FROM {table.TableName} WHERE {_sqlResult.TableName}Id = [colVal]",
-                                Command = $"SELECT * FROM {table.TableName} WHERE {_sqlResult.TableName}Id = " + "{" + column.ColumnName + "}",
+                                Description = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_sqlResult.TableName}Id = [colVal]",
+                                Command = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_sqlResult.TableName}Id = " + "{" + column.ColumnName + "}",
                                 TableName = _sqlResult.TableName
                             });
                         }

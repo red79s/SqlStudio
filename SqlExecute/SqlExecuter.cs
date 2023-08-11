@@ -807,6 +807,10 @@ namespace SqlExecute
             if (m.Success)
             {
                 tableName = m.Groups["table"].Value;
+                if (tableName.StartsWith('[') && tableName.EndsWith("]"))
+                {
+                    tableName = tableName.Substring(1, tableName.Length - 2);
+                }
             }
             return tableName;
         }
