@@ -35,7 +35,7 @@ namespace SqlStudio.AutoLayoutForm
 
         protected virtual void CreateControls()
         {
-            _groupBox = new GroupBox { Text = _fieldInfo.Name };
+            _groupBox = new GroupBox { Text = $"{_fieldInfo.Name} - {_fieldInfo.ValueType.Name}" };
             Controls.Add(_groupBox);
 
             _dbNullcheckBox = new CheckBox { Text = "Null", TextAlign = ContentAlignment.MiddleLeft };

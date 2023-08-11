@@ -57,14 +57,17 @@ namespace SqlStudio.AutoLayoutForm
                 return new FieldUserControlLong(fieldInfo);
             }
 
-            if (fieldInfo.ValueType == typeof(float))
+            if (fieldInfo.ValueType == typeof(decimal))
             {
                 return new FieldUserControlDecimal(fieldInfo);
             }
 
-            return new FieldUserControlBase(fieldInfo);
-
-            //return new FieldUserControlDefault(fieldInfo);
+            if (fieldInfo.ValueType == typeof(string))
+            {
+                return new FieldUserControlText(fieldInfo);
+            }
+            
+            return new FieldUserControlDefault(fieldInfo);
         }
         private void CancelButton_Click(object sender, System.EventArgs e)
         {
