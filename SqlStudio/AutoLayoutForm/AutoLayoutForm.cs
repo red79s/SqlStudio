@@ -1,75 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
+using System.Drawing;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace SqlStudio.AutoLayoutForm
 {
     public partial class AutoLayoutForm : Form
     {
-        private Dictionary<FieldInfo, IFieldUserControl> _fieldControls = new Dictionary<FieldInfo, IFieldUserControl>();
-        public AutoLayoutForm(List<FieldInfo> fieldInfos)
+        private UserControl _contentControl;
+        private SortedDictionary<FieldInfo, IFieldUserControl> _fieldControls = new SortedDictionary<FieldInfo, IFieldUserControl>();
+        public AutoLayoutForm(SortedDictionary<int, List<FieldInfo>> fieldInfos)
         {
             InitializeComponent();
-            InitFields(fieldInfos, 2);
+            CreateControls(fieldInfos);
+            ResizeControls();
+            Resize += AutoLayoutForm_Resize;
         }
 
-        private void InitFields(List<FieldInfo> fieldInfos, int columns)
+        private void AutoLayoutForm_Resize(object sender, EventArgs e)
         {
-            var columnWith = (Width - 10) / columns;
-            var rowHeight = 50;
-
-            var currentY = 5 - rowHeight;
-
-            for (int i = 0; i < fieldInfos.Count; i++)
-            {
-                var col = i % columns;
-                if (col == 0)
-                {
-                    currentY += rowHeight;
-                }
-
-                var fieldInfo = fieldInfos[i];
-                var control = CreateFieldUserControl(fieldInfo);
-                _fieldControls.Add(fieldInfo, (IFieldUserControl)control);
-                control.Left = (columnWith * col) + 5;
-                control.Width = columnWith - 10;
-                control.Top = currentY;
-                control.Height = rowHeight - 5;
-                Controls.Add(control);
-            }
+            ResizeControls();
         }
 
-        private UserControl CreateFieldUserControl(FieldInfo fieldInfo)
+        private void CreateControls(SortedDictionary<int, List<FieldInfo>> fieldInfos)
         {
-            if (fieldInfo.ValueType == typeof(DateTime))
-            {
-                return new FieldUserControlDateTime(fieldInfo);
-            }
+            _contentControl = new UserControl();
+            Controls.Add(_contentControl);
 
-            if (fieldInfo.ValueType == typeof(int)) 
+            foreach (var fieldInfo in fieldInfos)
             {
-                return new FieldUserControlInt(fieldInfo);
+                var control = new RowFieldsControl(fieldInfo.Key, fieldInfo.Value);
+                _contentControl.Controls.Add(control);
             }
-
-            if (fieldInfo.ValueType == typeof(long))
-            {
-                return new FieldUserControlLong(fieldInfo);
-            }
-
-            if (fieldInfo.ValueType == typeof(decimal))
-            {
-                return new FieldUserControlDecimal(fieldInfo);
-            }
-
-            if (fieldInfo.ValueType == typeof(string))
-            {
-                return new FieldUserControlText(fieldInfo);
-            }
-            
-            return new FieldUserControlDefault(fieldInfo);
         }
-        private void CancelButton_Click(object sender, System.EventArgs e)
+
+        private void ResizeControls()
+        {
+            _contentControl.Width = Width;
+            _contentControl.Height = Height - 30;
+            _contentControl.Location = new Point(0, 0);
+
+            var row = 0;
+            foreach (var control in _contentControl.Controls)
+            {
+                var c = control as RowFieldsControl;
+                c.Location = new Point(3, (row * c.TotalHeight));
+                c.Width = _contentControl.Width -23;
+                c.Height = c.TotalHeight;
+                row++;
+            }
+        }
+
+        private void CancelButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Close();
@@ -77,9 +61,9 @@ namespace SqlStudio.AutoLayoutForm
 
         private void SaveButton_Click(object sender, System.EventArgs e)
         {
-            foreach (var field in _fieldControls)
+            foreach (RowFieldsControl control in _contentControl.Controls)
             {
-                field.Key.Value = field.Value.Value;
+                control.SetValuesFromControls();
             }
 
             DialogResult = DialogResult.OK;

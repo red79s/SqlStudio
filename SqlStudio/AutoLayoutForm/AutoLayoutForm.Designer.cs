@@ -62,7 +62,7 @@
             Controls.Add(btnSave);
             Controls.Add(btnCancel);
             Name = "AutoLayoutForm";
-            Text = "AutoLayoutForm";
+            Text = "Edit column values";
             ResumeLayout(false);
         }
 

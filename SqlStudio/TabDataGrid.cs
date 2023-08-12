@@ -165,16 +165,28 @@ namespace SqlStudio
         {
             var cells = SelectedCells;
             var fieldCells = new Dictionary<FieldInfo, DataGridViewCell>();
-            var fieldInfos = new List<FieldInfo>();
-            foreach (DataGridViewCell cell in cells )
+            var fieldInfos = new SortedDictionary<int, List<FieldInfo>>();
+            
+            foreach (DataGridViewCell cell in cells)
             {
                 var fieldInfo = new FieldInfo
                 {
+                    ColumnIndex = cell.ColumnIndex,
                     Name = cell.OwningColumn.Name,
                     Value = cell.Value,
                     ValueType = cell.ValueType
                 };
-                fieldInfos.Add(fieldInfo);
+
+                if (fieldInfos.ContainsKey(cell.RowIndex))
+                {
+                    var rowColumns = fieldInfos[cell.RowIndex];
+                    rowColumns.Add(fieldInfo);
+                    fieldInfos[cell.RowIndex] = rowColumns.OrderBy(x => x.ColumnIndex).ToList();
+                }
+                else
+                {
+                    fieldInfos.Add(cell.RowIndex, new List<FieldInfo> { fieldInfo });
+                }
                 fieldCells.Add(fieldInfo, cell);
             }
 

@@ -1,16 +1,21 @@
-﻿using System;
+﻿using Google.Protobuf.WellKnownTypes;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SqlStudio.AutoLayoutForm
 {
-    public class FieldUserControlDecimal : FieldUserControlBase
-    {
-        private TextBox _valueControl;
+    internal class FieldUserControlBool : FieldUserControlBase
+    { 
+        private CheckBox _valueControl;
         private ErrorProvider _errorProvider;
 
-        public FieldUserControlDecimal(FieldInfo fieldInfo)
+        public FieldUserControlBool(FieldInfo fieldInfo)
             : base(fieldInfo)
         {
             Value = fieldInfo.Value;
@@ -20,7 +25,7 @@ namespace SqlStudio.AutoLayoutForm
         {
             base.CreateControls();
 
-            _valueControl = new TextBox { TextAlign = HorizontalAlignment.Right };
+            _valueControl = new CheckBox { Appearance = Appearance.Button };
             _groupBox.Controls.Add(_valueControl);
 
             _errorProvider = new ErrorProvider();
@@ -35,15 +40,7 @@ namespace SqlStudio.AutoLayoutForm
         private Regex _validateRegex = new Regex("[0-9. ]+");
         private void _valueControl_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!_validateRegex.IsMatch(_valueControl.Text))
-            {
-                e.Cancel = true;
-                _errorProvider.SetError(_valueControl, "Not a valid int");
-            }
-            else
-            {
-                _errorProvider.SetError(_valueControl, "");
-            }
+
         }
 
         protected override void ResizeControls()
@@ -59,25 +56,19 @@ namespace SqlStudio.AutoLayoutForm
         {
             if (!_dbNullcheckBox.Checked)
             {
-                _valueControl.Text = "0";
+                _valueControl.Checked = false;
                 _valueControl.Enabled = true;
             }
             else
             {
-                _valueControl.Text = "";
+                _valueControl.Checked = false;
                 _valueControl.Enabled = false;
             }
         }
 
-        private decimal GetValue(string text)
+        private bool GetValue(bool value)
         {
-            if (text == null)
-                return 0;
-
-            if (decimal.TryParse(text, out var value))
-                return value;
-
-            return 0;
+            return value;
         }
 
         public override object Value
@@ -88,7 +79,7 @@ namespace SqlStudio.AutoLayoutForm
                 {
                     return DBNull.Value;
                 }
-                return GetValue(_valueControl.Text);
+                return GetValue(_valueControl.Checked);
             }
             set
             {
@@ -99,7 +90,7 @@ namespace SqlStudio.AutoLayoutForm
                 }
                 else
                 {
-                    _valueControl.Text = value.ToString();
+                    _valueControl.Checked = (bool)value;
                     _dbNullcheckBox.Checked = false;
                 }
             }

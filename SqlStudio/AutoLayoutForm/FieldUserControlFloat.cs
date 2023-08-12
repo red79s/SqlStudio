@@ -5,12 +5,12 @@ using System.Windows.Forms;
 
 namespace SqlStudio.AutoLayoutForm
 {
-    public class FieldUserControlDecimal : FieldUserControlBase
+    public class FieldUserControlFloat : FieldUserControlBase
     {
         private TextBox _valueControl;
         private ErrorProvider _errorProvider;
 
-        public FieldUserControlDecimal(FieldInfo fieldInfo)
+        public FieldUserControlFloat(FieldInfo fieldInfo)
             : base(fieldInfo)
         {
             Value = fieldInfo.Value;
@@ -69,12 +69,12 @@ namespace SqlStudio.AutoLayoutForm
             }
         }
 
-        private decimal GetValue(string text)
+        private float GetValue(string text)
         {
             if (text == null)
                 return 0;
 
-            if (decimal.TryParse(text, out var value))
+            if (float.TryParse(text, out var value))
                 return value;
 
             return 0;
