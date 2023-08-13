@@ -25,31 +25,17 @@ namespace SqlStudio.AutoLayoutForm
         {
             base.CreateControls();
 
-            _valueControl = new CheckBox { Appearance = Appearance.Button };
+            _valueControl = new CheckBox();// { Appearance = Appearance.Button };
             _groupBox.Controls.Add(_valueControl);
-
-            _errorProvider = new ErrorProvider();
-            _errorProvider.SetIconAlignment(_valueControl, ErrorIconAlignment.MiddleRight);
-            _errorProvider.SetIconPadding(_valueControl, 2);
-            _errorProvider.BlinkRate = 1000;
-            _errorProvider.BlinkStyle = ErrorBlinkStyle.AlwaysBlink;
-
-            _valueControl.Validating += _valueControl_Validating;
-        }
-
-        private Regex _validateRegex = new Regex("[0-9. ]+");
-        private void _valueControl_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
         }
 
         protected override void ResizeControls()
         {
             base.ResizeControls();
 
-            _valueControl.Height = Height - 11;
+            _valueControl.Height = Height - 15;
             _valueControl.Width = Width - 75;
-            _valueControl.Location = new Point(10, 14);
+            _valueControl.Location = new Point(10, 13);
         }
 
         protected override void DbNull_CheckedChanged(object sender, EventArgs e)

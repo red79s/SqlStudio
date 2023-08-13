@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -36,7 +37,7 @@ namespace SqlStudio.AutoLayoutForm
             _valueControl.Validating += _valueControl_Validating;
         }
 
-        private Regex _validateRegex = new Regex("[0-9. ]+");
+        private Regex _validateRegex = new Regex("^[0-9.,]+$");
         private void _valueControl_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!_validateRegex.IsMatch(_valueControl.Text))
@@ -77,8 +78,8 @@ namespace SqlStudio.AutoLayoutForm
         {
             if (text == null)
                 return 0;
-
-            if (double.TryParse(text, out var value))
+            text = text.Replace(",", ".");
+            if (double.TryParse(text, CultureInfo.InvariantCulture, out var value))
                 return value;
 
             return 0;
