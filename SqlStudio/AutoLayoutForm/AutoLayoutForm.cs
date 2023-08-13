@@ -46,8 +46,8 @@ namespace SqlStudio.AutoLayoutForm
             foreach (var control in _contentControl.Controls)
             {
                 var c = control as RowFieldsControl;
+                c.Width = _contentControl.Width - 23;
                 c.Location = new Point(3, (row * c.TotalHeight));
-                c.Width = _contentControl.Width -23;
                 c.Height = c.TotalHeight;
                 row++;
             }
