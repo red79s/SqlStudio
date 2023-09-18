@@ -32,6 +32,11 @@ namespace SqlStudio
         private BuiltInCommands _builtIn = null;
         private List<string> _cmdBuffer = null;
         private Timer _executeTimer = new Timer();
+        private bool _bulkExecute = false;
+        private Stopwatch _bulkTimer = new Stopwatch();
+        private int _bulkErrors = 0;
+        private int _bulkOk = 0;
+        private DateTime _excutionStarted;
         private string _userConfigDbFile;
         private ISqlCompleter _sqlCompleter = null;
         private IDatabaseKeywordEscape _databaseKeywordEscape = null;
@@ -536,12 +541,6 @@ namespace SqlStudio
 
             cmdLineControl_CommandReady(this, query);
         }
-
-        private bool _bulkExecute = false;
-        private Stopwatch _bulkTimer = new Stopwatch();
-        private int _bulkErrors = 0;
-        private int _bulkOk = 0;
-        private DateTime _excutionStarted;
 
         void cmdLineControl_CommandReady(object sender, string cmd)
         {
@@ -1069,10 +1068,10 @@ namespace SqlStudio
             var ofd = new OpenFileDialog();
             if (ofd.ShowDialog() != DialogResult.OK)
                 return;
-            
+
             var importer = new EfEnumImporter();
             var colDesc = importer.Import(ofd.FileName);
-            
+
             if (colDesc != null && colDesc.Count > 0)
             {
                 var source = colDesc[0].AssemblyName;
@@ -1082,13 +1081,13 @@ namespace SqlStudio
                     foreach (var enumVal in cd.EnumValues)
                     {
                         cvd.Add(
-                            new ColumnValueDescription 
-                            { 
-                                Source = source, 
-                                TableName = cd.TableName, 
-                                ColumnName = cd.ColumnName, 
-                                Value = enumVal.Value.ToString(), 
-                                Description = enumVal.Name 
+                            new ColumnValueDescription
+                            {
+                                Source = source,
+                                TableName = cd.TableName,
+                                ColumnName = cd.ColumnName,
+                                Value = enumVal.Value.ToString(),
+                                Description = enumVal.Name
                             });
                     }
                 }

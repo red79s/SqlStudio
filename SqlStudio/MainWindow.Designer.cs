@@ -80,6 +80,7 @@ namespace SqlStudio
             logImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             generatePasswordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             generateDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            importEnumValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             windowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             dataTabsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,7 +100,6 @@ namespace SqlStudio
             saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            importEnumValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -130,7 +130,7 @@ namespace SqlStudio
             // 
             splitContainer1.Panel2.Controls.Add(sqlOutput);
             splitContainer1.Size = new System.Drawing.Size(946, 724);
-            splitContainer1.SplitterDistance = 482;
+            splitContainer1.SplitterDistance = 481;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
             // 
@@ -142,7 +142,7 @@ namespace SqlStudio
             tabControlMainDocs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabControlMainDocs.Name = "tabControlMainDocs";
             tabControlMainDocs.SelectedIndex = 0;
-            tabControlMainDocs.Size = new System.Drawing.Size(946, 431);
+            tabControlMainDocs.Size = new System.Drawing.Size(946, 430);
             tabControlMainDocs.TabIndex = 4;
             // 
             // tpMainInput
@@ -152,7 +152,7 @@ namespace SqlStudio
             tpMainInput.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tpMainInput.Name = "tpMainInput";
             tpMainInput.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tpMainInput.Size = new System.Drawing.Size(938, 403);
+            tpMainInput.Size = new System.Drawing.Size(938, 402);
             tpMainInput.TabIndex = 0;
             tpMainInput.Text = "Input";
             tpMainInput.UseVisualStyleBackColor = true;
@@ -176,7 +176,7 @@ namespace SqlStudio
             cmdLineControl.Name = "cmdLineControl";
             cmdLineControl.ShowIconPane = false;
             cmdLineControl.ShowLineNumbers = true;
-            cmdLineControl.Size = new System.Drawing.Size(930, 397);
+            cmdLineControl.Size = new System.Drawing.Size(930, 396);
             cmdLineControl.TabIndex = 3;
             // 
             // toolStripMainWindow
@@ -512,6 +512,13 @@ namespace SqlStudio
             generateDataToolStripMenuItem.Text = "Generate data";
             generateDataToolStripMenuItem.Click += generateDataToolStripMenuItem_Click;
             // 
+            // importEnumValuesToolStripMenuItem
+            // 
+            importEnumValuesToolStripMenuItem.Name = "importEnumValuesToolStripMenuItem";
+            importEnumValuesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            importEnumValuesToolStripMenuItem.Text = "Import enum values...";
+            importEnumValuesToolStripMenuItem.Click += importEnumValuesToolStripMenuItem_Click;
+            // 
             // windowsToolStripMenuItem
             // 
             windowsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { dataTabsToolStripMenuItem });
@@ -564,7 +571,7 @@ namespace SqlStudio
             sqlOutput.Name = "sqlOutput";
             sqlOutput.SelectedIndex = 0;
             sqlOutput.ShowToolTips = true;
-            sqlOutput.Size = new System.Drawing.Size(946, 237);
+            sqlOutput.Size = new System.Drawing.Size(946, 238);
             sqlOutput.TabIndex = 0;
             // 
             // statusStrip1
@@ -581,7 +588,7 @@ namespace SqlStudio
             // toolStripMessageLabel
             // 
             toolStripMessageLabel.Name = "toolStripMessageLabel";
-            toolStripMessageLabel.Size = new System.Drawing.Size(738, 19);
+            toolStripMessageLabel.Size = new System.Drawing.Size(707, 19);
             toolStripMessageLabel.Spring = true;
             toolStripMessageLabel.Text = "Disconnected";
             toolStripMessageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -651,13 +658,6 @@ namespace SqlStudio
             runToolStripMenuItem.Size = new System.Drawing.Size(127, 26);
             runToolStripMenuItem.Text = "Run";
             runToolStripMenuItem.Click += toolStripButtonRunScript_Click;
-            // 
-            // importEnumValuesToolStripMenuItem
-            // 
-            importEnumValuesToolStripMenuItem.Name = "importEnumValuesToolStripMenuItem";
-            importEnumValuesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            importEnumValuesToolStripMenuItem.Text = "Import enum values...";
-            importEnumValuesToolStripMenuItem.Click += importEnumValuesToolStripMenuItem_Click;
             // 
             // MainWindow
             // 
