@@ -1056,8 +1056,11 @@ namespace SqlStudio
             if (SelectedCells == null || SelectedCells.Count == 0)
                 return;
 
-            var description = _columnMetadataInfo.GetDescriptionForColumn(_sqlResult.TableName, SelectedCells[0].OwningColumn.Name);
-            MessageBox.Show(string.Join(Environment.NewLine, description));
+            var descriptions = _columnMetadataInfo.GetDescriptionForColumn(_sqlResult.TableName, SelectedCells[0].OwningColumn.Name);
+            if (descriptions.Count == 0) 
+                return;
+
+            MessageBox.Show(string.Join(Environment.NewLine, descriptions));
             //foreach (DataGridViewCell cell in SelectedCells)
             //{
             //    if (cell.Value == null)
