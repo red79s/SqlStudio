@@ -46,6 +46,11 @@
     <Compile Update="ImgControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Update="SearchControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -135,5 +140,11 @@
     <Compile Remove="Symbol.cs" />
     <Compile Remove="Token.cs" />
     <Compile Remove="TokenStack.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 </Project>

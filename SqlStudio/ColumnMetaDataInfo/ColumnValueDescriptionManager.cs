@@ -2,6 +2,7 @@
 using Common.Model;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace SqlStudio.ColumnMetaDataInfo
@@ -31,6 +32,17 @@ namespace SqlStudio.ColumnMetaDataInfo
             }
 
             return value;
+        }
+
+        public List<string> GetDescriptionForColumn(string tableName, string columnName)
+        {
+            var descriptions = new List<string>();
+            var posibleValues = _columnValueDescriptions.Where(x => x.TableName == tableName && x.ColumnName == columnName).OrderBy(x => x.Value).ToList();
+            foreach (var val in posibleValues)
+            {
+                descriptions.Add($"{val.Value} - {val.Description}");
+            }
+            return descriptions;
         }
 
         public void Load()

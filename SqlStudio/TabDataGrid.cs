@@ -1056,13 +1056,15 @@ namespace SqlStudio
             if (SelectedCells == null || SelectedCells.Count == 0)
                 return;
 
-            foreach (DataGridViewCell cell in SelectedCells)
-            {
-                if (cell.Value == null)
-                    continue;
+            var description = _columnMetadataInfo.GetDescriptionForColumn(_sqlResult.TableName, SelectedCells[0].OwningColumn.Name);
+            MessageBox.Show(string.Join(Environment.NewLine, description));
+            //foreach (DataGridViewCell cell in SelectedCells)
+            //{
+            //    if (cell.Value == null)
+            //        continue;
 
-                cell.ToolTipText = _columnMetadataInfo.GetDescriptionForValue(_sqlResult.TableName, cell.OwningColumn.Name, cell.Value.ToString());
-            }
+            //    cell.ToolTipText = _columnMetadataInfo.GetDescriptionForValue(_sqlResult.TableName, cell.OwningColumn.Name, cell.Value.ToString());
+            //}
         }
 
         private byte[] GetBlobFromCell(DataGridViewCell cell)
@@ -1414,14 +1416,14 @@ namespace SqlStudio
             }
 
             _generatedDataMenuItem.DropDownItems.Clear();
-            var generatedAutoQueries = GetGeneratedTableAutoQueries();
-            foreach (var query in generatedAutoQueries)
-            {
-                var menuItem = new ToolStripMenuItem(query.Description);
-                menuItem.Click += GeneratedQueryMenuItem_Click;
-                menuItem.Tag = query;
-                _generatedDataMenuItem.DropDownItems.Add(menuItem);
-            }
+            //var generatedAutoQueries = GetGeneratedTableAutoQueries();
+            //foreach (var query in generatedAutoQueries)
+            //{
+            //    var menuItem = new ToolStripMenuItem(query.Description);
+            //    menuItem.Click += GeneratedQueryMenuItem_Click;
+            //    menuItem.Tag = query;
+            //    _generatedDataMenuItem.DropDownItems.Add(menuItem);
+            //}
         }
 
         private const int MaxRowsDetailedColumnWidthCalculationTreshold = 1000;
