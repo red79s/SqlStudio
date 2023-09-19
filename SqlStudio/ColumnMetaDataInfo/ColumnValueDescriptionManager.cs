@@ -37,7 +37,7 @@ namespace SqlStudio.ColumnMetaDataInfo
         public List<string> GetDescriptionForColumn(string tableName, string columnName)
         {
             var descriptions = new List<string>();
-            var posibleValues = _columnValueDescriptions.Where(x => x.TableName == tableName && x.ColumnName == columnName).OrderBy(x => x.Value).ToList();
+            var posibleValues = _columnValueDescriptions.Where(x => x.TableName == tableName && x.ColumnName == columnName).OrderBy(x => long.Parse(x.Value)).ToList();
             foreach (var val in posibleValues)
             {
                 descriptions.Add($"{val.Value} - {val.Description}");

@@ -154,6 +154,10 @@ namespace SqlStudio
             miFindText.Click += MiFindTextOnClick;
             ContextMenuStrip.Items.Add(miFindText);
 
+            var miFindColumn = new ToolStripMenuItem("Find Column...");
+            miFindColumn.Click += MiFindColumnOnClick;
+            ContextMenuStrip.Items.Add(miFindColumn);
+
             var miFindTimeDiff = new ToolStripMenuItem("Get Time diffs");
             miFindTimeDiff.Click += MiFindTimeDiffOnClick;
             ContextMenuStrip.Items.Add(miFindTimeDiff);
@@ -477,14 +481,33 @@ namespace SqlStudio
         private void MiFindTextOnClick(object sender, EventArgs eventArgs)
         {
             FindDialog fd = new FindDialog();
-            if (fd.ShowDialog() == DialogResult.OK)
+            fd.StartPosition = FormStartPosition.CenterParent;
+			if (fd.ShowDialog() == DialogResult.OK)
             {
                 SearchText = fd.SearchText;
                 FindNext(true);
             }
         }
 
-        private string SearchText { get; set; }
+		private void MiFindColumnOnClick(object sender, EventArgs eventArgs)
+        {
+			FindDialog fd = new FindDialog();
+            fd.StartPosition = FormStartPosition.CenterParent;
+			if (fd.ShowDialog() == DialogResult.OK)
+			{
+                foreach (DataGridViewColumn col in Columns)
+                {
+                    if (col.HeaderText.Contains(fd.SearchText, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        FirstDisplayedScrollingColumnIndex = col.Index;
+                        return;
+                    }
+                }
+				MessageBox.Show($"No column name containing: {fd.SearchText} is found", "Not found", MessageBoxButtons.OK);
+			}
+		}
+
+		private string SearchText { get; set; }
 
         private void FindNext(bool directionDown)
         {
@@ -1060,7 +1083,7 @@ namespace SqlStudio
             if (descriptions.Count == 0) 
                 return;
 
-            MessageBox.Show(string.Join(Environment.NewLine, descriptions));
+            MessageBox.Show(string.Join(Environment.NewLine, descriptions), "Value - Description");
             //foreach (DataGridViewCell cell in SelectedCells)
             //{
             //    if (cell.Value == null)
