@@ -5,14 +5,9 @@ using SqlExecute;
 using SqlStudio.ColumnMetaDataInfo;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SqlStudio
@@ -103,6 +98,36 @@ namespace SqlStudio
             cmdLineControl.InsertCommandOutput(query);
 
             cmdLineControl_CommandReady(this, query);
+        }
+
+        private void SetDatabasesOnToolsMenu(List<string> databases)
+        {
+            toolStripDatabaseConnectionsDropDownButton.DropDownItems.Clear();
+            foreach (string database in databases)
+            {
+                var button = new ToolStripButton(database);
+                button.Tag = database;
+                button.Margin = new Padding(4, 1, 0, 2);
+                button.Click += (sender, args) => ConnectToDatabaseOnSameServer(database);
+                toolStripDatabaseConnectionsDropDownButton.DropDownItems.Add(button);
+            }
+        }
+
+        private void ConnectToDatabaseOnSameServer(string databaseName)
+        {
+            if (_executer.CurrentConnection == null)
+            {
+                MessageBox.Show("Not connected to server", "Error");
+                return;
+            }
+
+            var connectionCommand = _cfgDataStore.GetConnectCommand(_executer.CurrentConnection.ProviderName,
+                _executer.CurrentConnection.Server,
+                databaseName,
+                _executer.CurrentConnection.User,
+                _executer.CurrentConnection.Password);
+            cmdLineControl.ExecuteCommand(connectionCommand);
+
         }
 
         private void CmdLineControl_InsertSnipit(object sender, CommandPrompt.InsertSnipitEventArgs e)
@@ -263,6 +288,7 @@ namespace SqlStudio
                         }
 
                         var databases = _executer.GetDatabases();
+                        SetDatabasesOnToolsMenu(databases);
                     }
                     else if (res.ResType == SqlResult.ResultType.DISCONNECT)
                     {
@@ -270,6 +296,7 @@ namespace SqlStudio
                         cmdLineControl.InsertCommandOutput("\n" + msg);
                         toolStripMessageLabel.Text = msg;
                         Text = "SqlStudio";
+                        SetDatabasesOnToolsMenu(new List<string>());
                     }
                     else if (res.ResType == SqlResult.ResultType.INFO)
                     {

@@ -51,6 +51,9 @@ namespace SqlStudio
             toolStripButtonOpenScript = new System.Windows.Forms.ToolStripButton();
             toolStripButtoSaveScript = new System.Windows.Forms.ToolStripButton();
             toolStripButtonRunScript = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            toolStripDatabaseConnectionsDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)MainViewSplitContainer).BeginInit();
             MainViewSplitContainer.Panel1.SuspendLayout();
             MainViewSplitContainer.Panel2.SuspendLayout();
@@ -233,11 +236,29 @@ namespace SqlStudio
             tabPage5.Text = "   +";
             tabPage5.Visible = false;
             // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+            // 
+            // toolStripDatabaseConnectionsDropDownButton
+            // 
+            toolStripDatabaseConnectionsDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripDatabaseConnectionsDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDatabaseConnectionsDropDownButton.Name = "toolStripDatabaseConnectionsDropDownButton";
+            toolStripDatabaseConnectionsDropDownButton.Size = new System.Drawing.Size(73, 24);
+            toolStripDatabaseConnectionsDropDownButton.Text = "Databases";
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
+            // 
             // toolStripScripts
             // 
             toolStripScripts.Location = new System.Drawing.Point(0, 0);
             toolStripScripts.Name = "toolStripScripts";
-            toolStripScripts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButtonNewScript, toolStripButtonOpenScript, toolStripButtoSaveScript, toolStripButtonRunScript });
+            toolStripScripts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButtonNewScript, toolStripButtonOpenScript, toolStripButtoSaveScript, toolStripButtonRunScript, toolStripSeparator1, toolStripDatabaseConnectionsDropDownButton, toolStripSeparator2 });
             toolStripScripts.Size = new System.Drawing.Size(954, 25);
             toolStripScripts.TabIndex = 1;
             toolStripScripts.Text = "toolStrip1";
@@ -334,5 +355,8 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripButton toolStripButtonOpenScript;
         private System.Windows.Forms.ToolStripButton toolStripButtonRunScript;
         private System.Windows.Forms.ToolStripButton toolStripButtonNewScript;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDatabaseConnectionsDropDownButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     }
 }
