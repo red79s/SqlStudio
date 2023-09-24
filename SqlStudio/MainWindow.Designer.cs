@@ -30,19 +30,8 @@ namespace SqlStudio
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            splitContainer1 = new System.Windows.Forms.SplitContainer();
-            tabControlMainDocs = new System.Windows.Forms.TabControl();
-            tpMainInput = new System.Windows.Forms.TabPage();
-            cmdLineControl = new CommandPrompt.CmdLineControl();
             toolStripMainWindow = new System.Windows.Forms.ToolStrip();
-            toolStripButtonNewScript = new System.Windows.Forms.ToolStripButton();
-            toolStripButtonOpenScript = new System.Windows.Forms.ToolStripButton();
-            toolStripButtoSaveScript = new System.Windows.Forms.ToolStripButton();
-            toolStripButtonRunScript = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            toolStripDatabaseConnectionsDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
-            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            menuStrip1 = new System.Windows.Forms.MenuStrip();
+            menuStripTop = new System.Windows.Forms.MenuStrip();
             fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             openSQLiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,12 +76,6 @@ namespace SqlStudio
             helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            sqlOutput = new SqlOutputTabContainer();
-            statusStrip1 = new System.Windows.Forms.StatusStrip();
-            toolStripMessageLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            visibleRowsToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
-            toolStripStatusLabelMetaData = new System.Windows.Forms.ToolStripStatusLabel();
             cmScriptTabs = new System.Windows.Forms.ContextMenuStrip(components);
             closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
@@ -100,167 +83,30 @@ namespace SqlStudio
             saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
-            splitContainer1.Panel1.SuspendLayout();
-            splitContainer1.Panel2.SuspendLayout();
-            splitContainer1.SuspendLayout();
-            tabControlMainDocs.SuspendLayout();
-            tpMainInput.SuspendLayout();
-            toolStripMainWindow.SuspendLayout();
-            menuStrip1.SuspendLayout();
-            statusStrip1.SuspendLayout();
+            tabControlDatabaseConnections = new System.Windows.Forms.TabControl();
+            menuStripTop.SuspendLayout();
             cmScriptTabs.SuspendLayout();
             SuspendLayout();
-            // 
-            // splitContainer1
-            // 
-            splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            splitContainer1.Location = new System.Drawing.Point(0, 0);
-            splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            splitContainer1.Name = "splitContainer1";
-            splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            splitContainer1.Panel1.Controls.Add(tabControlMainDocs);
-            splitContainer1.Panel1.Controls.Add(toolStripMainWindow);
-            splitContainer1.Panel1.Controls.Add(menuStrip1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            splitContainer1.Panel2.Controls.Add(sqlOutput);
-            splitContainer1.Size = new System.Drawing.Size(946, 724);
-            splitContainer1.SplitterDistance = 481;
-            splitContainer1.SplitterWidth = 5;
-            splitContainer1.TabIndex = 0;
-            // 
-            // tabControlMainDocs
-            // 
-            tabControlMainDocs.Controls.Add(tpMainInput);
-            tabControlMainDocs.Dock = System.Windows.Forms.DockStyle.Fill;
-            tabControlMainDocs.Location = new System.Drawing.Point(0, 51);
-            tabControlMainDocs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabControlMainDocs.Name = "tabControlMainDocs";
-            tabControlMainDocs.SelectedIndex = 0;
-            tabControlMainDocs.Size = new System.Drawing.Size(946, 430);
-            tabControlMainDocs.TabIndex = 4;
-            // 
-            // tpMainInput
-            // 
-            tpMainInput.Controls.Add(cmdLineControl);
-            tpMainInput.Location = new System.Drawing.Point(4, 24);
-            tpMainInput.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tpMainInput.Name = "tpMainInput";
-            tpMainInput.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tpMainInput.Size = new System.Drawing.Size(938, 402);
-            tpMainInput.TabIndex = 0;
-            tpMainInput.Text = "Input";
-            tpMainInput.UseVisualStyleBackColor = true;
-            // 
-            // cmdLineControl
-            // 
-            cmdLineControl.AcceptsKeyInput = false;
-            cmdLineControl.AutoScroll = true;
-            cmdLineControl.AutoScrollMinSize = new System.Drawing.Size(38, 29);
-            cmdLineControl.BackColor = System.Drawing.Color.White;
-            cmdLineControl.BackColorIconPane = System.Drawing.Color.Yellow;
-            cmdLineControl.BackColorLineNum = System.Drawing.Color.FromArgb(224, 224, 224);
-            cmdLineControl.BackColorSelection = System.Drawing.Color.FromArgb(122, 150, 223);
-            cmdLineControl.Cursor = System.Windows.Forms.Cursors.IBeam;
-            cmdLineControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            cmdLineControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            cmdLineControl.ForeColor = System.Drawing.Color.Black;
-            cmdLineControl.ForeColorLineNum = System.Drawing.Color.FromArgb(64, 64, 64);
-            cmdLineControl.Location = new System.Drawing.Point(4, 3);
-            cmdLineControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            cmdLineControl.Name = "cmdLineControl";
-            cmdLineControl.ShowIconPane = false;
-            cmdLineControl.ShowLineNumbers = true;
-            cmdLineControl.Size = new System.Drawing.Size(930, 396);
-            cmdLineControl.TabIndex = 3;
             // 
             // toolStripMainWindow
             // 
             toolStripMainWindow.ImageScalingSize = new System.Drawing.Size(20, 20);
-            toolStripMainWindow.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButtonNewScript, toolStripButtonOpenScript, toolStripButtoSaveScript, toolStripButtonRunScript, toolStripSeparator1, toolStripDatabaseConnectionsDropDownButton, toolStripSeparator2 });
             toolStripMainWindow.Location = new System.Drawing.Point(0, 24);
             toolStripMainWindow.Name = "toolStripMainWindow";
-            toolStripMainWindow.Size = new System.Drawing.Size(946, 27);
+            toolStripMainWindow.Size = new System.Drawing.Size(946, 25);
             toolStripMainWindow.TabIndex = 2;
             toolStripMainWindow.Text = "toolStrip1";
             // 
-            // toolStripButtonNewScript
+            // menuStripTop
             // 
-            toolStripButtonNewScript.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            toolStripButtonNewScript.Image = (System.Drawing.Image)resources.GetObject("toolStripButtonNewScript.Image");
-            toolStripButtonNewScript.ImageTransparentColor = System.Drawing.Color.Magenta;
-            toolStripButtonNewScript.Name = "toolStripButtonNewScript";
-            toolStripButtonNewScript.Size = new System.Drawing.Size(24, 24);
-            toolStripButtonNewScript.Text = "toolStripButton1";
-            toolStripButtonNewScript.ToolTipText = "New script";
-            toolStripButtonNewScript.Click += toolStripButtonNewScript_Click;
-            // 
-            // toolStripButtonOpenScript
-            // 
-            toolStripButtonOpenScript.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            toolStripButtonOpenScript.Image = (System.Drawing.Image)resources.GetObject("toolStripButtonOpenScript.Image");
-            toolStripButtonOpenScript.ImageTransparentColor = System.Drawing.Color.Magenta;
-            toolStripButtonOpenScript.Name = "toolStripButtonOpenScript";
-            toolStripButtonOpenScript.Size = new System.Drawing.Size(24, 24);
-            toolStripButtonOpenScript.Text = "toolStripButton2";
-            toolStripButtonOpenScript.ToolTipText = "Open";
-            toolStripButtonOpenScript.Click += toolStripButtonOpenScript_Click;
-            // 
-            // toolStripButtoSaveScript
-            // 
-            toolStripButtoSaveScript.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            toolStripButtoSaveScript.Image = (System.Drawing.Image)resources.GetObject("toolStripButtoSaveScript.Image");
-            toolStripButtoSaveScript.ImageTransparentColor = System.Drawing.Color.Magenta;
-            toolStripButtoSaveScript.Name = "toolStripButtoSaveScript";
-            toolStripButtoSaveScript.Size = new System.Drawing.Size(24, 24);
-            toolStripButtoSaveScript.Text = "toolStripButton1";
-            toolStripButtoSaveScript.ToolTipText = "Save";
-            toolStripButtoSaveScript.Click += toolStripButtoSaveScript_Click;
-            // 
-            // toolStripButtonRunScript
-            // 
-            toolStripButtonRunScript.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            toolStripButtonRunScript.Image = (System.Drawing.Image)resources.GetObject("toolStripButtonRunScript.Image");
-            toolStripButtonRunScript.ImageTransparentColor = System.Drawing.Color.Magenta;
-            toolStripButtonRunScript.Name = "toolStripButtonRunScript";
-            toolStripButtonRunScript.Size = new System.Drawing.Size(24, 24);
-            toolStripButtonRunScript.Text = "toolStripButton3";
-            toolStripButtonRunScript.ToolTipText = "Execute";
-            toolStripButtonRunScript.Click += toolStripButtonRunScript_Click;
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
-            // 
-            // toolStripDatabaseConnectionsDropDownButton
-            // 
-            toolStripDatabaseConnectionsDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            toolStripDatabaseConnectionsDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            toolStripDatabaseConnectionsDropDownButton.Name = "toolStripDatabaseConnectionsDropDownButton";
-            toolStripDatabaseConnectionsDropDownButton.Size = new System.Drawing.Size(73, 24);
-            toolStripDatabaseConnectionsDropDownButton.Text = "Databases";
-            // 
-            // toolStripSeparator2
-            // 
-            toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
-            // 
-            // menuStrip1
-            // 
-            menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, viewToolStripMenuItem, toolsToolStripMenuItem, windowsToolStripMenuItem, helpToolStripMenuItem });
-            menuStrip1.Location = new System.Drawing.Point(0, 0);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
-            menuStrip1.Size = new System.Drawing.Size(946, 24);
-            menuStrip1.TabIndex = 1;
-            menuStrip1.Text = "menuStrip1";
+            menuStripTop.ImageScalingSize = new System.Drawing.Size(20, 20);
+            menuStripTop.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, viewToolStripMenuItem, toolsToolStripMenuItem, windowsToolStripMenuItem, helpToolStripMenuItem });
+            menuStripTop.Location = new System.Drawing.Point(0, 0);
+            menuStripTop.Name = "menuStripTop";
+            menuStripTop.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
+            menuStripTop.Size = new System.Drawing.Size(946, 24);
+            menuStripTop.TabIndex = 1;
+            menuStripTop.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
@@ -561,56 +407,6 @@ namespace SqlStudio
             helpToolStripMenuItem1.Text = "Help...";
             helpToolStripMenuItem1.Click += helpToolStripMenuItem1_Click;
             // 
-            // sqlOutput
-            // 
-            sqlOutput.DisplayFilterRow = false;
-            sqlOutput.Dock = System.Windows.Forms.DockStyle.Fill;
-            sqlOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            sqlOutput.Location = new System.Drawing.Point(0, 0);
-            sqlOutput.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            sqlOutput.Name = "sqlOutput";
-            sqlOutput.SelectedIndex = 0;
-            sqlOutput.ShowToolTips = true;
-            sqlOutput.Size = new System.Drawing.Size(946, 238);
-            sqlOutput.TabIndex = 0;
-            // 
-            // statusStrip1
-            // 
-            statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripMessageLabel, visibleRowsToolStripStatusLabel, toolStripProgressBar, toolStripStatusLabelMetaData });
-            statusStrip1.Location = new System.Drawing.Point(0, 724);
-            statusStrip1.Name = "statusStrip1";
-            statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            statusStrip1.Size = new System.Drawing.Size(946, 24);
-            statusStrip1.TabIndex = 1;
-            statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripMessageLabel
-            // 
-            toolStripMessageLabel.Name = "toolStripMessageLabel";
-            toolStripMessageLabel.Size = new System.Drawing.Size(707, 19);
-            toolStripMessageLabel.Spring = true;
-            toolStripMessageLabel.Text = "Disconnected";
-            toolStripMessageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // visibleRowsToolStripStatusLabel
-            // 
-            visibleRowsToolStripStatusLabel.Name = "visibleRowsToolStripStatusLabel";
-            visibleRowsToolStripStatusLabel.Size = new System.Drawing.Size(13, 19);
-            visibleRowsToolStripStatusLabel.Text = "0";
-            visibleRowsToolStripStatusLabel.ToolTipText = "Number of rows displayed";
-            // 
-            // toolStripProgressBar
-            // 
-            toolStripProgressBar.Name = "toolStripProgressBar";
-            toolStripProgressBar.Size = new System.Drawing.Size(117, 18);
-            // 
-            // toolStripStatusLabelMetaData
-            // 
-            toolStripStatusLabelMetaData.Name = "toolStripStatusLabelMetaData";
-            toolStripStatusLabelMetaData.Size = new System.Drawing.Size(59, 19);
-            toolStripStatusLabelMetaData.Text = "No Cache";
-            // 
             // cmScriptTabs
             // 
             cmScriptTabs.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -659,41 +455,38 @@ namespace SqlStudio
             runToolStripMenuItem.Text = "Run";
             runToolStripMenuItem.Click += toolStripButtonRunScript_Click;
             // 
+            // tabControlDatabaseConnections
+            // 
+            tabControlDatabaseConnections.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            tabControlDatabaseConnections.Location = new System.Drawing.Point(0, 52);
+            tabControlDatabaseConnections.Name = "tabControlDatabaseConnections";
+            tabControlDatabaseConnections.SelectedIndex = 0;
+            tabControlDatabaseConnections.Size = new System.Drawing.Size(946, 697);
+            tabControlDatabaseConnections.TabIndex = 3;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(946, 748);
-            Controls.Add(splitContainer1);
-            Controls.Add(statusStrip1);
+            Controls.Add(tabControlDatabaseConnections);
+            Controls.Add(toolStripMainWindow);
+            Controls.Add(menuStripTop);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
-            MainMenuStrip = menuStrip1;
+            MainMenuStrip = menuStripTop;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "MainWindow";
             Text = "Sql Studio";
-            splitContainer1.Panel1.ResumeLayout(false);
-            splitContainer1.Panel1.PerformLayout();
-            splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
-            splitContainer1.ResumeLayout(false);
-            tabControlMainDocs.ResumeLayout(false);
-            tpMainInput.ResumeLayout(false);
-            toolStripMainWindow.ResumeLayout(false);
-            toolStripMainWindow.PerformLayout();
-            menuStrip1.ResumeLayout(false);
-            menuStrip1.PerformLayout();
-            statusStrip1.ResumeLayout(false);
-            statusStrip1.PerformLayout();
+            menuStripTop.ResumeLayout(false);
+            menuStripTop.PerformLayout();
             cmScriptTabs.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ToolStrip toolStripMainWindow;
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menuStripTop;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
@@ -716,18 +509,7 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripMenuItem dataTabsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem1;
-        private SqlOutputTabContainer sqlOutput;
-        private CommandPrompt.CmdLineControl cmdLineControl;
-        private System.Windows.Forms.TabControl tabControlMainDocs;
-        private System.Windows.Forms.TabPage tpMainInput;
         private System.Windows.Forms.ToolStripMenuItem newScriptToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton toolStripButtoSaveScript;
-        private System.Windows.Forms.ToolStripButton toolStripButtonOpenScript;
-        private System.Windows.Forms.ToolStripButton toolStripButtonRunScript;
-        private System.Windows.Forms.ToolStripButton toolStripButtonNewScript;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripMessageLabel;
-        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar;
         private System.Windows.Forms.ToolStripMenuItem saveScriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveScriptAsToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip cmScriptTabs;
@@ -741,7 +523,6 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripMenuItem openSQLiteToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
         private System.Windows.Forms.ToolStripMenuItem displayFilterRowToolStripMenuItem;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelMetaData;
         private System.Windows.Forms.ToolStripMenuItem runScriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem formatQueryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openSqlCEToolStripMenuItem;
@@ -750,17 +531,14 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem7;
         private System.Windows.Forms.ToolStripMenuItem openConfigDbToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem autoQueriesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripStatusLabel visibleRowsToolStripStatusLabel;
         private System.Windows.Forms.ToolStripMenuItem logSearchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openCvsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logImportToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDatabaseConnectionsDropDownButton;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem copyConnectionStringToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generatePasswordToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importEnumValuesToolStripMenuItem;
+        private System.Windows.Forms.TabControl tabControlDatabaseConnections;
     }
 }
 

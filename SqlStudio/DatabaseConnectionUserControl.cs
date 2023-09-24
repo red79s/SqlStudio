@@ -1,18 +1,22 @@
 ﻿using CfgDataStore;
 using Common;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SqlCommandCompleter;
 using SqlExecute;
 using SqlStudio.ColumnMetaDataInfo;
+using SqlStudio.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace SqlStudio
 {
-    public partial class DatabaseConnectionUserControl : UserControl, IExecuteQueryCallback
+    public partial class DatabaseConnectionUserControl : UserControl, IExecuteQueryCallback, IDatabaseConnectionUserControl, ILogger
     {
         private Executer _executer = null;
         private ConfigDataStore _cfgDataStore = null;
@@ -29,11 +33,12 @@ namespace SqlStudio
         private ISqlCompleter _sqlCompleter = null;
         private IDatabaseKeywordEscape _databaseKeywordEscape = null;
         private IColumnValueDescriptionProvider _columnMetadataInfo = null;
-        private readonly ILogger _logger;
 
-        public DatabaseConnectionUserControl(ILogger logger)
+        public DatabaseConnectionUserControl(ConfigDataStore cfgDataStore)
         {
             InitializeComponent();
+
+            _cfgDataStore = cfgDataStore;
 
             _databaseKeywordEscape = new DatabaseKeywordEscapeManager();
             _columnMetadataInfo = new ColumnValueDescriptionManager();
@@ -53,12 +58,11 @@ namespace SqlStudio
                     return;
                 }
             }
-            _cfgDataStore = new ConfigDataStore(_userConfigDbFile);
 
             _executer = new Executer(cmdLineControl, _cfgDataStore);
             _executer.ExecutionFinished += new Executer.ExecutionFinishedDelegate(_executer_ExecutionFinished);
 
-            _sqlCompleter = new SqlCompleter(_logger, _executer.SqlExecuter, _databaseKeywordEscape);
+            _sqlCompleter = new SqlCompleter(this, _executer.SqlExecuter, _databaseKeywordEscape);
 
             _syntaxHighLight = new SyntaxHighlight.SQLSyntaxHighlight();
             _syntaxHighLight.DefaultColor = cmdLineControl.ForeColor;
@@ -85,7 +89,6 @@ namespace SqlStudio
             _executeTimer.Tick += ExecuteTimerOnTick;
 
             cmdLineControl.GetCommand();
-            _logger = logger;
         }
 
         public void ExecuteQuery(string query, bool inNewTab, string datatabLabel)
@@ -128,6 +131,15 @@ namespace SqlStudio
                 _executer.CurrentConnection.Password);
             cmdLineControl.ExecuteCommand(connectionCommand);
 
+            UpdateTabText($"{_executer.CurrentConnection.Server} - {databaseName}");
+        }
+
+        private void UpdateTabText(string text)
+        {
+            if (Parent != null && Parent is TabPage)
+            {
+                ((TabPage)Parent).Text = text;
+            }
         }
 
         private void CmdLineControl_InsertSnipit(object sender, CommandPrompt.InsertSnipitEventArgs e)
@@ -491,6 +503,123 @@ namespace SqlStudio
 
             return string.Format("{0}ms",
                                     t.Milliseconds);
+        }
+
+        public void Log(LogLevel logLevel, string message)
+        {
+            toolStripMessageLabel.Text = $"{logLevel}: {message}";
+        }
+
+        public void Log(LogLevel logLevel, string message, Exception ex)
+        {
+            toolStripMessageLabel.Text = $"{logLevel}: {message}, {ex.Message}";
+        }
+
+        public void Connect(Connection connection)
+        {
+            if (_executer.IsBussy)
+            {
+                MessageBox.Show("Executer is bussy");
+                return;
+            }
+            cmdLineControl.ExecuteCommand(
+                _cfgDataStore.GetConnectCommand(
+                    connection.provider, 
+                    connection.server, 
+                    connection.db, 
+                    connection.user, 
+                    connection.password));
+
+            UpdateTabText($"{connection.server} - {connection.db}");
+        }
+
+        public void SetDislayFilterRow(bool showFilterRow)
+        {
+            sqlOutput.DisplayFilterRow = showFilterRow;
+        }
+
+        public void CreateNewScriptTab()
+        {
+            toolStripButtonNewScript_Click(this, null);
+        }
+
+        public void CloseScriptTab()
+        {
+            object obj = tabControlMainDocs.SelectedTab.Controls[0];
+            if (obj is CommandPrompt.SQLScript)
+            {
+                tabControlMainDocs.TabPages.Remove(tabControlMainDocs.SelectedTab);
+            }
+        }
+
+        public void OpenScriptFile()
+        {
+            toolStripButtonOpenScript_Click(this, null);
+        }
+
+        public void SaveScript()
+        {
+            toolStripButtoSaveScript_Click(this, null);
+        }
+
+        public void SaveScriptAs()
+        {
+            var sfd = new SaveFileDialog();
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                object obj = tabControlMainDocs.SelectedTab.Controls[0];
+                if (obj is CommandPrompt.SQLScript)
+                {
+                    ((CommandPrompt.SQLScript)obj).Save(sfd.FileName);
+                }
+            }
+        }
+
+        public void RunScript()
+        {
+            toolStripButtonRunScript_Click(this, null);
+        }
+
+        public void Cut()
+        {
+            cmdLineControl.Cut();
+        }
+
+        public void Copy()
+        {
+            cmdLineControl.Copy();
+        }
+
+        public void Paste()
+        {
+            cmdLineControl.Paste();
+        }
+
+        public void OpenSqlite()
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.CheckFileExists = false;
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                cmdLineControl.ExecuteCommand(_cfgDataStore.GetConnectCommand("SQLite", null, ofd.FileName, null, null));
+                UpdateTabText($"{ofd.FileName}");
+            }
+        }
+
+        public void OpenSqlCet()
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                cmdLineControl.ExecuteCommand(_cfgDataStore.GetConnectCommand(SqlExecuter.GetProviderName(SqlExecuter.DatabaseProvider.SQLSERVERCE), null, ofd.FileName, null, null));
+                UpdateTabText($"{ofd.FileName}");
+            }
+        }
+
+        public void OpenConfigDb()
+        {
+            cmdLineControl.ExecuteCommand(_cfgDataStore.GetConnectCommand("SQLite", null, _userConfigDbFile, null, null));
+            UpdateTabText($"{_userConfigDbFile}");
         }
     }
 }
