@@ -4,6 +4,7 @@ using System.Windows.Forms;
 
 namespace SqlStudio.AutoLayoutForm
 {
+#pragma warning disable CA1416
     public class FieldUserControlBase : UserControl, IFieldUserControl
     {
         protected readonly FieldInfo _fieldInfo;

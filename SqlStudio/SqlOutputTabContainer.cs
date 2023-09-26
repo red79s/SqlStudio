@@ -7,6 +7,8 @@ using SqlExecute;
 using CfgDataStore;
 using Common;
 
+#pragma warning disable CA1416
+
 namespace SqlStudio
 {
     public class SqlOutputTabContainer : TabControl

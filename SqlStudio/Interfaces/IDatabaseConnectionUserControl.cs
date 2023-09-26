@@ -6,7 +6,11 @@ namespace SqlStudio.Interfaces
     public interface IDatabaseConnectionUserControl
     {
         void Connect(Connection connectionInfo);
+        void CloseConnection();
+        void CancelExecution();
+        void ExecuteQuery(string query, bool inNewTab, string datatabLabel);
         void SetDislayFilterRow(bool showFilterRow);
+        void InsertNewDataTab();
         void CreateNewScriptTab();
         void CloseScriptTab();
         void OpenScriptFile();
@@ -19,5 +23,8 @@ namespace SqlStudio.Interfaces
         void OpenSqlite();
         void OpenSqlCet();
         void OpenConfigDb();
+        void OpenCvsFile();
+        void CopyConnectionStringToClipboard();
+        void OpenGenerateDataTool();
     }
 }

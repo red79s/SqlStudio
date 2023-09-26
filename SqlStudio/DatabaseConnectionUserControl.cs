@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SqlCommandCompleter;
 using SqlExecute;
 using SqlStudio.ColumnMetaDataInfo;
+using SqlStudio.CvsImport;
 using SqlStudio.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -620,5 +621,46 @@ namespace SqlStudio
 			cmdLineControl.ExecuteCommand(_cfgDataStore.GetConnectCommand("SQLite", null, _userConfigDbFile, null, null));
 			UpdateTabText($"{_userConfigDbFile}");
 		}
-	}
+
+        public void CloseConnection()
+        {
+            _executer.Execute(new string[] { "disconnect" });
+        }
+
+        public void CancelExecution()
+        {
+            _executer?.Cancel();
+        }
+
+        public void OpenCvsFile()
+        {
+            var ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                var result = CsvImporter.ImportFromFile(ofd.FileName);
+                _executer_ExecutionFinished(this, new List<SqlResult> { result });
+            }
+        }
+
+        public void CopyConnectionStringToClipboard()
+        {
+			if (_executer?.SqlExecuter?.ConnectionString == null)
+			{
+				MessageBox.Show("Not able to get connection string", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+			Clipboard.SetText(_executer.SqlExecuter.ConnectionString);
+		}
+
+        public void OpenGenerateDataTool()
+        {
+			var gdf = new GenerateDataForm(_executer.SqlExecuter);
+			gdf.ShowDialog();
+		}
+
+        public void InsertNewDataTab()
+        {
+			sqlOutput.CreateNewDataTab(null);
+        }
+    }
 }

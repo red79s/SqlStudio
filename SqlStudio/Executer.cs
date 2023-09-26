@@ -117,20 +117,6 @@ namespace SqlStudio
             _sqlExecuter.Cancel();
         }
 
-        public void CancelExecution()
-        {
-            lock (this)
-            {
-                if (!_bussy)
-                    return;
-                if (_thread == null)
-                    return;
-                if (_thread.IsAlive && _thread.ThreadState == ThreadState.Running)
-                    _thread.Abort();
-                _bussy = false;
-            }
-        }
-
         public void Execute()
         {
             try

@@ -13,7 +13,6 @@ namespace SqlStudio.AutoLayoutForm
     internal class FieldUserControlBool : FieldUserControlBase
     { 
         private CheckBox _valueControl;
-        private ErrorProvider _errorProvider;
 
         public FieldUserControlBool(FieldInfo fieldInfo)
             : base(fieldInfo)

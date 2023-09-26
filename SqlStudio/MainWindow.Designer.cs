@@ -64,15 +64,13 @@ namespace SqlStudio
             toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             aliasesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             autoQueriesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            uploadSBDZipFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             logSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            logImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             generatePasswordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             generateDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importEnumValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             windowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             dataTabsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            newDataTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -304,7 +302,7 @@ namespace SqlStudio
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, uploadSBDZipFileToolStripMenuItem, logSearchToolStripMenuItem, logImportToolStripMenuItem, generatePasswordToolStripMenuItem, generateDataToolStripMenuItem, importEnumValuesToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, logSearchToolStripMenuItem, generatePasswordToolStripMenuItem, generateDataToolStripMenuItem, importEnumValuesToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             toolsToolStripMenuItem.Text = "Tools";
@@ -322,13 +320,7 @@ namespace SqlStudio
             autoQueriesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             autoQueriesToolStripMenuItem.Text = "Auto Queries...";
             autoQueriesToolStripMenuItem.Click += autoQueriesToolStripMenuItem_Click;
-            // 
-            // uploadSBDZipFileToolStripMenuItem
-            // 
-            uploadSBDZipFileToolStripMenuItem.Name = "uploadSBDZipFileToolStripMenuItem";
-            uploadSBDZipFileToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            uploadSBDZipFileToolStripMenuItem.Text = "Upload SBD zip file...";
-            uploadSBDZipFileToolStripMenuItem.Click += uploadSBDZipFileToolStripMenuItem_Click;
+            
             // 
             // logSearchToolStripMenuItem
             // 
@@ -336,13 +328,7 @@ namespace SqlStudio
             logSearchToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             logSearchToolStripMenuItem.Text = "LogSearch...";
             logSearchToolStripMenuItem.Click += logSearchToolStripMenuItem_Click;
-            // 
-            // logImportToolStripMenuItem
-            // 
-            logImportToolStripMenuItem.Name = "logImportToolStripMenuItem";
-            logImportToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            logImportToolStripMenuItem.Text = "LogImport...";
-            logImportToolStripMenuItem.Click += logImportToolStripMenuItem_Click;
+            
             // 
             // generatePasswordToolStripMenuItem
             // 
@@ -374,17 +360,17 @@ namespace SqlStudio
             // 
             // dataTabsToolStripMenuItem
             // 
-            dataTabsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { newToolStripMenuItem1 });
+            dataTabsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { newDataTabToolStripMenuItem });
             dataTabsToolStripMenuItem.Name = "dataTabsToolStripMenuItem";
             dataTabsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             dataTabsToolStripMenuItem.Text = "Data tabs";
             // 
             // newToolStripMenuItem1
             // 
-            newToolStripMenuItem1.Name = "newToolStripMenuItem1";
-            newToolStripMenuItem1.Size = new System.Drawing.Size(98, 22);
-            newToolStripMenuItem1.Text = "New";
-            newToolStripMenuItem1.Click += newToolStripMenuItem1_Click;
+            newDataTabToolStripMenuItem.Name = "newToolStripMenuItem1";
+            newDataTabToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+            newDataTabToolStripMenuItem.Text = "New";
+            newDataTabToolStripMenuItem.Click += NewDataTabToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -507,7 +493,7 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripMenuItem aliasesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem windowsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dataTabsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem newDataTabToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem newScriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveScriptToolStripMenuItem;
@@ -526,14 +512,12 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripMenuItem runScriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem formatQueryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openSqlCEToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem uploadSBDZipFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cancelExecutionToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem7;
         private System.Windows.Forms.ToolStripMenuItem openConfigDbToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem autoQueriesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logSearchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openCvsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem logImportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyConnectionStringToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generatePasswordToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateDataToolStripMenuItem;

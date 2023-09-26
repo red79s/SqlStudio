@@ -207,18 +207,19 @@ namespace SqlStudio
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //cmdLineControl.Cut();
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.Cut();
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //cmdLineControl.Copy();
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.Copy();
         }
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //cmdLineControl.Paste();
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.Paste();
         }
+
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NewDBConnectionForm newConnection = new NewDBConnectionForm();
@@ -286,7 +287,7 @@ namespace SqlStudio
 
         private void closeConnectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.CloseConnection();
         }
 
         private TabPage CreateNewScriptTab(string name)
@@ -352,7 +353,7 @@ namespace SqlStudio
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            openScriptToolStripMenuItem_Click(sender, e);
         }
 
         private void openSQLiteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -377,10 +378,6 @@ namespace SqlStudio
             con.OpenConfigDb();
         }
 
-        private void newToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-        }
-
         private bool DisplayFilterRow
         {
             get
@@ -388,6 +385,7 @@ namespace SqlStudio
                 return displayFilterRowToolStripMenuItem.Checked;
             }
         }
+
         private void displayFilterRowToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
             ToolStripMenuItem tsmiDisplayFilterRow = (ToolStripMenuItem)sender;
@@ -400,68 +398,19 @@ namespace SqlStudio
 
         private void runScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void RunScriptFile(string fileName)
-        {
-
-        }
-
-        void runScriptWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-
-        }
-
-        void runScriptWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-
-        }
-
-        void scriptExecuter_Progress(object sender, int numRowsExecuted)
-        {
-        }
-
-
-        void scriptExecuter_ExecuteFailed(object sender, string query, string message, int lineNumber)
-        {
-
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.RunScript();
         }
 
         private void formatQueryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SqlFormatDialog formatDialog = new SqlFormatDialog();
-            if (formatDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-
-            }
+            formatDialog.ShowDialog();
         }
 
-        private void uploadSBDZipFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private string GetSbdVersionArchive(string fileName)
-        {
-            using (ZipArchive archive = ZipFile.OpenRead(fileName))
-            {
-                var entry = archive.Entries.FirstOrDefault(x => x.FullName.EndsWith("DSG.SBD.Client.exe"));
-                if (entry != null)
-                {
-                    var extractedFile = Path.GetTempPath() + Guid.NewGuid() + ".exe";
-                    entry.ExtractToFile(extractedFile);
-                    var version = FileVersionInfo.GetVersionInfo(extractedFile).ProductVersion;
-                    File.Delete(extractedFile);
-                    return version;
-                }
-            }
-
-            throw new Exception("Unable to get version info from downloaded archive");
-        }
-
+        
         private void cancelExecutionToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.CancelExecution();
         }
 
         private LogSearchParametersDialog _logSearchParametersDialog = null;
@@ -476,37 +425,23 @@ namespace SqlStudio
             if (_logSearchParametersDialog.ShowDialog() == DialogResult.OK)
             {
                 var queryString = _logSearchParametersDialog.QueryString;
-                //ExecuteQuery(queryString, false, "");
+                tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.ExecuteQuery(queryString, false, "");
             }
         }
 
         private void openCsvToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var ofd = new OpenFileDialog();
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                var result = CsvImporter.ImportFromFile(ofd.FileName);
-                //_executer_ExecutionFinished(this, new List<SqlResult> { result });
-            }
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.OpenCvsFile();
         }
 
-        private void logImportToolStripMenuItem_Click(object sender, EventArgs e)
+        private void NewDataTabToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            var ofd = new OpenFileDialog();
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                var result = CsvImporter.ImportDataFromFile(ofd.FileName);
-                var converter = new ConvertCvsDataToLogRecords(result);
-                var rows = converter.CreateInsertCommands();
-                TabPage tp = CreateNewScriptTab(System.IO.Path.GetFileName(ofd.FileName));
-                ((CommandPrompt.SQLScript)tp.Controls[0]).Open(rows);
-                //tabControlMainDocs.TabPages.Add(tp);
-            }
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl.InsertNewDataTab();
         }
 
         public void Log(LogLevel logLevel, string message)
         {
-
+            Console.WriteLine($"{logLevel}: {message}");
         }
 
         public void Log(LogLevel logLevel, string message, Exception ex)
@@ -516,12 +451,7 @@ namespace SqlStudio
 
         private void copyConnectionStringToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //if (_executer?.SqlExecuter?.ConnectionString == null)
-            //{
-            //    MessageBox.Show("Not able to get connection string", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    return;
-            //}
-            //Clipboard.SetText(_executer.SqlExecuter.ConnectionString);
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.CopyConnectionStringToClipboard();
         }
 
         private void generatePasswordToolStripMenuItem_Click(object sender, EventArgs e)
@@ -532,8 +462,7 @@ namespace SqlStudio
 
         private void generateDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //var gdf = new GenerateDataForm(_executer.SqlExecuter);
-            //gdf.ShowDialog();
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.OpenGenerateDataTool();
         }
 
         private void importEnumValuesToolStripMenuItem_Click(object sender, EventArgs e)
