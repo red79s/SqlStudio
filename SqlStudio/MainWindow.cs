@@ -25,8 +25,6 @@ namespace SqlStudio
         private ConfigDataStore _cfgDataStore = null;
         private string _userConfigDbFile;
         private IColumnValueDescriptionProvider _columnMetadataInfo = null;
-        private IDatabaseConnectionUserControl _selectedConnection = null;
-        private IList<IDatabaseConnectionUserControl> _allDatabaseOuputTabs = new List<IDatabaseConnectionUserControl>();
 
         public MainWindow()
         {
@@ -46,6 +44,7 @@ namespace SqlStudio
                 }
             }
             _cfgDataStore = new ConfigDataStore(_userConfigDbFile);
+            tabControlDatabaseConnections.ConfigDataStore = _cfgDataStore;
 
             InitMenues();
         }
@@ -150,26 +149,12 @@ namespace SqlStudio
         void conToolItem_OnConnectionClick(object sender, long key)
         {
             var server = _cfgDataStore.GetConnection(key).server;
-            var databaseConnection = CreateNewDatabaseConnectionTab(server);
+            var databaseConnection = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab(server);
+            databaseConnection.SetDislayFilterRow(DisplayFilterRow);
             databaseConnection.Connect(_cfgDataStore.GetConnection(key));
         }
 
-        private IDatabaseConnectionUserControl CreateNewDatabaseConnectionTab(string tabText)
-        {
-            var tabPage = new TabPage();
-            tabPage.Text = tabText;
-            var databaseConnection = new DatabaseConnectionUserControl(_cfgDataStore);
-            tabPage.Controls.Add(databaseConnection);
-            databaseConnection.Dock = DockStyle.Fill;
-            tabControlDatabaseConnections.Controls.Add(tabPage);
-            tabControlDatabaseConnections.SelectedTab = tabPage;
-            databaseConnection.SetDislayFilterRow(DisplayFilterRow);
-
-            _allDatabaseOuputTabs.Add(databaseConnection);
-            _selectedConnection = databaseConnection;
-
-            return databaseConnection;
-        }
+        
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             _cfgDataStore.SetValue("window_size_x", (long)Width);
@@ -313,12 +298,12 @@ namespace SqlStudio
 
         private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _selectedConnection?.CreateNewScriptTab();
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.CreateNewScriptTab();
         }
 
         private void openScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _selectedConnection?.OpenScriptFile();
+			tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.OpenScriptFile();
         }
 
         private void toolStripButtonNewScript_Click(object sender, EventArgs e)
@@ -333,12 +318,12 @@ namespace SqlStudio
 
         private void toolStripButtoSaveScript_Click(object sender, EventArgs e)
         {
-            _selectedConnection.SaveScript();
+			tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl.SaveScript();
         }
 
         private void toolStripButtonRunScript_Click(object sender, EventArgs e)
         {
-            _selectedConnection?.RunScript();
+			tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.RunScript();
         }
 
         private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -348,12 +333,12 @@ namespace SqlStudio
 
         private void saveScriptAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _selectedConnection?.SaveScriptAs();
+			tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.SaveScriptAs();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _selectedConnection?.CloseScriptTab();
+			tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.CloseScriptTab();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -368,20 +353,23 @@ namespace SqlStudio
 
         private void openSQLiteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var con = CreateNewDatabaseConnectionTab("sqlite");
+            var con = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab("sqlite");
+            con.SetDislayFilterRow(DisplayFilterRow);
             con.OpenSqlite();
         }
 
 
         private void openSqlCEToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var con = CreateNewDatabaseConnectionTab("sqlCET");
+            var con = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab("sqlCET");
+            con.SetDislayFilterRow(DisplayFilterRow);
             con.OpenSqlCet();
         }
 
         private void openConfigDbToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var con = CreateNewDatabaseConnectionTab("config");
+            var con = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab("config");
+            con.SetDislayFilterRow(DisplayFilterRow);
             con.OpenConfigDb();
         }
 
@@ -400,7 +388,7 @@ namespace SqlStudio
         {
             ToolStripMenuItem tsmiDisplayFilterRow = (ToolStripMenuItem)sender;
             _cfgDataStore.SetValue("display_filter_row", tsmiDisplayFilterRow.Checked.ToString());
-            foreach (var dbConCntr in _allDatabaseOuputTabs)
+            foreach (var dbConCntr in tabControlDatabaseConnections.DatabaseConnectionUIControls)
             {
                 dbConCntr.SetDislayFilterRow(tsmiDisplayFilterRow.Checked);
             }

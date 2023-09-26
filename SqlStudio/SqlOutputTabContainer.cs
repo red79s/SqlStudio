@@ -71,10 +71,14 @@ namespace SqlStudio
 
         private ContextMenuStrip CreateDataTabsContextMenu()
         {
-            ContextMenuStrip cms = new ContextMenuStrip();
-            ToolStripMenuItem tsmiDataClose = new ToolStripMenuItem("Close", null, tsmiDataClose_Click);
+            var cms = new ContextMenuStrip();
+            var tsmiDataClose = new ToolStripMenuItem("Close", null, tsmiDataClose_Click);
             cms.Items.Add(tsmiDataClose);
-            ToolStripMenuItem tsmiDataRename = new ToolStripMenuItem("Rename", null, tsmiDataRename_Click);
+            var tsmiDataCloseAll = new ToolStripMenuItem("Close All", null, tsmiDataCloseAll_Click);
+            cms.Items.Add(tsmiDataCloseAll);
+            var tsmiDataCloseAllButThis = new ToolStripMenuItem("Close All But This", null, tsmiDataCloseAllButThis_Click);
+            cms.Items.Add(tsmiDataCloseAllButThis);
+            var tsmiDataRename = new ToolStripMenuItem("Rename", null, tsmiDataRename_Click);
             cms.Items.Add(tsmiDataRename);
             var tsmiDataRefresh = new ToolStripMenuItem("Refresh", null, tsmiDataRefresh_Click);
             tsmiDataRefresh.ShortcutKeys = Keys.F5;
@@ -102,7 +106,33 @@ namespace SqlStudio
             TabPages.Remove(SelectedTab);
         }
 
-        void tsmiDataRename_Click(object sender, EventArgs e)
+        private void tsmiDataCloseAll_Click(object sender, EventArgs e)
+        {
+			if (TabPages.Count > 2)
+            {
+				for (int i = TabPages.Count - 2; i >= 1; i--)
+				{
+						TabPages.RemoveAt(i);
+				}
+			}
+		}
+
+        private void tsmiDataCloseAllButThis_Click(object sender, EventArgs e)
+        {
+            if (TabPages.Count > 2)
+            {
+                var currentTab = SelectedTab;
+                for (int i = TabPages.Count - 2; i >= 1; i--)
+                {
+                    if (TabPages[i] != currentTab)
+                    {
+                        TabPages.RemoveAt(i);
+                    }
+                }
+            }
+		}
+
+		void tsmiDataRename_Click(object sender, EventArgs e)
         {
             RenameDialog rnd = new RenameDialog();
             rnd.NameText = SelectedTab.Text;

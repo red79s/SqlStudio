@@ -83,7 +83,7 @@ namespace SqlStudio
             saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            tabControlDatabaseConnections = new System.Windows.Forms.TabControl();
+            tabControlDatabaseConnections = new DatabaseConnectionTabControl();
             menuStripTop.SuspendLayout();
             cmScriptTabs.SuspendLayout();
             SuspendLayout();
@@ -538,7 +538,7 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripMenuItem generatePasswordToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importEnumValuesToolStripMenuItem;
-        private System.Windows.Forms.TabControl tabControlDatabaseConnections;
+        private DatabaseConnectionTabControl tabControlDatabaseConnections;
     }
 }
 
