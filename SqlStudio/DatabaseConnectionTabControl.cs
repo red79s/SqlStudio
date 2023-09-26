@@ -1,4 +1,5 @@
 ﻿using CfgDataStore;
+using Common;
 using SqlStudio.Interfaces;
 using System;
 using System.Collections;
@@ -94,11 +95,11 @@ namespace SqlStudio
 			}
 		}
 
-		public IDatabaseConnectionUserControl CreateNewDatabaseConnectionTab(string tabText)
+		public IDatabaseConnectionUserControl CreateNewDatabaseConnectionTab(string tabText, IColumnValueDescriptionProvider columnValueDescriptionProvider)
 		{
 			var tabPage = new TabPage();
 			tabPage.Text = tabText;
-			var databaseConnection = new DatabaseConnectionUserControl(ConfigDataStore);
+			var databaseConnection = new DatabaseConnectionUserControl(ConfigDataStore, columnValueDescriptionProvider);
 			tabPage.Controls.Add(databaseConnection);
 			databaseConnection.Dock = DockStyle.Fill;
 			Controls.Add(tabPage);

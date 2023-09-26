@@ -3,6 +3,7 @@ using CommandPrompt;
 using Common;
 using Common.Model;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using SqlStudio.ColumnMetaDataInfo;
 using SqlStudio.Converters;
 using SqlStudio.CvsImport;
 using SqlStudio.EnumImporter;
@@ -29,6 +30,9 @@ namespace SqlStudio
         public MainWindow()
         {
             InitializeComponent();
+
+            _columnMetadataInfo = new ColumnValueDescriptionManager();
+            _columnMetadataInfo.Load();
 
             _userConfigDbFile = Directory.GetParent(Application.UserAppDataPath) + @"\sqlstudio.cfg";
             string defaultCfgPath = Application.StartupPath + @"\sqlstudio.cfg";
@@ -149,7 +153,7 @@ namespace SqlStudio
         void conToolItem_OnConnectionClick(object sender, long key)
         {
             var server = _cfgDataStore.GetConnection(key).server;
-            var databaseConnection = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab(server);
+            var databaseConnection = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab(server, _columnMetadataInfo);
             databaseConnection.SetDislayFilterRow(DisplayFilterRow);
             databaseConnection.Connect(_cfgDataStore.GetConnection(key));
         }
@@ -353,7 +357,7 @@ namespace SqlStudio
 
         private void openSQLiteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var con = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab("sqlite");
+            var con = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab("sqlite", _columnMetadataInfo);
             con.SetDislayFilterRow(DisplayFilterRow);
             con.OpenSqlite();
         }
@@ -361,14 +365,14 @@ namespace SqlStudio
 
         private void openSqlCEToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var con = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab("sqlCET");
+            var con = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab("sqlCET", _columnMetadataInfo);
             con.SetDislayFilterRow(DisplayFilterRow);
             con.OpenSqlCet();
         }
 
         private void openConfigDbToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var con = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab("config");
+            var con = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab("config", _columnMetadataInfo);
             con.SetDislayFilterRow(DisplayFilterRow);
             con.OpenConfigDb();
         }
