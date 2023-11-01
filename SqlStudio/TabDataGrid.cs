@@ -717,6 +717,12 @@ namespace SqlStudio
                 firstRow = false;
             }
 
+            if (string.IsNullOrEmpty(insertText))
+            {
+                MessageBox.Show("no cells selected");
+                return;
+            }
+
             Clipboard.SetText(insertText);
         }
 
