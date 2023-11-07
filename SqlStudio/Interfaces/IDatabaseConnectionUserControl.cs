@@ -26,5 +26,6 @@ namespace SqlStudio.Interfaces
         void OpenCvsFile();
         void CopyConnectionStringToClipboard();
         void OpenGenerateDataTool();
+        void WriteToOutput(string message);
     }
 }

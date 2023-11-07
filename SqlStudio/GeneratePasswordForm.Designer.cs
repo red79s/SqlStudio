@@ -33,6 +33,9 @@
             btnGenerateHash = new System.Windows.Forms.Button();
             label2 = new System.Windows.Forms.Label();
             tbHash = new System.Windows.Forms.TextBox();
+            CreatePasswordButton = new System.Windows.Forms.Button();
+            CloseButton = new System.Windows.Forms.Button();
+            CloseWriteButton = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // label1
@@ -55,7 +58,7 @@
             // btnGenerateHash
             // 
             btnGenerateHash.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnGenerateHash.Location = new System.Drawing.Point(657, 9);
+            btnGenerateHash.Location = new System.Drawing.Point(657, 44);
             btnGenerateHash.Name = "btnGenerateHash";
             btnGenerateHash.Size = new System.Drawing.Size(105, 23);
             btnGenerateHash.TabIndex = 2;
@@ -80,11 +83,46 @@
             tbHash.Size = new System.Drawing.Size(561, 23);
             tbHash.TabIndex = 4;
             // 
+            // CreatePasswordButton
+            // 
+            CreatePasswordButton.Location = new System.Drawing.Point(657, 8);
+            CreatePasswordButton.Name = "CreatePasswordButton";
+            CreatePasswordButton.Size = new System.Drawing.Size(105, 23);
+            CreatePasswordButton.TabIndex = 5;
+            CreatePasswordButton.Text = "Generate";
+            CreatePasswordButton.UseVisualStyleBackColor = true;
+            CreatePasswordButton.Click += CreatePasswordButton_Click;
+            // 
+            // CloseButton
+            // 
+            CloseButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            CloseButton.Location = new System.Drawing.Point(657, 85);
+            CloseButton.Name = "CloseButton";
+            CloseButton.Size = new System.Drawing.Size(105, 23);
+            CloseButton.TabIndex = 6;
+            CloseButton.Text = "Close";
+            CloseButton.UseVisualStyleBackColor = true;
+            CloseButton.Click += CloseButton_Click;
+            // 
+            // CloseWriteButton
+            // 
+            CloseWriteButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            CloseWriteButton.Location = new System.Drawing.Point(537, 85);
+            CloseWriteButton.Name = "CloseWriteButton";
+            CloseWriteButton.Size = new System.Drawing.Size(105, 23);
+            CloseWriteButton.TabIndex = 7;
+            CloseWriteButton.Text = "Write and close";
+            CloseWriteButton.UseVisualStyleBackColor = true;
+            CloseWriteButton.Click += CloseWriteButton_Click;
+            // 
             // GeneratePasswordForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(774, 96);
+            ClientSize = new System.Drawing.Size(774, 154);
+            Controls.Add(CloseWriteButton);
+            Controls.Add(CloseButton);
+            Controls.Add(CreatePasswordButton);
             Controls.Add(tbHash);
             Controls.Add(label2);
             Controls.Add(btnGenerateHash);
@@ -103,5 +141,8 @@
         private System.Windows.Forms.Button btnGenerateHash;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbHash;
+        private System.Windows.Forms.Button CreatePasswordButton;
+        private System.Windows.Forms.Button CloseButton;
+        private System.Windows.Forms.Button CloseWriteButton;
     }
 }

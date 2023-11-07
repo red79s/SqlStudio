@@ -930,10 +930,10 @@ namespace SqlStudio
                     continue;
                 if (!includeBlobColumns && IsBlobColumn(type, colName))
                     continue;
-                if (value == null)
-                    continue;
-                if (value == DBNull.Value)
-                    continue;
+                //if (value == null)
+                //    continue;
+                //if (value == DBNull.Value)
+                //    continue;
 
                 string strValue = GetDbStringValue(type, value, true);
                 if (IsBlobColumn(type, colName))
@@ -975,6 +975,9 @@ namespace SqlStudio
 
         private string GetDbStringValue(Type type, object value, bool quoteStrings)
         {
+            if (value == null || value == DBNull.Value)
+				return "null";
+
             string strValue = value.ToString();
             if (quoteStrings)
             {

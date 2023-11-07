@@ -672,5 +672,10 @@ namespace SqlStudio
         {
 			sqlOutput.CreateNewDataTab(null);
         }
+
+        public void WriteToOutput(string message)
+        {
+            sqlOutput.SetOutputText(message);
+        }
     }
 }

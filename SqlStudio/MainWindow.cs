@@ -1,23 +1,13 @@
 using CfgDataStore;
-using CommandPrompt;
 using Common;
 using Common.Model;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SqlStudio.ColumnMetaDataInfo;
-using SqlStudio.Converters;
-using SqlStudio.CvsImport;
 using SqlStudio.EnumImporter;
-using SqlStudio.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
 using System.Windows.Forms;
-using static Org.BouncyCastle.Math.Primes;
 
 namespace SqlStudio
 {
@@ -457,7 +447,12 @@ namespace SqlStudio
         private void generatePasswordToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var generatePasswordDialog = new GeneratePasswordForm();
-            generatePasswordDialog.ShowDialog();
+            if (generatePasswordDialog.ShowDialog() == DialogResult.OK)
+            {
+                tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.WriteToOutput($"Password: {generatePasswordDialog.PasswordClearText}");
+                tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.WriteToOutput($"Password hash: {generatePasswordDialog.PasswordHash}");
+                Clipboard.SetText(generatePasswordDialog.PasswordHash);
+            }
         }
 
         private void generateDataToolStripMenuItem_Click(object sender, EventArgs e)
