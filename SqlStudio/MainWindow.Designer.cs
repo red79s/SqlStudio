@@ -82,6 +82,7 @@ namespace SqlStudio
             toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tabControlDatabaseConnections = new DatabaseConnectionTabControl();
+            formatTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuStripTop.SuspendLayout();
             cmScriptTabs.SuspendLayout();
             SuspendLayout();
@@ -245,7 +246,7 @@ namespace SqlStudio
             // 
             // editToolStripMenuItem
             // 
-            editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem, formatQueryToolStripMenuItem, copyConnectionStringToolStripMenuItem });
+            editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem, formatQueryToolStripMenuItem, formatTextToolStripMenuItem, copyConnectionStringToolStripMenuItem });
             editToolStripMenuItem.Name = "editToolStripMenuItem";
             editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             editToolStripMenuItem.Text = "Edit";
@@ -320,7 +321,6 @@ namespace SqlStudio
             autoQueriesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             autoQueriesToolStripMenuItem.Text = "Auto Queries...";
             autoQueriesToolStripMenuItem.Click += autoQueriesToolStripMenuItem_Click;
-            
             // 
             // logSearchToolStripMenuItem
             // 
@@ -328,7 +328,6 @@ namespace SqlStudio
             logSearchToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             logSearchToolStripMenuItem.Text = "LogSearch...";
             logSearchToolStripMenuItem.Click += logSearchToolStripMenuItem_Click;
-            
             // 
             // generatePasswordToolStripMenuItem
             // 
@@ -365,9 +364,9 @@ namespace SqlStudio
             dataTabsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             dataTabsToolStripMenuItem.Text = "Data tabs";
             // 
-            // newToolStripMenuItem1
+            // newDataTabToolStripMenuItem
             // 
-            newDataTabToolStripMenuItem.Name = "newToolStripMenuItem1";
+            newDataTabToolStripMenuItem.Name = "newDataTabToolStripMenuItem";
             newDataTabToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             newDataTabToolStripMenuItem.Text = "New";
             newDataTabToolStripMenuItem.Click += NewDataTabToolStripMenuItem_Click;
@@ -444,11 +443,19 @@ namespace SqlStudio
             // tabControlDatabaseConnections
             // 
             tabControlDatabaseConnections.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            tabControlDatabaseConnections.ConfigDataStore = null;
             tabControlDatabaseConnections.Location = new System.Drawing.Point(0, 52);
             tabControlDatabaseConnections.Name = "tabControlDatabaseConnections";
             tabControlDatabaseConnections.SelectedIndex = 0;
             tabControlDatabaseConnections.Size = new System.Drawing.Size(946, 697);
             tabControlDatabaseConnections.TabIndex = 3;
+            // 
+            // formatTextToolStripMenuItem
+            // 
+            formatTextToolStripMenuItem.Name = "formatTextToolStripMenuItem";
+            formatTextToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            formatTextToolStripMenuItem.Text = "Format Text...";
+            formatTextToolStripMenuItem.Click += formatTextToolStripMenuItem_Click;
             // 
             // MainWindow
             // 
@@ -523,6 +530,7 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripMenuItem generateDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importEnumValuesToolStripMenuItem;
         private DatabaseConnectionTabControl tabControlDatabaseConnections;
+        private System.Windows.Forms.ToolStripMenuItem formatTextToolStripMenuItem;
     }
 }
 

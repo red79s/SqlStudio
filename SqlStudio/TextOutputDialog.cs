@@ -54,5 +54,28 @@ namespace SqlStudio
             {
             }
         }
+
+        private void findButton_Click(object sender, EventArgs e)
+        {
+            var findDialog = new FindDialog(textBoxContent.SelectedText);
+            findDialog.Owner = this;
+            findDialog.StartPosition = FormStartPosition.CenterParent;
+
+            if (findDialog.ShowDialog() == DialogResult.OK)
+            {
+                var index = textBoxContent.Text.IndexOf(findDialog.SearchText, textBoxContent.SelectionStart + textBoxContent.SelectionLength, StringComparison.CurrentCultureIgnoreCase);
+                if (index >= 0)
+                {
+                    textBoxContent.SelectionStart = index;
+                    textBoxContent.SelectionLength = findDialog.SearchText.Length;
+                    textBoxContent.ScrollToCaret();
+                    textBoxContent.Focus();
+                }
+                else
+                {
+                    MessageBox.Show(this, "No more matches found.", "Find", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
     }
 }

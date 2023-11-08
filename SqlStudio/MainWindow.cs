@@ -148,7 +148,7 @@ namespace SqlStudio
             databaseConnection.Connect(_cfgDataStore.GetConnection(key));
         }
 
-        
+
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             _cfgDataStore.SetValue("window_size_x", (long)Width);
@@ -298,7 +298,7 @@ namespace SqlStudio
 
         private void openScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-			tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.OpenScriptFile();
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.OpenScriptFile();
         }
 
         private void toolStripButtonNewScript_Click(object sender, EventArgs e)
@@ -313,12 +313,12 @@ namespace SqlStudio
 
         private void toolStripButtoSaveScript_Click(object sender, EventArgs e)
         {
-			tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl.SaveScript();
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl.SaveScript();
         }
 
         private void toolStripButtonRunScript_Click(object sender, EventArgs e)
         {
-			tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.RunScript();
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.RunScript();
         }
 
         private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -328,12 +328,12 @@ namespace SqlStudio
 
         private void saveScriptAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-			tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.SaveScriptAs();
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.SaveScriptAs();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-			tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.CloseScriptTab();
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.CloseScriptTab();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -397,7 +397,7 @@ namespace SqlStudio
             formatDialog.ShowDialog();
         }
 
-        
+
         private void cancelExecutionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.CancelExecution();
@@ -491,6 +491,14 @@ namespace SqlStudio
                 _columnMetadataInfo.AddColumnMetadataInfo(source, cvd);
                 _columnMetadataInfo.Save();
             }
+        }
+
+        private void formatTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var textOutputDialog = new TextOutputDialog("");
+            textOutputDialog.Owner = this;
+            textOutputDialog.StartPosition = FormStartPosition.CenterParent;
+            textOutputDialog.ShowDialog();
         }
     }
 }
