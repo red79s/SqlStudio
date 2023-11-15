@@ -1513,7 +1513,7 @@ namespace SqlStudio
                     iRemainingWidth -= Columns[i].Width;
                 }
 
-                if (iRemainingWidth > 0)
+                if (iRemainingWidth > 0 && columnsNotResized.Count > 0)
                 {
                     int iAddWidth = iRemainingWidth / columnsNotResized.Count;
                     foreach (int i in columnsNotResized)
