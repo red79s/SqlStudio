@@ -11,8 +11,7 @@ namespace SqlStudio
 {
     public class Executer : ISqlExecuter
     {
-        public delegate void ExecutionFinishedDelegate(object sender, List<SqlResult> results);
-        public event ExecutionFinishedDelegate ExecutionFinished;
+        public EventHandler<IList<SqlResult>> ExecutionFinished;
 
         private SqlExecuter _sqlExecuter = null;
         public SqlExecuter SqlExecuter
@@ -33,7 +32,7 @@ namespace SqlStudio
             _cmdControl = cmdControl;
             _cfgDataStore = cfgDataStore;
             _sqlExecuter = new SqlExecuter();
-            _sqlExecuter.Executed += new SqlExecuter.ExecutedDelegate(_sqlExecuter_Executed);
+            _sqlExecuter.Executed += _sqlExecuter_Executed;
         }
 
         public string CurrentScriptPath 
@@ -287,7 +286,7 @@ namespace SqlStudio
             return input;
         }
 
-        void _sqlExecuter_Executed(object sender, List<SqlResult> results)
+        private void _sqlExecuter_Executed(object sender, IList<SqlResult> results)
         {
             if (ExecutionFinished != null)
             {

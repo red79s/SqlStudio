@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Data;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Data.Common;
-using System.IO;
-using CfgDataStore;
-using System.Text.RegularExpressions;
+﻿using CfgDataStore;
 using Common;
-using System.Linq;
-using SqlStudio.AutoLayoutForm;
-using System.Diagnostics;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Common.Model;
+using Microsoft.Extensions.DependencyInjection;
+using SqlStudio.AutoLayoutForm;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace SqlStudio
 {
@@ -33,17 +32,14 @@ namespace SqlStudio
         private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
         private readonly IColumnValueDescriptionProvider _columnMetadataInfo;
 
-        public TabDataGrid(ConfigDataStore configDataStore, 
-            IExecuteQueryCallback executeQueryCallback, 
-            IDatabaseSchemaInfo databaseSchemaInfo, 
-            IDatabaseKeywordEscape databaseKeywordEscape, 
-            IColumnValueDescriptionProvider columnMetadataInfo)
+        public TabDataGrid(IServiceProvider serviceProvider)
         {
-            _configDataStore = configDataStore;
-            _executeQueryCallback = executeQueryCallback;
-            _databaseSchemaInfo = databaseSchemaInfo;
-            _databaseKeywordEscape = databaseKeywordEscape;
-            _columnMetadataInfo = columnMetadataInfo;
+            _configDataStore = serviceProvider.GetRequiredService<ConfigDataStore>();
+            _executeQueryCallback = serviceProvider.GetService<IExecuteQueryCallback>();
+            _databaseSchemaInfo = serviceProvider.GetService<IDatabaseSchemaInfo>();
+            _databaseKeywordEscape = serviceProvider.GetService<IDatabaseKeywordEscape>();
+            _columnMetadataInfo = serviceProvider.GetService<IColumnValueDescriptionProvider>();
+
             BackgroundColor = Color.WhiteSmoke;
             ContextMenuStrip = new ContextMenuStrip();
 
@@ -59,15 +55,11 @@ namespace SqlStudio
             miSave.Click += miSave_Click;
             ContextMenuStrip.Items.Add(miSave);
 
-            ToolStripMenuItem miDelete = new ToolStripMenuItem("Delete");
-            miDelete.Click += miDelete_Click;
-            ContextMenuStrip.Items.Add(miDelete);
+            //var miDeleteAll = new ToolStripMenuItem("Delete");
+            //miDeleteAll.Click += miDelete_Click;
+            //ContextMenuStrip.Items.Add(miDeleteAll);
 
-            var miDeleteAll = new ToolStripMenuItem("Delete Selected Rows");
-            miDeleteAll.Click += miDelete_Click;
-            ContextMenuStrip.Items.Add(miDeleteAll);
-
-            ToolStripMenuItem miFill = new ToolStripMenuItem("Fill");
+            ToolStripMenuItem miFill = new ToolStripMenuItem("Undo edit");
             miFill.ShortcutKeys = Keys.F7;
             miFill.Click += miFill_Click;
             ContextMenuStrip.Items.Add(miFill);
@@ -75,10 +67,6 @@ namespace SqlStudio
             ToolStripMenuItem miNewRow = new ToolStripMenuItem("New Row");
             miNewRow.Click += miNewRow_Click;
             ContextMenuStrip.Items.Add(miNewRow);
-
-            ToolStripMenuItem miGetTitles = new ToolStripMenuItem("Get Titles");
-            miGetTitles.Click += miGetTitles_Click;
-            ContextMenuStrip.Items.Add(miGetTitles);
 
             ToolStripMenuItem miGetColumnInfo = new ToolStripMenuItem("Get Column Info");
             miGetColumnInfo.Click += GetColumnInfo_MenuItemClick;
@@ -1065,32 +1053,6 @@ namespace SqlStudio
             return false;
         }
 
-        void miGetTitles_Click(object sender, EventArgs e)
-        {
-            int numTitlesFetched = 0;
-
-            DataGridViewCell cell = SelectedCells[0];
-            for (int i = 0; i < Rows.Count; i++)
-            {
-                DataGridViewCell titleCell = Rows[i].Cells[cell.ColumnIndex];
-                if (titleCell.Value == null)
-                    continue;
-                int titleNo = (int)titleCell.Value;
-                if (titleNo < 1)
-                    continue;
-
-                string cmdText = string.Format("select title from asystitlesen where title_no = {0}", titleNo);
-                DbCommand cmd = SqlResult.Connection.CreateCommand();
-                cmd.CommandText = cmdText;
-                object o = cmd.ExecuteScalar();
-                titleCell.ToolTipText = o.ToString();
-                numTitlesFetched++;
-            }
-
-            if (UpdatedResults != null)
-                UpdatedResults(this, numTitlesFetched, "Fetched Agresso titles");
-        }
-
         private void GetColumnInfo_MenuItemClick(object sender, EventArgs e)
         {
             if (SelectedCells == null || SelectedCells.Count == 0)
@@ -1250,23 +1212,6 @@ namespace SqlStudio
                 columnName = SelectedCells[0].OwningColumn.Name;
 
             var tableName = SqlResult.TableName;
-
-            bool bEnableGetTitles = false;
-            if (SqlResult.Connection != null && SqlResult.Connection.State == ConnectionState.Open && 
-                SelectedCells != null && SelectedCells.Count == 1)
-            {
-                DataGridViewCell cell = SelectedCells[0];
-                if (cell.ValueType == typeof(Int32))
-                {
-                    bEnableGetTitles = true;
-                }
-            }
-            ContextMenuStrip.Items[3].Enabled = bEnableGetTitles;
-
-            bool bEnableCreateScript = false;
-            if (SelectedCells.Count > 0)
-                bEnableCreateScript = true;
-            ContextMenuStrip.Items[4].Enabled = bEnableCreateScript;
 
             foreach (ToolStripMenuItem menuItem in _dynamicDataMenuItem.DropDownItems)
             {

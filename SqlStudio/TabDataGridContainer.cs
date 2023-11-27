@@ -19,17 +19,11 @@ namespace SqlStudio
         private bool _filterRow = true;
         private List<TextBox> _filterControlls = null;
         private ISearchControl _searchControl = null;
+        private IServiceProvider _serviceProvider = null;
 
-        public TabDataGridContainer(ConfigDataStore configDataStore, 
-            IExecuteQueryCallback executeQueryCallback, 
-            IDatabaseSchemaInfo databaseSchemaInfo,
-            IDatabaseKeywordEscape databaseKeywordEscape, 
-            IColumnValueDescriptionProvider columnMetadataInfo)
+        public TabDataGridContainer(IServiceProvider serviceProvider)
         {
-            _executeQueryCallback = executeQueryCallback;
-            _databaseSchemaInfo = databaseSchemaInfo;
-            _databaseKeywordEscape = databaseKeywordEscape;
-            _columnMetadataInfo = columnMetadataInfo;
+            _serviceProvider = serviceProvider;    
             _filterControlls = new List<TextBox>();
 
             _searchControl = new SearchControl();
@@ -40,7 +34,7 @@ namespace SqlStudio
             _searchControl.IsVisible = true;
             Controls.Add(_searchControl as UserControl);
 
-            _tdg = new TabDataGrid(configDataStore, executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
+            _tdg = new TabDataGrid(_serviceProvider);
             _tdg.UpdatedResults += new TabDataGrid.UpdatedResultsDelegate(_tdg_UpdatedResults);
             _tdg.ColumnWidthChanged += new DataGridViewColumnEventHandler(_tdg_ColumnWidthChanged);
             _tdg.Scroll += new ScrollEventHandler(_tdg_Scroll);

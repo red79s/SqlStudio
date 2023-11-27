@@ -37,6 +37,7 @@ namespace SqlStudio
 		private ISqlCompleter _sqlCompleter = null;
 		private IDatabaseKeywordEscape _databaseKeywordEscape = null;
 		private IColumnValueDescriptionProvider _columnMetadataInfo = null;
+		private IHost _host = null;
 
 		public DatabaseConnectionUserControl(ConfigDataStore cfgDataStore, IColumnValueDescriptionProvider columnValueDescriptionProvider)
 		{
@@ -49,8 +50,7 @@ namespace SqlStudio
 			builder.Services.AddSingleton<ILogger>(this);
 			builder.Services.AddSingleton<IColumnValueDescriptionProvider>(columnValueDescriptionProvider);
 
-			_databaseKeywordEscape = new DatabaseKeywordEscapeManager();
-			builder.Services.AddSingleton<IDatabaseKeywordEscape>(_databaseKeywordEscape);
+			builder.Services.AddSingleton<IDatabaseKeywordEscape, DatabaseKeywordEscapeManager>();
 
 			_columnMetadataInfo = columnValueDescriptionProvider;
 
@@ -70,10 +70,13 @@ namespace SqlStudio
 			}
 
 			_executer = new Executer(cmdLineControl, _cfgDataStore);
-			_executer.ExecutionFinished += new Executer.ExecutionFinishedDelegate(_executer_ExecutionFinished);
+			_executer.ExecutionFinished += _executer_ExecutionFinished;
 
-			_sqlCompleter = new SqlCompleter(this, _executer.SqlExecuter, _databaseKeywordEscape);
+			builder.Services.AddSingleton<IExecuteQueryCallback>(this);
+			builder.Services.AddSingleton<IDatabaseSchemaInfo>(_executer.SqlExecuter);
+			builder.Services.AddSingleton<ISqlCompleter,  SqlCompleter>();
 
+			_host = builder.Build();
 			_syntaxHighLight = new SyntaxHighlight.SQLSyntaxHighlight();
 			_syntaxHighLight.DefaultColor = cmdLineControl.ForeColor;
 			_syntaxHighLight.IdentifiersColor = cmdLineControl.ForeColor;
@@ -87,7 +90,7 @@ namespace SqlStudio
 			cmdLineControl.SetHistoryItems(_cfgDataStore);
 			cmdLineControl.InsertSnipit += CmdLineControl_InsertSnipit;
 
-			sqlOutput.SetDependencyObjects(_cfgDataStore, this, _executer.SqlExecuter, _databaseKeywordEscape, _columnMetadataInfo);
+			sqlOutput.SetDependencyObjects(_host.Services);
 			sqlOutput.UpdatedResults += new SqlOutputTabContainer.UpdatedResultsDelegate(sqlOutput_UpdatedResults);
 			sqlOutput.VisibleRowsChanged += (s, e) => { visibleRowsToolStripStatusLabel.Text = $"{e}"; };
 
@@ -266,7 +269,8 @@ namespace SqlStudio
 				realIndex--;
 			}
 
-			return _sqlCompleter.GetPossibleCompletions(realCmd, realIndex);
+			var sqlCompleter = _host.Services.GetService<ISqlCompleter>();
+			return sqlCompleter.GetPossibleCompletions(realCmd, realIndex);
 		}
 
 		private void ExecuteTimerOnTick(object sender, EventArgs e)
@@ -274,11 +278,11 @@ namespace SqlStudio
 			toolStripMessageLabel.Text = $"Executing: {DateTime.Now.Subtract(_excutionStarted).ToString(@"hh\:mm\:ss")}";
 		}
 
-		void _executer_ExecutionFinished(object sender, List<SqlResult> results)
+		void _executer_ExecutionFinished(object sender, IList<SqlResult> results)
 		{
 			if (InvokeRequired)
 			{
-				BeginInvoke(new Executer.ExecutionFinishedDelegate(_executer_ExecutionFinished), new object[] { sender, results });
+				BeginInvoke(_executer_ExecutionFinished, new object[] { sender, results });
 				return;
 			}
 

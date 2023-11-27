@@ -28,6 +28,7 @@ namespace SqlCommandCompleter
             "UPDATE",
             "DELETE",
             "TRUNCATE",
+            "INSERT INTO",
             "CREATE TABLE",
             "FROM",
             "WHERE",
@@ -37,7 +38,9 @@ namespace SqlCommandCompleter
             "JOIN",
             "LEFT",
             "FULL",
-            "OUTER"
+            "OUTER",
+            "INTO",
+            "VALUES"
         };
 
         private List<string> _sqlKeywordsStart = new List<string>
@@ -46,6 +49,7 @@ namespace SqlCommandCompleter
             "UPDATE",
             "DELETE",
             "TRUNCATE",
+            "INSERT INTO",
             "CREATE TABLE"
         };
 
@@ -113,6 +117,13 @@ namespace SqlCommandCompleter
             {
                 var tables = GetTableNames();
                 tables.Insert(0, "WHERE");
+
+                return MergePossible(tables, symbol);
+            }
+
+            if (keyWord.Text.Equals("INTO", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var tables = GetTableNames();
 
                 return MergePossible(tables, symbol);
             }

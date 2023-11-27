@@ -58,9 +58,7 @@ namespace SqlExecute
             }
         }
 
-        //delegates
-        public delegate void ExecutedDelegate(object sender, List<SqlResult> results);
-        public event ExecutedDelegate Executed;
+        public EventHandler<IList<SqlResult>> Executed;
 
         public string CurrentScriptPath { get; set; }
 

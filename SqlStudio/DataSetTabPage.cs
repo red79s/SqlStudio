@@ -13,23 +13,11 @@ namespace SqlStudio
         public event UpdatedResultsDelegate UpdatedResults;
         public EventHandler<int> VisibleRowsChanged;
 
-        private ConfigDataStore _configDataStore;
-        private readonly IExecuteQueryCallback _executeQueryCallback;
-        private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
-        private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
-        private readonly IColumnValueDescriptionProvider _columnMetadataInfo;
-        private List<SqlResult> _results;
-        public DataSetTabPage(ConfigDataStore configDataStore,
-            IExecuteQueryCallback executeQueryCallback,
-            IDatabaseSchemaInfo databaseSchemaInfo,
-            IDatabaseKeywordEscape databaseKeywordEscape,
-            IColumnValueDescriptionProvider columnMetadataInfo)
+        private IServiceProvider _serviceProvider;
+        private IList<SqlResult> _results;
+        public DataSetTabPage(IServiceProvider serviceProvider)
         {
-            _configDataStore = configDataStore;
-            _executeQueryCallback = executeQueryCallback;
-            _databaseSchemaInfo = databaseSchemaInfo;
-            _databaseKeywordEscape = databaseKeywordEscape;
-            _columnMetadataInfo = columnMetadataInfo;
+            _serviceProvider = serviceProvider;
         }
 
         private bool _dispFilterRow = false;
@@ -46,12 +34,12 @@ namespace SqlStudio
             }
         }
 
-        public List<SqlResult> GetSqlResults()
+        public IList<SqlResult> GetSqlResults()
         {
             return _results;
         }
 
-        public void SetResults(List<SqlResult> results)
+        public void SetResults(IList<SqlResult> results)
         {
             _results = results;
 
@@ -83,7 +71,7 @@ namespace SqlStudio
                     lastSplit.Orientation = Orientation.Horizontal;
                     lastSplit.Dock = DockStyle.Fill;
                     Controls.Add(lastSplit);
-                    TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
+                    TabDataGridContainer tgrid = new TabDataGridContainer(_serviceProvider);
                     tgrid.FilterRow = DisplayFilterRow;
                     tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
                     tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
@@ -93,7 +81,7 @@ namespace SqlStudio
                 }
                 else if (i == 0)
                 {
-                    TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
+                    TabDataGridContainer tgrid = new TabDataGridContainer(_serviceProvider);
                     tgrid.FilterRow = DisplayFilterRow;
                     tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
                     tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
@@ -110,7 +98,7 @@ namespace SqlStudio
                         sc.Dock = DockStyle.Fill;
                         lastSplit.Panel2.Controls.Add(sc);
                         lastSplit = sc;
-                        TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
+                        TabDataGridContainer tgrid = new TabDataGridContainer(_serviceProvider);
                         tgrid.FilterRow = DisplayFilterRow;
                         tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
                         tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
@@ -120,7 +108,7 @@ namespace SqlStudio
                     }
                     else
                     {
-                        TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
+                        TabDataGridContainer tgrid = new TabDataGridContainer(_serviceProvider);
                         tgrid.FilterRow = DisplayFilterRow;
                         tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
                         tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };

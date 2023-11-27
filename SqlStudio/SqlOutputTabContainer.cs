@@ -1,10 +1,9 @@
+using Common.Model;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Drawing;
-using CfgDataStore;
-using Common;
-using Common.Model;
+using System.Windows.Forms;
 
 #pragma warning disable CA1416
 
@@ -21,11 +20,7 @@ namespace SqlStudio
         private int _resCounter = 0;
 
         ContextMenuStrip _dataTabContextMenu = null;
-        private ConfigDataStore _configDataStore;
-        private IExecuteQueryCallback _executeCallback;
-        private IDatabaseSchemaInfo _databaseSchemaInfo;
-        private IDatabaseKeywordEscape _databaseKeywordEscape;
-        private IColumnValueDescriptionProvider _columnMetadataInfo;
+        private IServiceProvider _serviceProvider = null;
 
         public SqlOutputTabContainer()
         {
@@ -57,17 +52,9 @@ namespace SqlStudio
             TabPages.Add(addTabPage);
         }
 
-        public void SetDependencyObjects(ConfigDataStore configDataStore, 
-            IExecuteQueryCallback executeCallback, 
-            IDatabaseSchemaInfo databaseSchemaInfo, 
-            IDatabaseKeywordEscape databaseKeywordEscape,
-            IColumnValueDescriptionProvider columnMetadataInfo)
+        public void SetDependencyObjects(IServiceProvider serviceProvider)
         {
-            _configDataStore = configDataStore;
-            _executeCallback = executeCallback;
-            _databaseSchemaInfo = databaseSchemaInfo;
-            _databaseKeywordEscape = databaseKeywordEscape;
-            _columnMetadataInfo = columnMetadataInfo;
+            _serviceProvider = serviceProvider;
         }
 
         private ContextMenuStrip CreateDataTabsContextMenu()
@@ -157,7 +144,8 @@ namespace SqlStudio
 
                 if (queries != "")
                 {
-                    _executeCallback.ExecuteQuery(queries, false, "");
+                    var executeCallback = _serviceProvider.GetService<IExecuteQueryCallback>();
+                    executeCallback.ExecuteQuery(queries, false, "");
                 }
             }
         }
@@ -200,7 +188,7 @@ namespace SqlStudio
             }
         }
 
-        public void DisplayResults(List<SqlResult> results)
+        public void DisplayResults(IList<SqlResult> results)
         {
             if (results.Count < 1)
                 return;
@@ -277,7 +265,7 @@ namespace SqlStudio
 
         private DataSetTabPage InsertNewDataTab(string label)
         {
-            DataSetTabPage dstp = new DataSetTabPage(_configDataStore, _executeCallback, _databaseSchemaInfo, _databaseKeywordEscape, _columnMetadataInfo);
+            DataSetTabPage dstp = new DataSetTabPage(_serviceProvider);
             dstp.DisplayFilterRow = DisplayFilterRow;
             dstp.UpdatedResults += new DataSetTabPage.UpdatedResultsDelegate(_currentDataTab_UpdatedResults);
             dstp.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
