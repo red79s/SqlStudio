@@ -1,11 +1,11 @@
+using Common.Model;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
 
-using SqlExecute;
-using CfgDataStore;
-using Common;
+#pragma warning disable CA1416
 
 namespace SqlStudio
 {
@@ -20,9 +20,7 @@ namespace SqlStudio
         private int _resCounter = 0;
 
         ContextMenuStrip _dataTabContextMenu = null;
-        private ConfigDataStore _configDataStore;
-        private IExecuteQueryCallback _executeCallback;
-        private IDatabaseSchemaInfo _databaseSchemaInfo;
+        private IServiceProvider _serviceProvider = null;
 
         public SqlOutputTabContainer()
         {
@@ -44,8 +42,7 @@ namespace SqlStudio
             _textBoxOutput.Multiline = true;
             _textBoxOutput.ScrollBars = ScrollBars.Both;
             _textBoxOutput.WordWrap = false;
-            _textBoxOutput.Font = new System.Drawing.Font("Lucida Sans Typewriter", 12F, System.Drawing.FontStyle.Regular, 
-                                                                System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            _textBoxOutput.Font = new Font("Lucida Sans Typewriter", 12F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
             _outputTab.Controls.Add(_textBoxOutput);
             _textBoxOutput.Dock = DockStyle.Fill;
 
@@ -55,26 +52,21 @@ namespace SqlStudio
             TabPages.Add(addTabPage);
         }
 
-        public void SetConfig(ConfigDataStore configDataStore)
+        public void SetDependencyObjects(IServiceProvider serviceProvider)
         {
-            _configDataStore = configDataStore;
+            _serviceProvider = serviceProvider;
         }
 
-        public void SetExecuteCallback(IExecuteQueryCallback executeCallback)
-        {
-            _executeCallback = executeCallback;
-        }
-
-        public void SetDatabaseSchemaInfo(IDatabaseSchemaInfo databaseSchemaInfo)
-        {
-            _databaseSchemaInfo = databaseSchemaInfo;
-        }
         private ContextMenuStrip CreateDataTabsContextMenu()
         {
-            ContextMenuStrip cms = new ContextMenuStrip();
-            ToolStripMenuItem tsmiDataClose = new ToolStripMenuItem("Close", null, tsmiDataClose_Click);
+            var cms = new ContextMenuStrip();
+            var tsmiDataClose = new ToolStripMenuItem("Close", null, tsmiDataClose_Click);
             cms.Items.Add(tsmiDataClose);
-            ToolStripMenuItem tsmiDataRename = new ToolStripMenuItem("Rename", null, tsmiDataRename_Click);
+            var tsmiDataCloseAll = new ToolStripMenuItem("Close All", null, tsmiDataCloseAll_Click);
+            cms.Items.Add(tsmiDataCloseAll);
+            var tsmiDataCloseAllButThis = new ToolStripMenuItem("Close All But This", null, tsmiDataCloseAllButThis_Click);
+            cms.Items.Add(tsmiDataCloseAllButThis);
+            var tsmiDataRename = new ToolStripMenuItem("Rename", null, tsmiDataRename_Click);
             cms.Items.Add(tsmiDataRename);
             var tsmiDataRefresh = new ToolStripMenuItem("Refresh", null, tsmiDataRefresh_Click);
             tsmiDataRefresh.ShortcutKeys = Keys.F5;
@@ -102,7 +94,33 @@ namespace SqlStudio
             TabPages.Remove(SelectedTab);
         }
 
-        void tsmiDataRename_Click(object sender, EventArgs e)
+        private void tsmiDataCloseAll_Click(object sender, EventArgs e)
+        {
+			if (TabPages.Count > 2)
+            {
+				for (int i = TabPages.Count - 2; i >= 1; i--)
+				{
+						TabPages.RemoveAt(i);
+				}
+			}
+		}
+
+        private void tsmiDataCloseAllButThis_Click(object sender, EventArgs e)
+        {
+            if (TabPages.Count > 2)
+            {
+                var currentTab = SelectedTab;
+                for (int i = TabPages.Count - 2; i >= 1; i--)
+                {
+                    if (TabPages[i] != currentTab)
+                    {
+                        TabPages.RemoveAt(i);
+                    }
+                }
+            }
+		}
+
+		void tsmiDataRename_Click(object sender, EventArgs e)
         {
             RenameDialog rnd = new RenameDialog();
             rnd.NameText = SelectedTab.Text;
@@ -126,7 +144,8 @@ namespace SqlStudio
 
                 if (queries != "")
                 {
-                    _executeCallback.ExecuteQuery(queries, false, "");
+                    var executeCallback = _serviceProvider.GetService<IExecuteQueryCallback>();
+                    executeCallback.ExecuteQuery(queries, false, "");
                 }
             }
         }
@@ -169,7 +188,7 @@ namespace SqlStudio
             }
         }
 
-        public void DisplayResults(List<SqlResult> results)
+        public void DisplayResults(IList<SqlResult> results)
         {
             if (results.Count < 1)
                 return;
@@ -246,7 +265,7 @@ namespace SqlStudio
 
         private DataSetTabPage InsertNewDataTab(string label)
         {
-            DataSetTabPage dstp = new DataSetTabPage(_configDataStore, _executeCallback, _databaseSchemaInfo);
+            DataSetTabPage dstp = new DataSetTabPage(_serviceProvider);
             dstp.DisplayFilterRow = DisplayFilterRow;
             dstp.UpdatedResults += new DataSetTabPage.UpdatedResultsDelegate(_currentDataTab_UpdatedResults);
             dstp.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
@@ -285,130 +304,6 @@ namespace SqlStudio
             _textBoxOutput.SelectionLength = 0;
             _textBoxOutput.SelectionStart = _textBoxOutput.Text.Length;
             _textBoxOutput.ScrollToCaret();
-        }
-    }
-
-    public class DataSetTabPage : TabPage
-    {
-        public delegate void UpdatedResultsDelegate(object sender, int rows, string message);
-        public event UpdatedResultsDelegate UpdatedResults;
-        public EventHandler<int> VisibleRowsChanged;
-
-        private ConfigDataStore _configDataStore;
-        private readonly IExecuteQueryCallback _executeQueryCallback;
-        private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
-        private List<SqlResult> _results;
-        public DataSetTabPage(ConfigDataStore configDataStore, IExecuteQueryCallback executeQueryCallback, IDatabaseSchemaInfo databaseSchemaInfo)
-        {
-            _configDataStore = configDataStore;
-            _executeQueryCallback = executeQueryCallback;
-            _databaseSchemaInfo = databaseSchemaInfo;
-        }
-
-        private bool _dispFilterRow = false;
-        public bool DisplayFilterRow
-        {
-            get { return _dispFilterRow; }
-            set
-            {
-                _dispFilterRow = value;
-                foreach (TabDataGridContainer tdgc in Controls)
-                {
-                    tdgc.FilterRow = value;
-                }
-            }
-        }
-
-        public List<SqlResult> GetSqlResults()
-        {
-            return _results;
-        }
-
-        public void SetResults(List<SqlResult> results)
-        {
-            _results = results;
-
-            Controls.Clear();
-            SplitContainer lastSplit = null;
-
-            if (results.Count > 0)
-            {
-                ToolTipText = results[0].SqlQuery;
-                if (results.Count == 1)
-                {
-                    Text = results[0].TableName;
-                    if (string.IsNullOrEmpty(Text))
-                    {
-                        Text = results[0].ResType.ToString();
-                    }
-                }
-                else
-                {
-                    Text = "Multiple";
-                }
-            }
-
-            for (int i = 0; i < results.Count; i++)
-            {
-                if (i == 0 && results.Count > 1)
-                {
-                    lastSplit = new SplitContainer();
-                    lastSplit.Orientation = Orientation.Horizontal;
-                    lastSplit.Dock = DockStyle.Fill;
-                    Controls.Add(lastSplit);
-                    TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo);
-                    tgrid.FilterRow = DisplayFilterRow;
-                    tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
-                    tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
-                    tgrid.Dock = DockStyle.Fill;
-                    tgrid.SqlResult = results[i];
-                    lastSplit.Panel1.Controls.Add(tgrid);
-                }
-                else if (i == 0)
-                {
-                    TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo);
-                    tgrid.FilterRow = DisplayFilterRow;
-                    tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
-                    tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
-                    tgrid.Dock = DockStyle.Fill;
-                    Controls.Add(tgrid);
-                    tgrid.SqlResult = results[i];
-                }
-                else
-                {
-                    if (i < (results.Count - 1))
-                    {
-                        SplitContainer sc = new SplitContainer();
-                        sc.Orientation = Orientation.Horizontal;
-                        sc.Dock = DockStyle.Fill;
-                        lastSplit.Panel2.Controls.Add(sc);
-                        lastSplit = sc;
-                        TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo);
-                        tgrid.FilterRow = DisplayFilterRow;
-                        tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
-                        tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
-                        tgrid.Dock = DockStyle.Fill;
-                        tgrid.SqlResult = results[i];
-                        lastSplit.Panel2.Controls.Add(tgrid);
-                    }
-                    else
-                    {
-                        TabDataGridContainer tgrid = new TabDataGridContainer(_configDataStore, _executeQueryCallback, _databaseSchemaInfo);
-                        tgrid.FilterRow = DisplayFilterRow;
-                        tgrid.UpdatedResults += new TabDataGridContainer.UpdatedResultsDelegate(tgrid_UpdatedResults);
-                        tgrid.VisibleRowsChanged += (s, e) => { VisibleRowsChanged?.Invoke(s, e); };
-                        tgrid.Dock = DockStyle.Fill;
-                        tgrid.SqlResult = results[i];
-                        lastSplit.Panel2.Controls.Add(tgrid);
-                    }
-                }
-            }
-        }
-
-        void tgrid_UpdatedResults(object sender, int rows, string message)
-        {
-            if (UpdatedResults != null)
-                UpdatedResults(sender, rows, message);
         }
     }
 }

@@ -12,34 +12,34 @@ namespace FormatTextControl
 
         public TextPos(int line, int index)
         {
-            this._line = line;
-            this._index = index;
-            this._bufferOffset = 0;
+            _line = line;
+            _index = index;
+            _bufferOffset = 0;
         }
 
         public TextPos(int line, int index, int bufferOffset)
         {
-            this._line = line;
-            this._index = index;
-            this._bufferOffset = bufferOffset;
+            _line = line;
+            _index = index;
+            _bufferOffset = bufferOffset;
         }
 
         public int Line
         {
-            get { return this._line; }
-            set { this._line = value; }
+            get { return _line; }
+            set { _line = value; }
         }
 
         public int Index
         {
-            get { return this._index; }
-            set { this._index = value; }
+            get { return _index; }
+            set { _index = value; }
         }
 
         public int BufferOffset
         {
-            get { return this._bufferOffset; }
-            set { this._bufferOffset = value; }
+            get { return _bufferOffset; }
+            set { _bufferOffset = value; }
         }
 
         public static bool operator <(TextPos tp1, TextPos tp2)
@@ -98,7 +98,7 @@ namespace FormatTextControl
 
         public override string ToString()
         {
-            return string.Format("[{0},{1}]", this._line, this._index);
+            return string.Format("[{0},{1}]", _line, _index);
         }
     }
 }

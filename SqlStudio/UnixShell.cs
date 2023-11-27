@@ -9,17 +9,17 @@ namespace SqlStudio
 	/// <summary>
 	/// Summary description for UnixShell.
 	/// </summary>
-	public class UnixShell : System.Windows.Forms.TextBox
-	{
-		public delegate void debug(object sender, string msg);
-		public event debug DebugEvent;
+	public class UnixShell : TextBox
+    {
+		public delegate void Debug(object sender, string msg);
+		public event Debug DebugEvent;
 		public delegate void Command(object sender, string cmd);
 		public event Command CommandEvent;
 		public delegate void Completer(object sender, string cmd, int currentIndex, ref List<string> posibleCompletions);
 		public event Completer CompleterEvent;
 
 		private enum KeyCodes {ENTER=13, BACKSPACE=8, TAB=9, UP_ARROW=38, DOWN_ARROW=40, LEFT_ARROW=37, RIGHT_ARROW=39, SPACE=32, SHIFT=16, CTRL=17, COPY=3, PASTE=22, CUT=24};
-		private enum CompleterState {UNINITALIZED=0, INITIALIZED=1, ASKING=2, ASKED=3};
+		
 		private string sPriProm = null;
 		private string sSecProm = null;
 		private char endChar = ';';
@@ -27,7 +27,6 @@ namespace SqlStudio
 		private int startCmd = 0;
 		private ArrayList alLinePos = null;
 		private History history = null;
-		private int completerState = (int)CompleterState.UNINITALIZED;
 		private int iDebug = 0;
         private bool bAccseptInput = true;
 
@@ -89,7 +88,7 @@ namespace SqlStudio
 				case (int)KeyCodes.RIGHT_ARROW: HandleArrowLeftRight(e); break;
 			}
 			if(iDebug>2)
-				Debug(string.Format("OnKeyDown: {0} ({1}) cc={2}", (char)e.KeyValue, e.KeyValue, curCursor));
+				DebugMgs(string.Format("OnKeyDown: {0} ({1}) cc={2}", (char)e.KeyValue, e.KeyValue, curCursor));
 			if(iDebug>3)
 			{
 				for(int i=0; i<alLinePos.Count;i++)
@@ -99,7 +98,7 @@ namespace SqlStudio
 					if(i < (alLinePos.Count - 1))
 						end = (int)alLinePos[i+1];
 					string lText = base.Text.Substring(b, end - b).Replace(System.Environment.NewLine,"NN");
-					Debug(string.Format("line={0},b={1},e={2} line<{3}>", i, b, end, lText));
+					DebugMgs(string.Format("line={0},b={1},e={2} line<{3}>", i, b, end, lText));
 				}
 			}
 		}
@@ -125,7 +124,7 @@ namespace SqlStudio
 				default: InsertChar(); break;
 			}
 			if(iDebug>2)
-				Debug(string.Format("OnKeyPress: {0} ({1}) cc={2} ", e.KeyChar, (int)e.KeyChar, curCursor));
+				DebugMgs(string.Format("OnKeyPress: {0} ({1}) cc={2} ", e.KeyChar, (int)e.KeyChar, curCursor));
 			if(iDebug>3)
 			{
 				for(int i=0; i<alLinePos.Count;i++)
@@ -135,7 +134,7 @@ namespace SqlStudio
 					if(i < (alLinePos.Count - 1))
 						end = (int)alLinePos[i+1];
 					string lText = base.Text.Substring(b, end - b).Replace(System.Environment.NewLine,"NN");
-					Debug(string.Format("line={0},b={1},e={2} line<{3}>", i, b, end, lText));
+					DebugMgs(string.Format("line={0},b={1},e={2} line<{3}>", i, b, end, lText));
 				}
 			}
 		}
@@ -173,8 +172,6 @@ namespace SqlStudio
 			SelectionStart = curCursor;
 			curCursor++;
 			SelectionLength = 0;
-
-			completerState = (int)CompleterState.UNINITALIZED;
 		}
 
 		protected void InsertChar(char e)
@@ -232,7 +229,7 @@ namespace SqlStudio
 		protected void HandleCopy(System.Windows.Forms.KeyPressEventArgs e)
 		{
 			if(iDebug>1)
-				Debug("selected text <" + base.SelectedText + ">");
+				DebugMgs("selected text <" + base.SelectedText + ">");
 
 			Clipboard.SetDataObject(base.SelectedText, true);
 		}
@@ -246,7 +243,7 @@ namespace SqlStudio
 				string dText = cText.Replace("\r","R");
 				dText = dText.Replace("\n","N");
 				if(iDebug>1)
-					Debug("text on Clipboard: " + dText);
+					DebugMgs("text on Clipboard: " + dText);
                 
                 if (SelectionLength > 0)
                 {
@@ -618,11 +615,11 @@ namespace SqlStudio
 					SelectionLength = 0;
 				}
 				if(iDebug>1)
-					Debug(string.Format("cc={0}", curCursor));
+					DebugMgs(string.Format("cc={0}", curCursor));
 			}
 		}
 
-		private void Debug(string msg)
+		private void DebugMgs(string msg)
 		{
 			if(DebugEvent != null)
 				DebugEvent(this, msg);

@@ -1,11 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Data.Common;
-using System.Data.Entity;
-using System.Data.Entity.Core.Common;
-using System.Data.SQLite;
-using System.Data.SQLite.EF6;
-using System.Linq;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace CfgDataStore
 {
@@ -14,7 +7,7 @@ namespace CfgDataStore
         private readonly string _configFile;
 
         public ConfigDbContext(string configFile)
-            : base(new SQLiteConnection($"data source = {configFile}"), true)
+            : base()
         {
             _configFile = configFile;
             EnusureTablesExists();
@@ -28,6 +21,9 @@ namespace CfgDataStore
         public DbSet<AutoQuery> AutoQueries { get;set;}
         public DbSet<HistoryLogItem> HistoryLog { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        => options.UseSqlite($"Data Source={_configFile}");
+
         public void EnusureTablesExists()
         {
             EnsureTableExists("AutoQueries", "AutoQueryId INTEGER primary key , description nvarchar(255), tablename nvarchar(255), columnname nvarchar(255) , command nvarchar(5000)");
@@ -38,50 +34,50 @@ namespace CfgDataStore
         {
             try
             {
-                Database.ExecuteSqlCommand($"Select count (*) from {tablename}");
+                Database.ExecuteSqlRaw($"Select count (*) from {tablename}");
             }
             catch
             {
-                Database.ExecuteSqlCommand($"create table {tablename}({tableCreateSql})");
+                Database.ExecuteSqlRaw($"create table {tablename}({tableCreateSql})");
             }
         }
     }
 
-    public class SqliteDbConfiguration : DbConfiguration
-    {
-        public SqliteDbConfiguration()
-        {
-            string assemblyName = typeof(SQLiteProviderFactory).Assembly.GetName().Name;
+    //public class SqliteDbConfiguration : DbConfiguration
+    //{
+    //    public SqliteDbConfiguration()
+    //    {
+    //        string assemblyName = typeof(SQLiteProviderFactory).Assembly.GetName().Name;
 
-            RegisterDbProviderFactories(assemblyName);
-            SetProviderFactory(assemblyName, SQLiteFactory.Instance);
-            SetProviderFactory(assemblyName, SQLiteProviderFactory.Instance);
-            SetProviderServices(assemblyName,
-                (DbProviderServices)SQLiteProviderFactory.Instance.GetService(
-                    typeof(DbProviderServices)));
-        }
+    //        RegisterDbProviderFactories(assemblyName);
+    //        SetProviderFactory(assemblyName, SQLiteFactory.Instance);
+    //        SetProviderFactory(assemblyName, SQLiteProviderFactory.Instance);
+    //        SetProviderServices(assemblyName,
+    //            (DbProviderServices)SQLiteProviderFactory.Instance.GetService(
+    //                typeof(DbProviderServices)));
+    //    }
 
-        static void RegisterDbProviderFactories(string assemblyName)
-        {
-            var dataSet = ConfigurationManager.GetSection("system.data") as DataSet;
-            if (dataSet != null)
-            {
-                var dbProviderFactoriesDataTable = dataSet.Tables.OfType<DataTable>()
-                    .First(x => x.TableName == typeof(DbProviderFactories).Name);
+    //    static void RegisterDbProviderFactories(string assemblyName)
+    //    {
+    //        var dataSet = ConfigurationManager.GetSection("system.data") as DataSet;
+    //        if (dataSet != null)
+    //        {
+    //            var dbProviderFactoriesDataTable = dataSet.Tables.OfType<DataTable>()
+    //                .First(x => x.TableName == typeof(DbProviderFactories).Name);
 
-                var dataRow = dbProviderFactoriesDataTable.Rows.OfType<DataRow>()
-                    .FirstOrDefault(x => x.ItemArray[2].ToString() == assemblyName);
+    //            var dataRow = dbProviderFactoriesDataTable.Rows.OfType<DataRow>()
+    //                .FirstOrDefault(x => x.ItemArray[2].ToString() == assemblyName);
 
-                if (dataRow != null)
-                    dbProviderFactoriesDataTable.Rows.Remove(dataRow);
+    //            if (dataRow != null)
+    //                dbProviderFactoriesDataTable.Rows.Remove(dataRow);
 
-                dbProviderFactoriesDataTable.Rows.Add(
-                    "SQLite Data Provider (Entity Framework 6)",
-                    ".NET Framework Data Provider for SQLite (Entity Framework 6)",
-                    assemblyName,
-                    typeof(SQLiteProviderFactory).AssemblyQualifiedName
-                    );
-            }
-        }
-    }
+    //            dbProviderFactoriesDataTable.Rows.Add(
+    //                "SQLite Data Provider (Entity Framework 6)",
+    //                ".NET Framework Data Provider for SQLite (Entity Framework 6)",
+    //                assemblyName,
+    //                typeof(SQLiteProviderFactory).AssemblyQualifiedName
+    //                );
+    //        }
+    //    }
+    //}
 }

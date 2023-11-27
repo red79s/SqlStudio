@@ -12,32 +12,32 @@ namespace SqlStudio
         private string _command = null;
         private struct CmdPairs
         {
-            public string flag;
-            public string value;
+            public string Flag;
+            public string Value;
             public CmdPairs(string flag, string value)
             {
-                this.flag = flag;
-                this.value = value;
+                Flag = flag;
+                Value = value;
             }
         }
         List<CmdPairs> _cmdPairs = null;
 
         public ArgumentsParser(string cmdLine)
         {
-            this.CommandLine(cmdLine);
+            CommandLine(cmdLine);
         }
 
         public void CommandLine(string cmdLine)
         {
             string cleanCmdLine = cmdLine.Replace("\r\n", "\n").Replace("\n", " ");
-            this.Parse(cleanCmdLine);
+            Parse(cleanCmdLine);
         }
 
         private void Parse(string cmdLine)
         {
-            this._cmdPairs = new List<CmdPairs>();
-            this._flags = new List<char>();
-            this._noFlagArgs = new List<string>();
+            _cmdPairs = new List<CmdPairs>();
+            _flags = new List<char>();
+            _noFlagArgs = new List<string>();
 
             List<string> stack = new List<string>();
             MatchCollection matches = Regex.Matches(cmdLine, "(\"([^\"]*)\")|('([^']*)')|([^ ]+)");
@@ -48,7 +48,7 @@ namespace SqlStudio
 
             if (stack.Count > 0)
             {
-                this._command = this.GetNonQuotedArg(stack[0]);
+                _command = GetNonQuotedArg(stack[0]);
                 stack.RemoveAt(0);
             }
 
@@ -58,26 +58,26 @@ namespace SqlStudio
             {
                 if (bLastArgumentFlag)
                 {
-                    cmdPair.value = this.GetNonQuotedArg(stack[i]);
-                    this._cmdPairs.Add(cmdPair);
+                    cmdPair.Value = GetNonQuotedArg(stack[i]);
+                    _cmdPairs.Add(cmdPair);
                     bLastArgumentFlag = false;
                 }
                 else if (stack[i].IndexOf("--") == 0)
                 {
-                    cmdPair.flag = stack[i].Substring(2, stack[i].Length - 2);
+                    cmdPair.Flag = stack[i].Substring(2, stack[i].Length - 2);
                     bLastArgumentFlag = true;
                 }
                 else if (stack[i].IndexOf("-") == 0)
                 {
                     for (int j = 1; j < stack[i].Length; j++)
                     {
-                        this._flags.Add(stack[i][j]);
+                        _flags.Add(stack[i][j]);
                     }
                     bLastArgumentFlag = false;
                 }
                 else
                 {
-                    this._noFlagArgs.Add(this.GetNonQuotedArg(stack[i]));
+                    _noFlagArgs.Add(GetNonQuotedArg(stack[i]));
                 }
             }
         }
@@ -99,17 +99,17 @@ namespace SqlStudio
 
         public string GetCommand()
         {
-            return this._command;
+            return _command;
         }
 
         public char[] GetFlags()
         {
-            return this._flags.ToArray();
+            return _flags.ToArray();
         }
 
         public bool FlagIsSet(char flag)
         {
-            foreach (char c in this._flags)
+            foreach (char c in _flags)
             {
                 if (c == flag)
                     return true;
@@ -119,36 +119,36 @@ namespace SqlStudio
 
         public string[] GetNonNamedArgs()
         {
-            return this._noFlagArgs.ToArray();
+            return _noFlagArgs.ToArray();
         }
 
         public string GetNonNamedArg(int index)
         {
-            if (index < this._noFlagArgs.Count && index >= 0)
-                return this._noFlagArgs[index];
+            if (index < _noFlagArgs.Count && index >= 0)
+                return _noFlagArgs[index];
             return null;
         }
 
         public int NumNonNamedArgs
         {
-            get { return this._noFlagArgs.Count; }
+            get { return _noFlagArgs.Count; }
         }
 
         public string GetNamedArg(string flag)
         {
-            foreach (CmdPairs cp in this._cmdPairs)
+            foreach (CmdPairs cp in _cmdPairs)
             {
-                if (cp.flag == flag)
-                    return cp.value;
+                if (cp.Flag == flag)
+                    return cp.Value;
             }
             return null;
         }
 
         public bool NamedArgExists(string flag)
         {
-            foreach (CmdPairs cp in this._cmdPairs)
+            foreach (CmdPairs cp in _cmdPairs)
             {
-                if (cp.flag == flag)
+                if (cp.Flag == flag)
                     return true;
             }
             return false;

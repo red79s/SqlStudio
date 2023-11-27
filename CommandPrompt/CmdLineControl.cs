@@ -112,8 +112,8 @@ namespace CommandPrompt
             {
                 AcceptsKeyInput = false;
                 string cmd = GetText(_cmdStartPos, GetTextEnd());
-                if (CommandReady != null)
-                    CommandReady(this, cmd);
+                CommandReady?.Invoke(this, cmd);
+                ClearUndoHistory();
                 _lineHistory.Add(cmd);
                 return;
             }
@@ -123,8 +123,8 @@ namespace CommandPrompt
                 if (cmd.IndexOf(";") >= 0)
                 {
                     AcceptsKeyInput = false;
-                    if (CommandReady != null)
-                        CommandReady(this, cmd);
+                    CommandReady?.Invoke(this, cmd);
+                    ClearUndoHistory();
                     _cmdHistory.Add(cmd);
                     return;
                 }

@@ -16,11 +16,11 @@ namespace CommandPrompt
             listBoxSelections.KeyDown += new KeyEventHandler(listBoxSelections_KeyDown);
             listBoxSelections.KeyPress += new KeyPressEventHandler(listBoxSelections_KeyPress);
             listBoxSelections.MouseDoubleClick += new MouseEventHandler(listBoxSelections_MouseDoubleClick);
-            ContextMenu cm = new ContextMenu();
-            MenuItem miReset = new MenuItem("Reset");
+            var cm = new ContextMenuStrip();
+            var miReset = new ToolStripMenuItem("Reset");
             miReset.Click += new EventHandler(miReset_Click);
-            cm.MenuItems.Add(miReset);
-            listBoxSelections.ContextMenu = cm;
+            cm.Items.Add(miReset);
+            listBoxSelections.ContextMenuStrip = cm;
         }
 
         void listBoxSelections_KeyPress(object sender, KeyPressEventArgs e)

@@ -1,16 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Data;
-using System.Windows.Forms;
-using SqlExecute;
-using System.Drawing;
-using System.Data.Common;
-using System.IO;
-using CfgDataStore;
-using System.Text.RegularExpressions;
+﻿using CfgDataStore;
 using Common;
+using Common.Model;
+using Microsoft.Extensions.DependencyInjection;
+using SqlStudio.AutoLayoutForm;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace SqlStudio
 {
@@ -26,12 +29,17 @@ namespace SqlStudio
         private ConfigDataStore _configDataStore;
         private readonly IExecuteQueryCallback _executeQueryCallback;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
+        private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
+        private readonly IColumnValueDescriptionProvider _columnMetadataInfo;
 
-        public TabDataGrid(ConfigDataStore configDataStore, IExecuteQueryCallback executeQueryCallback, IDatabaseSchemaInfo databaseSchemaInfo)
+        public TabDataGrid(IServiceProvider serviceProvider)
         {
-            _configDataStore = configDataStore;
-            _executeQueryCallback = executeQueryCallback;
-            _databaseSchemaInfo = databaseSchemaInfo;
+            _configDataStore = serviceProvider.GetRequiredService<ConfigDataStore>();
+            _executeQueryCallback = serviceProvider.GetService<IExecuteQueryCallback>();
+            _databaseSchemaInfo = serviceProvider.GetService<IDatabaseSchemaInfo>();
+            _databaseKeywordEscape = serviceProvider.GetService<IDatabaseKeywordEscape>();
+            _columnMetadataInfo = serviceProvider.GetService<IColumnValueDescriptionProvider>();
+
             BackgroundColor = Color.WhiteSmoke;
             ContextMenuStrip = new ContextMenuStrip();
 
@@ -39,11 +47,19 @@ namespace SqlStudio
             miCopy.Click += miCopy_Click;
             ContextMenuStrip.Items.Add(miCopy);
 
+            var miEdit = new ToolStripMenuItem("Edit");
+            miEdit.Click += MiEdit_Click;
+            ContextMenuStrip.Items.Add(miEdit);
+
             ToolStripMenuItem miSave = new ToolStripMenuItem("Save");
             miSave.Click += miSave_Click;
             ContextMenuStrip.Items.Add(miSave);
 
-            ToolStripMenuItem miFill = new ToolStripMenuItem("Fill");
+            //var miDeleteAll = new ToolStripMenuItem("Delete");
+            //miDeleteAll.Click += miDelete_Click;
+            //ContextMenuStrip.Items.Add(miDeleteAll);
+
+            ToolStripMenuItem miFill = new ToolStripMenuItem("Undo edit");
             miFill.ShortcutKeys = Keys.F7;
             miFill.Click += miFill_Click;
             ContextMenuStrip.Items.Add(miFill);
@@ -52,9 +68,9 @@ namespace SqlStudio
             miNewRow.Click += miNewRow_Click;
             ContextMenuStrip.Items.Add(miNewRow);
 
-            ToolStripMenuItem miGetTitles = new ToolStripMenuItem("Get Titles");
-            miGetTitles.Click += miGetTitles_Click;
-            ContextMenuStrip.Items.Add(miGetTitles);
+            ToolStripMenuItem miGetColumnInfo = new ToolStripMenuItem("Get Column Info");
+            miGetColumnInfo.Click += GetColumnInfo_MenuItemClick;
+            ContextMenuStrip.Items.Add(miGetColumnInfo);
 
             var miBlob = new ToolStripMenuItem("Blob");
             ContextMenuStrip.Items.Add(miBlob);
@@ -134,6 +150,10 @@ namespace SqlStudio
             miFindText.Click += MiFindTextOnClick;
             ContextMenuStrip.Items.Add(miFindText);
 
+            var miFindColumn = new ToolStripMenuItem("Find Column...");
+            miFindColumn.Click += MiFindColumnOnClick;
+            ContextMenuStrip.Items.Add(miFindColumn);
+
             var miFindTimeDiff = new ToolStripMenuItem("Get Time diffs");
             miFindTimeDiff.Click += MiFindTimeDiffOnClick;
             ContextMenuStrip.Items.Add(miFindTimeDiff);
@@ -141,11 +161,50 @@ namespace SqlStudio
             ContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(ContextMenuStrip_Opening);
         }
 
+        private void MiEdit_Click(object sender, EventArgs e)
+        {
+            var cells = SelectedCells;
+            var fieldCells = new Dictionary<FieldInfo, DataGridViewCell>();
+            var fieldInfos = new SortedDictionary<int, List<FieldInfo>>();
+            
+            foreach (DataGridViewCell cell in cells)
+            {
+                var fieldInfo = new FieldInfo
+                {
+                    ColumnIndex = cell.ColumnIndex,
+                    Name = cell.OwningColumn.Name,
+                    Value = cell.Value,
+                    ValueType = cell.ValueType
+                };
+
+                if (fieldInfos.ContainsKey(cell.RowIndex))
+                {
+                    var rowColumns = fieldInfos[cell.RowIndex];
+                    rowColumns.Add(fieldInfo);
+                    fieldInfos[cell.RowIndex] = rowColumns.OrderBy(x => x.ColumnIndex).ToList();
+                }
+                else
+                {
+                    fieldInfos.Add(cell.RowIndex, new List<FieldInfo> { fieldInfo });
+                }
+                fieldCells.Add(fieldInfo, cell);
+            }
+
+            var form = new AutoLayoutForm.AutoLayoutForm(fieldInfos);
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                foreach(var fieldCell in fieldCells)
+                {
+                    fieldCell.Value.Value = fieldCell.Key.Value;
+                }
+            }
+        }
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == (Keys.Control | Keys.N))
             {
-                this.ProcessDownKey(Keys.Down);
+                ProcessDownKey(Keys.Down);
 
                 if (SelectedCells != null && SelectedCells.Count == 1)
                 {
@@ -418,14 +477,33 @@ namespace SqlStudio
         private void MiFindTextOnClick(object sender, EventArgs eventArgs)
         {
             FindDialog fd = new FindDialog();
-            if (fd.ShowDialog() == DialogResult.OK)
+            fd.StartPosition = FormStartPosition.CenterParent;
+			if (fd.ShowDialog() == DialogResult.OK)
             {
                 SearchText = fd.SearchText;
                 FindNext(true);
             }
         }
 
-        private string SearchText { get; set; }
+		private void MiFindColumnOnClick(object sender, EventArgs eventArgs)
+        {
+			FindDialog fd = new FindDialog();
+            fd.StartPosition = FormStartPosition.CenterParent;
+			if (fd.ShowDialog() == DialogResult.OK)
+			{
+                foreach (DataGridViewColumn col in Columns)
+                {
+                    if (col.HeaderText.Contains(fd.SearchText, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        FirstDisplayedScrollingColumnIndex = col.Index;
+                        return;
+                    }
+                }
+				MessageBox.Show($"No column name containing: {fd.SearchText} is found", "Not found", MessageBoxButtons.OK);
+			}
+		}
+
+		private string SearchText { get; set; }
 
         private void FindNext(bool directionDown)
         {
@@ -621,12 +699,24 @@ namespace SqlStudio
         void miCreateScript_Click(object sender, EventArgs e)
         {
             List<string> insertStatements = CreateScript();
-            PrintScripts(insertStatements, "{0};" + Environment.NewLine);
+            //PrintScripts(insertStatements, "{0};" + Environment.NewLine);
 
             var insertText = "";
+            bool firstRow = true;
             foreach (var stmt in insertStatements)
             {
-                insertText += $"{stmt};{Environment.NewLine}";
+                if (!firstRow)
+                {
+                    insertText += Environment.NewLine;
+                }
+                insertText += $"{stmt};";
+                firstRow = false;
+            }
+
+            if (string.IsNullOrEmpty(insertText))
+            {
+                MessageBox.Show("no cells selected");
+                return;
             }
 
             Clipboard.SetText(insertText);
@@ -823,9 +913,12 @@ namespace SqlStudio
                 blobId = GetBlobId(GetBlobIdCell(cells));
             }
 
+            tableName = _databaseKeywordEscape.EscapeObject(tableName);
+
             for (int i = 0; i < cells.Count; i++)
             {
                 string colName = cells[i].OwningColumn.Name;
+                colName = _databaseKeywordEscape.EscapeObject(colName);
                 Type type = cells[i].ValueType;
                 Object value = cells[i].Value;
 
@@ -833,10 +926,10 @@ namespace SqlStudio
                     continue;
                 if (!includeBlobColumns && IsBlobColumn(type, colName))
                     continue;
-                if (value == null)
-                    continue;
-                if (value == DBNull.Value)
-                    continue;
+                //if (value == null)
+                //    continue;
+                //if (value == DBNull.Value)
+                //    continue;
 
                 string strValue = GetDbStringValue(type, value, true);
                 if (IsBlobColumn(type, colName))
@@ -878,6 +971,9 @@ namespace SqlStudio
 
         private string GetDbStringValue(Type type, object value, bool quoteStrings)
         {
+            if (value == null || value == DBNull.Value)
+				return "null";
+
             string strValue = value.ToString();
             if (quoteStrings)
             {
@@ -957,30 +1053,23 @@ namespace SqlStudio
             return false;
         }
 
-        void miGetTitles_Click(object sender, EventArgs e)
+        private void GetColumnInfo_MenuItemClick(object sender, EventArgs e)
         {
-            int numTitlesFetched = 0;
+            if (SelectedCells == null || SelectedCells.Count == 0)
+                return;
 
-            DataGridViewCell cell = SelectedCells[0];
-            for (int i = 0; i < Rows.Count; i++)
-            {
-                DataGridViewCell titleCell = Rows[i].Cells[cell.ColumnIndex];
-                if (titleCell.Value == null)
-                    continue;
-                int titleNo = (int)titleCell.Value;
-                if (titleNo < 1)
-                    continue;
+            var descriptions = _columnMetadataInfo.GetDescriptionForColumn(_sqlResult.TableName, SelectedCells[0].OwningColumn.Name);
+            if (descriptions.Count == 0) 
+                return;
 
-                string cmdText = string.Format("select title from asystitlesen where title_no = {0}", titleNo);
-                DbCommand cmd = SqlResult.Connection.CreateCommand();
-                cmd.CommandText = cmdText;
-                object o = cmd.ExecuteScalar();
-                titleCell.ToolTipText = o.ToString();
-                numTitlesFetched++;
-            }
+            MessageBox.Show(string.Join(Environment.NewLine, descriptions), "Value - Description");
+            //foreach (DataGridViewCell cell in SelectedCells)
+            //{
+            //    if (cell.Value == null)
+            //        continue;
 
-            if (UpdatedResults != null)
-                UpdatedResults(this, numTitlesFetched, "Fetched Agresso titles");
+            //    cell.ToolTipText = _columnMetadataInfo.GetDescriptionForValue(_sqlResult.TableName, cell.OwningColumn.Name, cell.Value.ToString());
+            //}
         }
 
         private byte[] GetBlobFromCell(DataGridViewCell cell)
@@ -1124,23 +1213,6 @@ namespace SqlStudio
 
             var tableName = SqlResult.TableName;
 
-            bool bEnableGetTitles = false;
-            if (SqlResult.Connection != null && SqlResult.Connection.State == ConnectionState.Open && 
-                SelectedCells != null && SelectedCells.Count == 1)
-            {
-                DataGridViewCell cell = SelectedCells[0];
-                if (cell.ValueType == typeof(Int32))
-                {
-                    bEnableGetTitles = true;
-                }
-            }
-            ContextMenuStrip.Items[3].Enabled = bEnableGetTitles;
-
-            bool bEnableCreateScript = false;
-            if (SelectedCells.Count > 0)
-                bEnableCreateScript = true;
-            ContextMenuStrip.Items[4].Enabled = bEnableCreateScript;
-
             foreach (ToolStripMenuItem menuItem in _dynamicDataMenuItem.DropDownItems)
             {
                 var autoQuery = menuItem.Tag as AutoQuery;
@@ -1168,7 +1240,8 @@ namespace SqlStudio
             {
                 return res;
             }
-
+            var sw = new Stopwatch();
+            sw.Start();
             foreach (DataColumn column in _sqlResult.DataTable.Columns)
             {
                 if (column.ColumnName.Equals("table", StringComparison.CurrentCultureIgnoreCase) ||
@@ -1178,7 +1251,23 @@ namespace SqlStudio
                     res.Add(new AutoQuery { Description = "SELECT * FROM [table]", Command = "SELECT * FROM {" + column.ColumnName + "}", TableName = _sqlResult.TableName});
                 }
 
-                if (column.ColumnName.EndsWith("id", StringComparison.CurrentCultureIgnoreCase))
+                if (column.ColumnName.Equals("id", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    foreach (var table in _databaseSchemaInfo.Tables)
+                    {
+                        if (table.Columns.FirstOrDefault(x => x.ColumnName.Equals($"{_sqlResult.TableName}id", StringComparison.CurrentCultureIgnoreCase)) != null)
+                        {
+                            
+                            res.Add(new AutoQuery
+                            {
+                                Description = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_sqlResult.TableName}Id = [colVal]",
+                                Command = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_sqlResult.TableName}Id = " + "{" + column.ColumnName + "}",
+                                TableName = _sqlResult.TableName
+                            });
+                        }
+                    }
+                }
+                else if (column.ColumnName.EndsWith("id", StringComparison.CurrentCultureIgnoreCase))
                 {
                     var tableName = column.ColumnName.Substring(0, column.ColumnName.Length - 2);
                     foreach (var table in _databaseSchemaInfo.Tables)
@@ -1193,14 +1282,18 @@ namespace SqlStudio
 
                             if (col != null)
                             {
-                                res.Add(new AutoQuery { Description = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} = [colVal]", 
-                                    Command = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} IN (" + "{" + column.ColumnName + "})", TableName = _sqlResult.TableName });
+                                res.Add(new AutoQuery
+                                {
+                                    Description = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} = [colVal]",
+                                    Command = $"SELECT * FROM {table.TableName} WHERE {col.ColumnName} IN (" + "{" + column.ColumnName + "})",
+                                    TableName = _sqlResult.TableName
+                                });
                             }
                         }
                     }
                 }
             }
-
+            sw.Stop();
             return res;
         }
 
@@ -1268,6 +1361,20 @@ namespace SqlStudio
             }
         }
 
+        void miDelete_Click(object sender, EventArgs e)
+        {
+            if (_sqlResult == null || _sqlResult.DataAdapter == null)
+                return;
+
+            var tableInfo = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName.Equals(_sqlResult.TableName, StringComparison.CurrentCultureIgnoreCase));
+            var keys = tableInfo?.Columns.Where(x => x.IsPrimaryKey).ToList();
+            DataGridViewSelectedRowCollection selRows = SelectedRows;
+            foreach (DataGridViewRow dgRow in selRows)
+            {
+                
+            }
+        }
+
         public SqlResult SqlResult
         {
             get { return _sqlResult; }
@@ -1311,14 +1418,14 @@ namespace SqlStudio
             }
 
             _generatedDataMenuItem.DropDownItems.Clear();
-            var generatedAutoQueries = GetGeneratedTableAutoQueries();
-            foreach (var query in generatedAutoQueries)
-            {
-                var menuItem = new ToolStripMenuItem(query.Description);
-                menuItem.Click += GeneratedQueryMenuItem_Click;
-                menuItem.Tag = query;
-                _generatedDataMenuItem.DropDownItems.Add(menuItem);
-            }
+            //var generatedAutoQueries = GetGeneratedTableAutoQueries();
+            //foreach (var query in generatedAutoQueries)
+            //{
+            //    var menuItem = new ToolStripMenuItem(query.Description);
+            //    menuItem.Click += GeneratedQueryMenuItem_Click;
+            //    menuItem.Tag = query;
+            //    _generatedDataMenuItem.DropDownItems.Add(menuItem);
+            //}
         }
 
         private const int MaxRowsDetailedColumnWidthCalculationTreshold = 1000;
@@ -1355,7 +1462,6 @@ namespace SqlStudio
                         Columns[i].Width = Columns[i].GetPreferredWidth(DataGridViewAutoSizeColumnMode.AllCells, true);
                     }
                 }
-                    
             }
             else
             {
@@ -1373,7 +1479,7 @@ namespace SqlStudio
                     iRemainingWidth -= Columns[i].Width;
                 }
 
-                if (iRemainingWidth > 0)
+                if (iRemainingWidth > 0 && columnsNotResized.Count > 0)
                 {
                     int iAddWidth = iRemainingWidth / columnsNotResized.Count;
                     foreach (int i in columnsNotResized)

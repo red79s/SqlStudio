@@ -1,5 +1,6 @@
 
 using Common;
+using Common.Model;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Data.SQLite;
-using System.Data.SqlServerCe;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -16,6 +16,7 @@ namespace SqlExecute
 {
     public class SqlExecuter : IDatabaseSchemaInfo
     {
+        public string ConnectionString { get; private set; }
         public enum DatabaseProvider 
         { 
             SQLSERVER, 
@@ -57,9 +58,7 @@ namespace SqlExecute
             }
         }
 
-        //delegates
-        public delegate void ExecutedDelegate(object sender, List<SqlResult> results);
-        public event ExecutedDelegate Executed;
+        public EventHandler<IList<SqlResult>> Executed;
 
         public string CurrentScriptPath { get; set; }
 
@@ -71,6 +70,7 @@ namespace SqlExecute
         private DbSchemaCache.DbSchemaCache _dbCache = null;
         private int _iCommandTimeout = 20;
         private object _cacheLockObj = new object();
+        private List<ForeignKeyInfo> _foreignKeyInfos = null;
 
         public SqlExecuter()
         {
@@ -113,12 +113,24 @@ namespace SqlExecute
                     DataRow[] rows = _dbCache.ColumnCache.Select();
                     for (int r = 0; r<rows.Length; r++)
                     {
-                        ti.Columns.Add( new ColumnInfo { ColumnName = (string)rows[r]["column_name"] });
+                        ti.Columns.Add( new ColumnInfo { ColumnName = (string)rows[r]["column_name"], ColumnType = (string)rows[r]["data_type"], IsNullable = (bool)rows[r]["is_nullable"], IsPrimaryKey = (bool)rows[r]["primary_key"] });
                     }
                     ret.Add(ti);
                 }
                 return ret;
             }
+        }
+
+        public IList<ForeignKeyInfo> ForeignKeys
+        {
+            get 
+            {
+                if (_foreignKeyInfos == null)
+                {
+                    _foreignKeyInfos = _schemaInfo.GetForeignKeyInfo();
+                }
+                return _foreignKeyInfos;
+            } 
         }
 
         public void SetTimeout(int iTimeout) //in seconds
@@ -316,7 +328,8 @@ namespace SqlExecute
                     DbSchemaCache.ColumnCacheDataRow drCol = _dbCache.ColumnCache.NewDBRow();
                     drCol.table_name = (string)dr["table_name"];
                     drCol.column_name = (string)dr["column_name"];
-                    drCol.data_type = (string)dr["data_type"];
+                    if (dr["data_type"] != DBNull.Value)
+                        drCol.data_type = (string)dr["data_type"];
                     if (dr["column_length"] != DBNull.Value)
                         drCol.column_length = (int)dr["column_length"];
                     else
@@ -360,12 +373,12 @@ namespace SqlExecute
             if (string.IsNullOrEmpty(database))
                 throw new Exception("No database file supplied to sql server CE open()");
 
-            _dbFactory = new SqlCeProviderFactory();
-            _connection = _dbFactory.CreateConnection();
-            SqlCeConnectionStringBuilder builder = new SqlCeConnectionStringBuilder() {DataSource = database};
-            _connectionString = builder.ConnectionString;
-            _connection.ConnectionString = builder.ConnectionString;
-            _provider = DatabaseProvider.SQLSERVERCE;
+            //_dbFactory = new SqlCeProviderFactory();
+            //_connection = _dbFactory.CreateConnection();
+            //SqlCeConnectionStringBuilder builder = new SqlCeConnectionStringBuilder() {DataSource = database};
+            //_connectionString = builder.ConnectionString;
+            //_connection.ConnectionString = builder.ConnectionString;
+            //_provider = DatabaseProvider.SQLSERVERCE;
         }
 
         private void CreateMySqlConnection(string server, string database, string user, string password)
@@ -424,6 +437,7 @@ namespace SqlExecute
                 sqlCSB.IntegratedSecurity = true;
             }
 
+            ConnectionString = sqlCSB.ConnectionString;
             _dbFactory = SqlClientFactory.Instance;
             _connection = _dbFactory.CreateConnection();
             _connection.ConnectionString = sqlCSB.ConnectionString;
@@ -456,6 +470,7 @@ namespace SqlExecute
                 connectionString += "Integrated Security;";
             }
 
+            ConnectionString = connectionString;
             _dbFactory = Npgsql.NpgsqlFactory.Instance;
             _connection = _dbFactory.CreateConnection();
             _connection.ConnectionString = connectionString;
@@ -487,6 +502,7 @@ namespace SqlExecute
                 connectionString += "Integrated Security;";
             }
 
+            ConnectionString = connectionString;
             _dbFactory = System.Data.Odbc.OdbcFactory.Instance;
             _connection = _dbFactory.CreateConnection();
             _connection.ConnectionString = connectionString;
@@ -496,6 +512,7 @@ namespace SqlExecute
  
         private void CreateODBCConnection(string connectionString)
         {
+            ConnectionString = ConnectionString;
             _dbFactory = System.Data.Odbc.OdbcFactory.Instance;
             _connection = _dbFactory.CreateConnection();
             _connection.ConnectionString = connectionString;
@@ -523,6 +540,7 @@ namespace SqlExecute
                 oracleCSB.Password = password;
             }
 
+            ConnectionString = oracleCSB.ConnectionString;
             _dbFactory = OracleClientFactory.Instance;
             _connection = _dbFactory.CreateConnection();
             _connection.ConnectionString = oracleCSB.ConnectionString;
@@ -801,6 +819,10 @@ namespace SqlExecute
             if (m.Success)
             {
                 tableName = m.Groups["table"].Value;
+                if (tableName.StartsWith('[') && tableName.EndsWith("]"))
+                {
+                    tableName = tableName.Substring(1, tableName.Length - 2);
+                }
             }
             return tableName;
         }

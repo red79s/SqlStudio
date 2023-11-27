@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SqlStudio
@@ -13,7 +8,7 @@ namespace SqlStudio
         public HelpForm()
         {
             InitializeComponent();
-            this.webBrowser1.Url = new Uri("file://" + Application.StartupPath + @"\help.htm");
+            webBrowser1.Url = new Uri("file://" + Application.StartupPath + @"\help.htm");
         }
     }
 }

@@ -5,9 +5,10 @@ namespace SqlStudio
 {
     public partial class FindDialog : Form
     {
-        public FindDialog()
+        public FindDialog(string searchText = "")
         {
             InitializeComponent();
+            tbSearchText.Text = searchText;
         }
 
         public string SearchText

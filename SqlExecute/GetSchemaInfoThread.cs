@@ -44,8 +44,8 @@ namespace SqlExecute
             {
                 con.Close();
             }
-            if (dt != null && this.DataReady != null)
-                this.DataReady(this, dt, executionTime);
+            if (dt != null && DataReady != null)
+                DataReady(this, dt, executionTime);
         }
     }
 }

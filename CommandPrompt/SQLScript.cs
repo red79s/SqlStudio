@@ -17,9 +17,9 @@ namespace CommandPrompt
         public SQLScript()
         {
             InitializeComponent();
-            MenuItem miRepeat = new MenuItem("Expand text");
+            var miRepeat = new ToolStripMenuItem("Expand text");
             miRepeat.Click += new EventHandler(miRepeat_Click);
-            formatTextControl.ContextMenu.MenuItems.Add(miRepeat);
+            formatTextControl.ContextMenuStrip.Items.Add(miRepeat);
         }
 
         void miRepeat_Click(object sender, EventArgs e)
@@ -48,20 +48,20 @@ namespace CommandPrompt
 
         public void Save()
         {
-            if (this._fileName != null)
-                File.WriteAllLines(this._fileName, this.formatTextControl.Lines);
+            if (_fileName != null)
+                File.WriteAllLines(_fileName, formatTextControl.Lines);
         }
 
         public void Save(string fileName)
         {
-            File.WriteAllLines(fileName, this.formatTextControl.Lines);
-            this._fileName = fileName;
+            File.WriteAllLines(fileName, formatTextControl.Lines);
+            _fileName = fileName;
         }
 
         public void Open(string fileName)
         {
-            this.formatTextControl.Text = File.ReadAllText(fileName);
-            this._fileName = fileName;
+            formatTextControl.Text = File.ReadAllText(fileName);
+            _fileName = fileName;
         }
 
         public void Open(List<string> commands)
@@ -79,10 +79,10 @@ namespace CommandPrompt
             List<string> ret = new List<string>();
             string content = null;
 
-            if (this.formatTextControl.SelectionEnd > this.formatTextControl.SelectionStart)
-                content = this.formatTextControl.GetSelectedText();
+            if (formatTextControl.SelectionEnd > formatTextControl.SelectionStart)
+                content = formatTextControl.GetSelectedText();
             else
-                content = this.formatTextControl.Text;
+                content = formatTextControl.Text;
 
             string[] commands = content.Split(new char[] { ';' });
             foreach (string command in commands)

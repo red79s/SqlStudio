@@ -11,7 +11,7 @@ namespace SqlCommandCompleterTests
     {
         Mock<ILogger> _logger = new Mock<ILogger> ();
         Mock<IDatabaseSchemaInfo> _databaseSchemaInfo = new Mock<IDatabaseSchemaInfo> ();
-
+        Mock<IDatabaseKeywordEscape> _databaseKeywordEscape = new Mock<IDatabaseKeywordEscape> ();
         private void Setup()
         {
             _databaseSchemaInfo.Setup(x => x.DatabaseName).Returns("MyDb");
@@ -26,7 +26,7 @@ namespace SqlCommandCompleterTests
         private SqlCompleter CreateCompleter()
         {
             Setup();
-            return new SqlCompleter(_logger.Object, _databaseSchemaInfo.Object);
+            return new SqlCompleter(_logger.Object, _databaseSchemaInfo.Object, _databaseKeywordEscape.Object);
         }
 
         [TestMethod]
@@ -121,7 +121,7 @@ namespace SqlCommandCompleterTests
         {
             var comp = CreateCompleter();
             var res = comp.GetPossibleCompletions("select * from ", 14);
-            Assert.AreEqual(2, res.PossibleCompletions.Count);
+            Assert.AreEqual(3, res.PossibleCompletions.Count);
         }
 
         [TestMethod]

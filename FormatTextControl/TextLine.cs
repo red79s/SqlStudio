@@ -16,106 +16,106 @@ namespace FormatTextControl
 
         public TextLine(Color fgColor)
         {
-            this._sbLine = new StringBuilder();
-            this._defaultFgColor = fgColor;
-            this._formating = new List<TextLineFormating>();
+            _sbLine = new StringBuilder();
+            _defaultFgColor = fgColor;
+            _formating = new List<TextLineFormating>();
         }
 
         public TextLine(string text, Color fgColor)
         {
-            this._sbLine = new StringBuilder(text);
-            this._defaultFgColor = fgColor;
-            this._formating = new List<TextLineFormating>();
+            _sbLine = new StringBuilder(text);
+            _defaultFgColor = fgColor;
+            _formating = new List<TextLineFormating>();
         }
 
         public Color ForeColor
         {
-            get { return this._defaultFgColor; }
+            get { return _defaultFgColor; }
             set
             {
-                this._defaultFgColor = value;
+                _defaultFgColor = value;
             }
         }
 
         public void InsertText(int index, string text)
         {
-            this._sbLine.Insert(index, text);
+            _sbLine.Insert(index, text);
         }
 
         public void InsertText(int index, string text, Color fgColor)
         {
-            this.InsertText(index, text);
-            this.AppendFormating(index, text.Length, fgColor);
+            InsertText(index, text);
+            AppendFormating(index, text.Length, fgColor);
         }
 
         public void InsertText(int index, string text, Color fgColor, Color bgColor)
         {
-            this.InsertText(index, text);
-            this.AppendFormating(index, text.Length, fgColor, bgColor);
+            InsertText(index, text);
+            AppendFormating(index, text.Length, fgColor, bgColor);
         }
 
         public void AppendText(string text)
         {
-            this._sbLine.Append(text);
+            _sbLine.Append(text);
         }
 
         public void AppendText(TextLine textLine)
         {
-            int index = this.Length;
-            this.AppendText(textLine.GetText());
+            int index = Length;
+            AppendText(textLine.GetText());
             List<TextLineFormating> formating = textLine.GetFormating();
             foreach (TextLineFormating format in formating)
             {
                 if (format.BgColorSet)
-                    this.AppendFormating(index + format.Index, format.Length, format.FgColor, format.BgColor);
+                    AppendFormating(index + format.Index, format.Length, format.FgColor, format.BgColor);
                 else
-                    this.AppendFormating(index + format.Index, format.Length, format.FgColor);
+                    AppendFormating(index + format.Index, format.Length, format.FgColor);
             }
         }
 
         public void AppendText(string text, Color fgColor)
         {
-            this.AppendText(text);
-            this.AppendFormating(0, text.Length, fgColor);
+            AppendText(text);
+            AppendFormating(0, text.Length, fgColor);
         }
 
         public void AppendText(string text, Color fgColor, Color bgColor)
         {
-            this.AppendText(text);
-            this.AppendFormating(0, text.Length, fgColor, bgColor);
+            AppendText(text);
+            AppendFormating(0, text.Length, fgColor, bgColor);
         }
 
         public void RemoveText()
         {
-            this._sbLine.Remove(0, this._sbLine.Length);
-            this.RemoveFormating();
+            _sbLine.Remove(0, _sbLine.Length);
+            RemoveFormating();
         }
 
         public void RemoveText(int index, int length)
         {
-            this._sbLine.Remove(index, length);
-            this.RemoveFormating(index, length);
+            _sbLine.Remove(index, length);
+            RemoveFormating(index, length);
         }
 
         public void AppendFormating(int index, int length, Color fgColor)
         {
-            this.AppendFormating(index, length);
-            this._formating.Add(new TextLineFormating(index, length, fgColor));
+            AppendFormating(index, length);
+            _formating.Add(new TextLineFormating(index, length, fgColor));
         }
 
         public void AppendFormating(int index, int length, Color fgColor, Color bgColor)
         {
-            this.AppendFormating(index, length);
-            this._formating.Add(new TextLineFormating(index, length, fgColor, bgColor));
+            AppendFormating(index, length);
+            _formating.Add(new TextLineFormating(index, length, fgColor, bgColor));
         }
 
         private void AppendFormating(int index, int length)
         {
-            this._formatingSorted = false;
+            _formatingSorted = false;
 
-            for (int i = this._formating.Count - 1; i >= 0; i--)
+            for (int i = _formating.Count - 1; i >= 0; i--)
             {
-                TextLineFormating format = this._formating[i];
+                TextLineFormating format = _formating[i];
            
                 if (index <= format.Index)
                     format.Index += length;
@@ -125,7 +125,7 @@ namespace FormatTextControl
                     TextLineFormating nFormat = new TextLineFormating(index + length, format.Length - diff, format.FgColor);
                     if (format.BgColorSet)
                         nFormat.BgColor = format.BgColor;
-                    this._formating.Add(nFormat);
+                    _formating.Add(nFormat);
                     format.Length = diff;
                 }
             }
@@ -133,19 +133,19 @@ namespace FormatTextControl
 
         public void RemoveFormating()
         {
-            this._formatingSorted = false;
-            this._formating.Clear();
+            _formatingSorted = false;
+            _formating.Clear();
         }
 
         public void RemoveFormating(int index, int length)
         {
-           this._formatingSorted = false;
+           _formatingSorted = false;
 
-            for (int i = this._formating.Count - 1; i >= 0; i--)
+            for (int i = _formating.Count - 1; i >= 0; i--)
             {
-                TextLineFormating format = this._formating[i];
+                TextLineFormating format = _formating[i];
                 if (format.Index >= index && (format.Index + format.Length) <= (index + length)) //inside, remove
-                    this._formating.RemoveAt(i);
+                    _formating.RemoveAt(i);
                 else if (format.Index >= index && format.Index < (index + length)) // overlap to left, shrink
                 {
                     format.Length -= ((index + length) - format.Index);
@@ -167,46 +167,46 @@ namespace FormatTextControl
 
         public List<TextLineFormating> GetFormating()
         {
-            return new List<TextLineFormating>(this._formating);
+            return new List<TextLineFormating>(_formating);
         }
 
         public float LineWidth
         {
-            get { return this._lineWidth; }
-            set { this._lineWidth = value; }
+            get { return _lineWidth; }
+            set { _lineWidth = value; }
         }
 
         public int Length
         {
-            get { return this._sbLine.Length; }
+            get { return _sbLine.Length; }
         }
 
         public string GetText()
         {
-            return this._sbLine.ToString();
+            return _sbLine.ToString();
         }
 
         public string GetText(int index, int length)
         {
-            return this._sbLine.ToString(index, length);
+            return _sbLine.ToString(index, length);
         }
 
         public List<TextLineSegment> GetFormatedText()
         {
-            return this.GenerateTextSegments(0, this._sbLine.Length);
+            return GenerateTextSegments(0, _sbLine.Length);
         }
 
         public List<TextLineSegment> GetFormatedText(int index, int length)
         {
-            return this.GenerateTextSegments(index, length);
+            return GenerateTextSegments(index, length);
         }
 
         #region IEnumerable<TextLineSegment> Members
 
         IEnumerator<TextLineSegment> IEnumerable<TextLineSegment>.GetEnumerator()
         {
-            this._textLineSegments = this.GenerateTextSegments(0, this._sbLine.Length);
-            return this._textLineSegments.GetEnumerator();
+            _textLineSegments = GenerateTextSegments(0, _sbLine.Length);
+            return _textLineSegments.GetEnumerator();
         }
 
         #endregion
@@ -215,36 +215,36 @@ namespace FormatTextControl
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            this._textLineSegments = this.GenerateTextSegments(0, this._sbLine.Length);
-            return this._textLineSegments.GetEnumerator();
+            _textLineSegments = GenerateTextSegments(0, _sbLine.Length);
+            return _textLineSegments.GetEnumerator();
         }
 
         #endregion
 
         private void SortFormating()
         {
-            if (this._formatingSorted)
+            if (_formatingSorted)
                 return;
-            this._formating.Sort(delegate(TextLineFormating t1, TextLineFormating t2) { return t1.Index.CompareTo(t2.Index); });
-            this._formatingSorted = true;
+            _formating.Sort(delegate(TextLineFormating t1, TextLineFormating t2) { return t1.Index.CompareTo(t2.Index); });
+            _formatingSorted = true;
         }
 
         private List<TextLineSegment> GenerateTextSegments(int index, int length)
         {
             List<TextLineSegment> ret = new List<TextLineSegment>();
-            if (this._formating.Count < 1)
+            if (_formating.Count < 1)
             {
-                ret.Add(new TextLineSegment(index, this.GetText(index, length), this._defaultFgColor));
+                ret.Add(new TextLineSegment(index, GetText(index, length), _defaultFgColor));
             }
             else
             {
-                this.SortFormating();
+                SortFormating();
 
                 int lastIndex = index;
-                foreach (TextLineFormating format in this._formating)
+                foreach (TextLineFormating format in _formating)
                 {
-                    //if ((format.Index + format.Length) > this._sbLine.Length)
-                    //    format.Length = this._sbLine.Length - format.Index;
+                    //if ((format.Index + format.Length) > ._sbLine.Length)
+                    //    format.Length = ._sbLine.Length - format.Index;
 
                     if ((format.Index + format.Length) < index)
                         continue;
@@ -253,17 +253,17 @@ namespace FormatTextControl
 
                     if (lastIndex < format.Index)
                     {
-                        ret.Add(new TextLineSegment(lastIndex, this.GetText(lastIndex, format.Index - lastIndex), this._defaultFgColor));
+                        ret.Add(new TextLineSegment(lastIndex, GetText(lastIndex, format.Index - lastIndex), _defaultFgColor));
                         lastIndex = format.Index;
                     }
-                    TextLineSegment tls = new TextLineSegment(format.Index, this.GetText(format.Index, format.Length), format.FgColor);
+                    TextLineSegment tls = new TextLineSegment(format.Index, GetText(format.Index, format.Length), format.FgColor);
                     if (format.BgColorSet)
                         tls.BgColor = format.BgColor;
                     ret.Add(tls);
                     lastIndex = format.Index + format.Length;
                 }
                 if (lastIndex < (index + length))
-                    ret.Add(new TextLineSegment(lastIndex, this.GetText(lastIndex, (index + length) - lastIndex), this._defaultFgColor));
+                    ret.Add(new TextLineSegment(lastIndex, GetText(lastIndex, (index + length) - lastIndex), _defaultFgColor));
             }
 
             return ret;

@@ -3,44 +3,46 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStudio", "SqlStudio\SqlStudio.csproj", "{1A03107A-FEBD-4927-8FD1-9840AEEBBAF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlStudio", "SqlStudio\SqlStudio.csproj", "{1A03107A-FEBD-4927-8FD1-9840AEEBBAF6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9B010465-86F4-48DA-AC83-AA1D8E95E42F} = {9B010465-86F4-48DA-AC83-AA1D8E95E42F}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormatTextControl", "FormatTextControl\FormatTextControl.csproj", "{7EAE81F9-9885-4473-93A2-D6F1C15B24C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormatTextControl", "FormatTextControl\FormatTextControl.csproj", "{7EAE81F9-9885-4473-93A2-D6F1C15B24C2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9B010465-86F4-48DA-AC83-AA1D8E95E42F} = {9B010465-86F4-48DA-AC83-AA1D8E95E42F}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandPrompt", "CommandPrompt\CommandPrompt.csproj", "{746124D0-4F96-4061-A299-4400C6F7CEB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommandPrompt", "CommandPrompt\CommandPrompt.csproj", "{746124D0-4F96-4061-A299-4400C6F7CEB3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9B010465-86F4-48DA-AC83-AA1D8E95E42F} = {9B010465-86F4-48DA-AC83-AA1D8E95E42F}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlExecute", "SqlExecute\SqlExecute.csproj", "{70F21FC1-09EB-4E00-B132-339F1411B5B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlExecute", "SqlExecute\SqlExecute.csproj", "{70F21FC1-09EB-4E00-B132-339F1411B5B2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9B010465-86F4-48DA-AC83-AA1D8E95E42F} = {9B010465-86F4-48DA-AC83-AA1D8E95E42F}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryFiles", "BinaryFiles\BinaryFiles.csproj", "{9B010465-86F4-48DA-AC83-AA1D8E95E42F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryFiles", "BinaryFiles\BinaryFiles.csproj", "{9B010465-86F4-48DA-AC83-AA1D8E95E42F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfgDataStore", "CfgDataStore\CfgDataStore.csproj", "{6F025F9B-D711-4412-AAD2-86BAC2CCDAE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CfgDataStore", "CfgDataStore\CfgDataStore.csproj", "{6F025F9B-D711-4412-AAD2-86BAC2CCDAE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStudioTests", "SqlStudioTests\SqlStudioTests.csproj", "{EEB263B7-10E1-49C2-A44E-82B779D97E4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlStudioTests", "SqlStudioTests\SqlStudioTests.csproj", "{EEB263B7-10E1-49C2-A44E-82B779D97E4E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EAF7B081-487B-4B70-9FDE-DE60A97C1763}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{4161310A-80E1-45E8-B5EF-61471316A7DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{4161310A-80E1-45E8-B5EF-61471316A7DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlParser", "SqlParser\SqlParser.csproj", "{23FC2062-18D2-49CD-9A77-663E09F100FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlParser", "SqlParser\SqlParser.csproj", "{23FC2062-18D2-49CD-9A77-663E09F100FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlCommandCompleter", "SqlCommandCompleter\SqlCommandCompleter.csproj", "{A4A9BEFB-0393-4E91-AF8F-692F4304387D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlCommandCompleter", "SqlCommandCompleter\SqlCommandCompleter.csproj", "{A4A9BEFB-0393-4E91-AF8F-692F4304387D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlCommandCompleterTests", "SqlCommandCompleterTests\SqlCommandCompleterTests.csproj", "{778F187E-288C-40B9-92FE-69F905776C1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlCommandCompleterTests", "SqlCommandCompleterTests\SqlCommandCompleterTests.csproj", "{778F187E-288C-40B9-92FE-69F905776C1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormatTextControlTests", "FormatTextControlTests\FormatTextControlTests.csproj", "{3D2E005E-C796-4B4D-BA60-BB8F0F8127BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +94,10 @@ Global
 		{778F187E-288C-40B9-92FE-69F905776C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{778F187E-288C-40B9-92FE-69F905776C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{778F187E-288C-40B9-92FE-69F905776C1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D2E005E-C796-4B4D-BA60-BB8F0F8127BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D2E005E-C796-4B4D-BA60-BB8F0F8127BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D2E005E-C796-4B4D-BA60-BB8F0F8127BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D2E005E-C796-4B4D-BA60-BB8F0F8127BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

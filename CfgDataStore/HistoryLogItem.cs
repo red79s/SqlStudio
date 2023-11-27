@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CfgDataStore
 {
+    [Table("HistoryLogItems")]
     public class HistoryLogItem
     {
         public long Id { get; set; }

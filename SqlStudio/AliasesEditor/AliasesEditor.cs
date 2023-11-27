@@ -10,12 +10,12 @@ namespace SqlStudio.AliasesEditor
 {
     public struct Alias
     {
-        public string name;
-        public string value;
+        public string Name;
+        public string Value;
         public Alias(string name, string value)
         {
-            this.name = name;
-            this.value = value;
+            Name = name;
+            Value = value;
         }
     }
 
@@ -26,34 +26,34 @@ namespace SqlStudio.AliasesEditor
         public AliasesEditor()
         {
             InitializeComponent();
-            this._dtAliases = new DataTable();
-            this._dtAliases.Columns.Add("Name", typeof(string));
-            this._dtAliases.Columns.Add("Value", typeof(string));
-            this.InitData();
+            _dtAliases = new DataTable();
+            _dtAliases.Columns.Add("Name", typeof(string));
+            _dtAliases.Columns.Add("Value", typeof(string));
+            InitData();
         }
 
         private void InitData()
         {
-            this.dataGridView.DataSource = this._dtAliases;
-            this.dataGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridView.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridView.RowHeadersWidth = 15;
+            dataGridView.DataSource = _dtAliases;
+            dataGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+            dataGridView.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView.RowHeadersWidth = 15;
         }
 
         public void AddAlias(Alias alias)
         {
-            DataRow dr = this._dtAliases.NewRow();
-            dr["Name"] = alias.name;
-            dr["Value"] = alias.value;
-            this._dtAliases.Rows.Add(dr);
-            this._dtAliases.AcceptChanges();
-            this.InitData();
+            DataRow dr = _dtAliases.NewRow();
+            dr["Name"] = alias.Name;
+            dr["Value"] = alias.Value;
+            _dtAliases.Rows.Add(dr);
+            _dtAliases.AcceptChanges();
+            InitData();
         }
 
         public List<Alias> GetModified()
         {
             List<Alias> ret = new List<Alias>();
-            foreach (DataRow dr in this._dtAliases.Rows)
+            foreach (DataRow dr in _dtAliases.Rows)
             {
                 if (dr.RowState == DataRowState.Modified)
                     ret.Add(new Alias((string)dr["Name"], (string)dr["Value"]));
@@ -64,7 +64,7 @@ namespace SqlStudio.AliasesEditor
         public List<Alias> GetNew()
         {
             List<Alias> ret = new List<Alias>();
-            foreach (DataRow dr in this._dtAliases.Rows)
+            foreach (DataRow dr in _dtAliases.Rows)
             {
                 if (dr.RowState == DataRowState.Added)
                     ret.Add(new Alias((string)dr["Name"], (string)dr["Value"]));
@@ -75,7 +75,7 @@ namespace SqlStudio.AliasesEditor
         public List<Alias> GetDeleted()
         {
             List<Alias> ret = new List<Alias>();
-            foreach (DataRow dr in this._dtAliases.Rows)
+            foreach (DataRow dr in _dtAliases.Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
                 {
@@ -88,14 +88,14 @@ namespace SqlStudio.AliasesEditor
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
     }
 }

@@ -23,23 +23,23 @@ namespace SqlExecute.DbSchemaCache
         public ColumnCacheDataTableBase(DbProviderFactory factory, DbConnection connection)
             : base("column_cache")
         {
-            this._dbFactory = factory;
-            this._dbConnection = connection;
-            this.GenerateUpdateDA();
+            _dbFactory = factory;
+            _dbConnection = connection;
+            GenerateUpdateDA();
         }
 
         public ColumnCacheDataTableBase(DbProviderFactory factory, string connectionString)
             : base("column_cache")
         {
-            this._dbFactory = factory;
-            this._connectionString = connectionString;
-            this.GenerateUpdateDA();
+            _dbFactory = factory;
+            _connectionString = connectionString;
+            GenerateUpdateDA();
         }
 
         public ColumnCacheDataTableBase(DbProviderFactory factory)
             : base("column_cache")
         {
-            this.GenerateUpdateDA();
+            GenerateUpdateDA();
         }
 
         private DbConnection GetOpenConnection(string connectionString)
@@ -47,7 +47,7 @@ namespace SqlExecute.DbSchemaCache
             if (connectionString == null)
                 throw new Exception("No connection string available");
 
-            DbConnection connection = this._dbFactory.CreateConnection();
+            DbConnection connection = _dbFactory.CreateConnection();
             connection.ConnectionString = connectionString;
             connection.Open();
             return connection;
@@ -55,24 +55,24 @@ namespace SqlExecute.DbSchemaCache
 
         private void SetDAConnection(DbConnection connection)
         {
-            if (this._dbAdapter == null)
+            if (_dbAdapter == null)
                 return;
-            this._dbAdapter.SelectCommand.Connection = connection;
-            this._dbAdapter.UpdateCommand.Connection = connection;
-            this._dbAdapter.InsertCommand.Connection = connection;
-            this._dbAdapter.DeleteCommand.Connection = connection;
+            _dbAdapter.SelectCommand.Connection = connection;
+            _dbAdapter.UpdateCommand.Connection = connection;
+            _dbAdapter.InsertCommand.Connection = connection;
+            _dbAdapter.DeleteCommand.Connection = connection;
         }
 
         public int Save()
         {
-            if (this._dbConnection != null)
+            if (_dbConnection != null)
             {
-                this.SetDAConnection(this._dbConnection);
-                return this._dbAdapter.Update(this);
+                SetDAConnection(_dbConnection);
+                return _dbAdapter.Update(this);
             }
-            else if (this._connectionString != null)
+            else if (_connectionString != null)
             {
-                return this.Save(this._connectionString);
+                return Save(_connectionString);
             }
 
             throw new Exception("No valid DB Connection");
@@ -80,28 +80,28 @@ namespace SqlExecute.DbSchemaCache
 
         public int Save(string connectionString)
         {
-            DbConnection connection = this.GetOpenConnection(connectionString);
-            this.SetDAConnection(connection);
-            int rows = this._dbAdapter.Update(this);
+            DbConnection connection = GetOpenConnection(connectionString);
+            SetDAConnection(connection);
+            int rows = _dbAdapter.Update(this);
             connection.Close();
             return rows;
         }
 
         public int Save(DbConnection connection)
         {
-            this.SetDAConnection(connection);
-            return this._dbAdapter.Update(this);
+            SetDAConnection(connection);
+            return _dbAdapter.Update(this);
         }
 
         public bool TableExists()
         {
-            if (this._dbConnection != null)
+            if (_dbConnection != null)
             {
-                return this.TableExists(this._dbConnection);
+                return TableExists(_dbConnection);
             }
-            else if (this._connectionString != null)
+            else if (_connectionString != null)
             {
-                return this.TableExists(this._connectionString);
+                return TableExists(_connectionString);
             }
 
             throw new Exception("No valid DB Connection");
@@ -109,8 +109,8 @@ namespace SqlExecute.DbSchemaCache
 
         public bool TableExists(string connectionString)
         {
-            DbConnection connection = this.GetOpenConnection(connectionString);
-            bool bRet = this.TableExists(connection);
+            DbConnection connection = GetOpenConnection(connectionString);
+            bool bRet = TableExists(connection);
             connection.Close();
             return bRet;
         }
@@ -125,13 +125,13 @@ namespace SqlExecute.DbSchemaCache
 
         public void CreateTable()
         {
-            if (this._dbConnection != null)
+            if (_dbConnection != null)
             {
-                this.CreateTable(this._dbConnection);
+                CreateTable(_dbConnection);
             }
-            else if (this._connectionString != null)
+            else if (_connectionString != null)
             {
-                this.CreateTable(this._connectionString);
+                CreateTable(_connectionString);
             }
             else
                 throw new Exception("No valid DB Connection");
@@ -139,8 +139,8 @@ namespace SqlExecute.DbSchemaCache
 
         public void CreateTable(string connectionString)
         {
-            DbConnection connection = this.GetOpenConnection(connectionString);
-            this.CreateTable(connection);
+            DbConnection connection = GetOpenConnection(connectionString);
+            CreateTable(connection);
             connection.Close();
         }
 
@@ -152,13 +152,13 @@ namespace SqlExecute.DbSchemaCache
         public void CreateTable(DbConnection connection)
         {
             string sqlDrop = "DROP TABLE column_cache";
-            string sqlCreate = "CREATE TABLE column_cache " + this.GetColumnSpecification();
+            string sqlCreate = "CREATE TABLE column_cache " + GetColumnSpecification();
 
-            DbCommand commandDrop = this._dbFactory.CreateCommand();
+            DbCommand commandDrop = _dbFactory.CreateCommand();
             commandDrop.CommandText = sqlDrop;
             commandDrop.Connection = connection;
 
-            DbCommand commandCreate = this._dbFactory.CreateCommand();
+            DbCommand commandCreate = _dbFactory.CreateCommand();
             commandCreate.CommandText = sqlCreate;
             commandCreate.Connection = connection;
 
@@ -178,13 +178,13 @@ namespace SqlExecute.DbSchemaCache
 
         public void TruncateTable()
         {
-            if (this._dbConnection != null)
+            if (_dbConnection != null)
             {
-                this.TruncateTable(this._dbConnection);
+                TruncateTable(_dbConnection);
             }
-            else if (this._connectionString != null)
+            else if (_connectionString != null)
             {
-                this.TruncateTable(this._connectionString);
+                TruncateTable(_connectionString);
             }
             else
                 throw new Exception("No valid DB Connection");
@@ -192,15 +192,15 @@ namespace SqlExecute.DbSchemaCache
 
         public void TruncateTable(string connectionString)
         {
-            DbConnection connection = this.GetOpenConnection(connectionString);
-            this.TruncateTable(connection);
+            DbConnection connection = GetOpenConnection(connectionString);
+            TruncateTable(connection);
             connection.Close();
         }
 
         public void TruncateTable(DbConnection connection)
         {
             string sqlTruncate = "DELETE FROM column_cache";
-            DbCommand commandTruncate = this._dbFactory.CreateCommand();
+            DbCommand commandTruncate = _dbFactory.CreateCommand();
             commandTruncate.Connection = connection;
             commandTruncate.CommandText = sqlTruncate;
             commandTruncate.ExecuteNonQuery();
@@ -219,13 +219,13 @@ namespace SqlExecute.DbSchemaCache
 
         public int FillQuery(string query)
         {
-            if (this._dbConnection != null)
+            if (_dbConnection != null)
             {
-                return this.FillQuery(query, this._dbConnection);
+                return FillQuery(query, _dbConnection);
             }
-            else if (this._connectionString != null)
+            else if (_connectionString != null)
             {
-                return this.FillQuery(query, this._connectionString);
+                return FillQuery(query, _connectionString);
             }
 
             throw new Exception("No valid SqliteConnection");
@@ -233,174 +233,174 @@ namespace SqlExecute.DbSchemaCache
 
         public int FillQuery(string query, string connectionString)
         {
-            DbConnection connection = this.GetOpenConnection(connectionString);
-            int iRet = this.FillQuery(query, connection);
+            DbConnection connection = GetOpenConnection(connectionString);
+            int iRet = FillQuery(query, connection);
             connection.Close();
             return iRet;
         }
 
         public int FillQuery(string query, DbConnection connection)
         {
-            this.GenerateFillQueryDA(query);
-            this.SetDAConnection(connection);
-            return this._dbAdapter.Fill(this);
+            GenerateFillQueryDA(query);
+            SetDAConnection(connection);
+            return _dbAdapter.Fill(this);
         }
 
         private void GenerateFillQueryDA(string query)
         {
-            if (this._dbAdapter == null)
-                this._dbAdapter = this._dbFactory.CreateDataAdapter();
+            if (_dbAdapter == null)
+                _dbAdapter = _dbFactory.CreateDataAdapter();
 
             string selectQuery = "SELECT table_name  , column_name  , ordinal_position  , data_type , column_length , is_nullable  , primary_key FROM column_cache";
 
             if (query != null && query.Length > 0)
                 selectQuery += " WHERE " + query;
 
-            if (this._dbAdapter.SelectCommand != null)
-                this._dbAdapter.SelectCommand.Dispose();
+            if (_dbAdapter.SelectCommand != null)
+                _dbAdapter.SelectCommand.Dispose();
 
-            this._dbAdapter.SelectCommand = this._dbFactory.CreateCommand();
-            this._dbAdapter.SelectCommand.CommandText = selectQuery;
+            _dbAdapter.SelectCommand = _dbFactory.CreateCommand();
+            _dbAdapter.SelectCommand.CommandText = selectQuery;
         }
 
         private void GenerateUpdateDA()
         {
-            if (this._dbAdapter == null)
-                this._dbAdapter = this._dbFactory.CreateDataAdapter();
+            if (_dbAdapter == null)
+                _dbAdapter = _dbFactory.CreateDataAdapter();
 
 
-            if (this._dbAdapter.UpdateCommand != null)
-                this._dbAdapter.UpdateCommand.Dispose();
+            if (_dbAdapter.UpdateCommand != null)
+                _dbAdapter.UpdateCommand.Dispose();
 
-            this._dbAdapter.UpdateCommand = this._dbFactory.CreateCommand();
-            this._dbAdapter.UpdateCommand.CommandText = "UPDATE column_cache SET ordinal_position = @ordinal_position , data_type = @data_type , column_length = @column_length,is_nullable = @is_nullable , primary_key = @primary_key WHERE table_name = @w_table_name AND column_name = @w_column_name";
+            _dbAdapter.UpdateCommand = _dbFactory.CreateCommand();
+            _dbAdapter.UpdateCommand.CommandText = "UPDATE column_cache SET ordinal_position = @ordinal_position , data_type = @data_type , column_length = @column_length,is_nullable = @is_nullable , primary_key = @primary_key WHERE table_name = @w_table_name AND column_name = @w_column_name";
 
             
-            DbParameter ordinal_positionUpdateParam = this._dbFactory.CreateParameter();
+            DbParameter ordinal_positionUpdateParam = _dbFactory.CreateParameter();
             ordinal_positionUpdateParam.ParameterName = "@ordinal_position";
             ordinal_positionUpdateParam.SourceColumn = "ordinal_position";
             ordinal_positionUpdateParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.UpdateCommand.Parameters.Add(ordinal_positionUpdateParam);
+            _dbAdapter.UpdateCommand.Parameters.Add(ordinal_positionUpdateParam);
             
-            DbParameter data_typeUpdateParam = this._dbFactory.CreateParameter();
+            DbParameter data_typeUpdateParam = _dbFactory.CreateParameter();
             data_typeUpdateParam.ParameterName = "@data_type";
             data_typeUpdateParam.SourceColumn = "data_type";
             data_typeUpdateParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.UpdateCommand.Parameters.Add(data_typeUpdateParam);
+            _dbAdapter.UpdateCommand.Parameters.Add(data_typeUpdateParam);
 
-            DbParameter column_lengthUpdateParam = this._dbFactory.CreateParameter();
+            DbParameter column_lengthUpdateParam = _dbFactory.CreateParameter();
             column_lengthUpdateParam.ParameterName = "@column_length";
             column_lengthUpdateParam.SourceColumn = "column_length";
             column_lengthUpdateParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.UpdateCommand.Parameters.Add(column_lengthUpdateParam);
+            _dbAdapter.UpdateCommand.Parameters.Add(column_lengthUpdateParam);
 
-            DbParameter is_nullableUpdateParam = this._dbFactory.CreateParameter();
+            DbParameter is_nullableUpdateParam = _dbFactory.CreateParameter();
             is_nullableUpdateParam.ParameterName = "@is_nullable";
             is_nullableUpdateParam.SourceColumn = "is_nullable";
             is_nullableUpdateParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.UpdateCommand.Parameters.Add(is_nullableUpdateParam);
+            _dbAdapter.UpdateCommand.Parameters.Add(is_nullableUpdateParam);
             
-            DbParameter primary_keyUpdateParam = this._dbFactory.CreateParameter();
+            DbParameter primary_keyUpdateParam = _dbFactory.CreateParameter();
             primary_keyUpdateParam.ParameterName = "@primary_key";
             primary_keyUpdateParam.SourceColumn = "primary_key";
             primary_keyUpdateParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.UpdateCommand.Parameters.Add(primary_keyUpdateParam);
+            _dbAdapter.UpdateCommand.Parameters.Add(primary_keyUpdateParam);
             
             
             
-            DbParameter table_nameUpdateParam = this._dbFactory.CreateParameter();
+            DbParameter table_nameUpdateParam = _dbFactory.CreateParameter();
             table_nameUpdateParam.ParameterName = "@w_table_name";
             table_nameUpdateParam.SourceColumn = "table_name";
             table_nameUpdateParam.SourceVersion = System.Data.DataRowVersion.Original;
-            this._dbAdapter.UpdateCommand.Parameters.Add(table_nameUpdateParam);
+            _dbAdapter.UpdateCommand.Parameters.Add(table_nameUpdateParam);
             
-            DbParameter column_nameUpdateParam = this._dbFactory.CreateParameter();
+            DbParameter column_nameUpdateParam = _dbFactory.CreateParameter();
             column_nameUpdateParam.ParameterName = "@w_column_name";
             column_nameUpdateParam.SourceColumn = "column_name";
             column_nameUpdateParam.SourceVersion = System.Data.DataRowVersion.Original;
-            this._dbAdapter.UpdateCommand.Parameters.Add(column_nameUpdateParam);
+            _dbAdapter.UpdateCommand.Parameters.Add(column_nameUpdateParam);
             
 
-            if (this._dbAdapter.DeleteCommand != null)
-                this._dbAdapter.DeleteCommand.Dispose();
+            if (_dbAdapter.DeleteCommand != null)
+                _dbAdapter.DeleteCommand.Dispose();
 
-            this._dbAdapter.DeleteCommand = this._dbFactory.CreateCommand();
-            this._dbAdapter.DeleteCommand.CommandText = "DELETE FROM column_cache WHERE table_name = @w_table_name AND column_name = @w_column_name";
+            _dbAdapter.DeleteCommand = _dbFactory.CreateCommand();
+            _dbAdapter.DeleteCommand.CommandText = "DELETE FROM column_cache WHERE table_name = @w_table_name AND column_name = @w_column_name";
 
             
-            DbParameter table_nameDeleteParam = this._dbFactory.CreateParameter();
+            DbParameter table_nameDeleteParam = _dbFactory.CreateParameter();
             table_nameDeleteParam.ParameterName = "@w_table_name";
             table_nameDeleteParam.SourceColumn = "table_name";
             table_nameDeleteParam.SourceVersion = System.Data.DataRowVersion.Original;
-            this._dbAdapter.DeleteCommand.Parameters.Add(table_nameDeleteParam);
+            _dbAdapter.DeleteCommand.Parameters.Add(table_nameDeleteParam);
             
-            DbParameter column_nameDeleteParam = this._dbFactory.CreateParameter();
+            DbParameter column_nameDeleteParam = _dbFactory.CreateParameter();
             column_nameDeleteParam.ParameterName = "@w_column_name";
             column_nameDeleteParam.SourceColumn = "column_name";
             column_nameDeleteParam.SourceVersion = System.Data.DataRowVersion.Original;
-            this._dbAdapter.DeleteCommand.Parameters.Add(column_nameDeleteParam);
+            _dbAdapter.DeleteCommand.Parameters.Add(column_nameDeleteParam);
             
 
-            if (this._dbAdapter.InsertCommand != null)
-                this._dbAdapter.InsertCommand.Dispose();
+            if (_dbAdapter.InsertCommand != null)
+                _dbAdapter.InsertCommand.Dispose();
 
-            this._dbAdapter.InsertCommand = this._dbFactory.CreateCommand();
-            this._dbAdapter.InsertCommand.CommandText = "INSERT INTO column_cache (table_name , column_name , ordinal_position , data_type , column_length, is_nullable , primary_key) VALUES(@table_name , @column_name , @ordinal_position , @data_type ,@column_length, @is_nullable , @primary_key)";
+            _dbAdapter.InsertCommand = _dbFactory.CreateCommand();
+            _dbAdapter.InsertCommand.CommandText = "INSERT INTO column_cache (table_name , column_name , ordinal_position , data_type , column_length, is_nullable , primary_key) VALUES(@table_name , @column_name , @ordinal_position , @data_type ,@column_length, @is_nullable , @primary_key)";
 
             
-            DbParameter table_nameInsertParam = this._dbFactory.CreateParameter();
+            DbParameter table_nameInsertParam = _dbFactory.CreateParameter();
             table_nameInsertParam.ParameterName = "@table_name";
             table_nameInsertParam.SourceColumn = "table_name";
             table_nameInsertParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.InsertCommand.Parameters.Add(table_nameInsertParam);
+            _dbAdapter.InsertCommand.Parameters.Add(table_nameInsertParam);
             
-            DbParameter column_nameInsertParam = this._dbFactory.CreateParameter();
+            DbParameter column_nameInsertParam = _dbFactory.CreateParameter();
             column_nameInsertParam.ParameterName = "@column_name";
             column_nameInsertParam.SourceColumn = "column_name";
             column_nameInsertParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.InsertCommand.Parameters.Add(column_nameInsertParam);
+            _dbAdapter.InsertCommand.Parameters.Add(column_nameInsertParam);
             
-            DbParameter ordinal_positionInsertParam = this._dbFactory.CreateParameter();
+            DbParameter ordinal_positionInsertParam = _dbFactory.CreateParameter();
             ordinal_positionInsertParam.ParameterName = "@ordinal_position";
             ordinal_positionInsertParam.SourceColumn = "ordinal_position";
             ordinal_positionInsertParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.InsertCommand.Parameters.Add(ordinal_positionInsertParam);
+            _dbAdapter.InsertCommand.Parameters.Add(ordinal_positionInsertParam);
             
-            DbParameter data_typeInsertParam = this._dbFactory.CreateParameter();
+            DbParameter data_typeInsertParam = _dbFactory.CreateParameter();
             data_typeInsertParam.ParameterName = "@data_type";
             data_typeInsertParam.SourceColumn = "data_type";
             data_typeInsertParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.InsertCommand.Parameters.Add(data_typeInsertParam);
+            _dbAdapter.InsertCommand.Parameters.Add(data_typeInsertParam);
 
-            DbParameter column_lengthInsertParam = this._dbFactory.CreateParameter();
+            DbParameter column_lengthInsertParam = _dbFactory.CreateParameter();
             column_lengthInsertParam.ParameterName = "@column_length";
             column_lengthInsertParam.SourceColumn = "column_length";
             column_lengthInsertParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.InsertCommand.Parameters.Add(column_lengthInsertParam);
+            _dbAdapter.InsertCommand.Parameters.Add(column_lengthInsertParam);
 
-            DbParameter is_nullableInsertParam = this._dbFactory.CreateParameter();
+            DbParameter is_nullableInsertParam = _dbFactory.CreateParameter();
             is_nullableInsertParam.ParameterName = "@is_nullable";
             is_nullableInsertParam.SourceColumn = "is_nullable";
             is_nullableInsertParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.InsertCommand.Parameters.Add(is_nullableInsertParam);
+            _dbAdapter.InsertCommand.Parameters.Add(is_nullableInsertParam);
             
-            DbParameter primary_keyInsertParam = this._dbFactory.CreateParameter();
+            DbParameter primary_keyInsertParam = _dbFactory.CreateParameter();
             primary_keyInsertParam.ParameterName = "@primary_key";
             primary_keyInsertParam.SourceColumn = "primary_key";
             primary_keyInsertParam.SourceVersion = System.Data.DataRowVersion.Current;
-            this._dbAdapter.InsertCommand.Parameters.Add(primary_keyInsertParam);
+            _dbAdapter.InsertCommand.Parameters.Add(primary_keyInsertParam);
             
         }
 
         public int FillKeys(string table_name, string column_name)
         {
-            if (this._dbConnection != null)
+            if (_dbConnection != null)
             {
-                return this.FillKeys(table_name, column_name, this._dbConnection);
+                return FillKeys(table_name, column_name, _dbConnection);
             }
-            else if (this._connectionString != null)
+            else if (_connectionString != null)
             {
-                return this.FillKeys(table_name, column_name, this._connectionString);
+                return FillKeys(table_name, column_name, _connectionString);
             }
 
             throw new Exception("No valid DB Connection");
@@ -408,41 +408,41 @@ namespace SqlExecute.DbSchemaCache
 
         public int FillKeys(string table_name, string column_name, string connectionString)
         {
-            DbConnection connection = this.GetOpenConnection(connectionString);
-            int iRet = this.FillKeys(table_name, column_name, connection);
+            DbConnection connection = GetOpenConnection(connectionString);
+            int iRet = FillKeys(table_name, column_name, connection);
             connection.Close();
             return iRet;
         }
 
         public int FillKeys(string table_name, string column_name, DbConnection connection)
         {
-            this.GenerateFillKeyDA(table_name, column_name);
-            this.SetDAConnection(connection);
-            return this._dbAdapter.Fill(this);
+            GenerateFillKeyDA(table_name, column_name);
+            SetDAConnection(connection);
+            return _dbAdapter.Fill(this);
         }
 
         private void GenerateFillKeyDA(string table_name, string column_name)
         {
-            if (this._dbAdapter == null)
-                this._dbAdapter = this._dbFactory.CreateDataAdapter();
+            if (_dbAdapter == null)
+                _dbAdapter = _dbFactory.CreateDataAdapter();
 
             string selectQuery = "SELECT table_name, column_name, ordinal_position, data_type, column_length, is_nullable, primary_key FROM column_cache WHERE table_name = @w_table_name AND column_name = @w_column_name";
-            if (this._dbAdapter.SelectCommand != null)
-                this._dbAdapter.SelectCommand.Dispose();
+            if (_dbAdapter.SelectCommand != null)
+                _dbAdapter.SelectCommand.Dispose();
 
-            this._dbAdapter.SelectCommand = this._dbFactory.CreateCommand();
-            this._dbAdapter.SelectCommand.CommandText = selectQuery;
+            _dbAdapter.SelectCommand = _dbFactory.CreateCommand();
+            _dbAdapter.SelectCommand.CommandText = selectQuery;
 
             
-            DbParameter table_nameSelectParam = this._dbFactory.CreateParameter();
+            DbParameter table_nameSelectParam = _dbFactory.CreateParameter();
             table_nameSelectParam.ParameterName = "@w_table_name";
             table_nameSelectParam.Value = table_name;
-            this._dbAdapter.SelectCommand.Parameters.Add(table_nameSelectParam);
+            _dbAdapter.SelectCommand.Parameters.Add(table_nameSelectParam);
             
-            DbParameter column_nameSelectParam = this._dbFactory.CreateParameter();
+            DbParameter column_nameSelectParam = _dbFactory.CreateParameter();
             column_nameSelectParam.ParameterName = "@w_column_name";
             column_nameSelectParam.Value = column_name;
-            this._dbAdapter.SelectCommand.Parameters.Add(column_nameSelectParam);
+            _dbAdapter.SelectCommand.Parameters.Add(column_nameSelectParam);
             
         }
     }

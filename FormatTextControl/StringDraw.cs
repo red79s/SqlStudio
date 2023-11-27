@@ -11,8 +11,8 @@ namespace FormatTextControl
 
         public StringDraw(Graphics g)
         {
-            this._g = g;
-            this._g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+            _g = g;
+            _g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
         }
 
         public SizeF MeasureString(string str, Font font)
@@ -25,8 +25,8 @@ namespace FormatTextControl
             format.SetMeasurableCharacterRanges(ranges);
             format.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
             format.SetTabStops(0, _tabStops);
-            regions = this._g.MeasureCharacterRanges(str, font, rect, format);
-            rect = regions[0].GetBounds(this._g);
+            regions = _g.MeasureCharacterRanges(str, font, rect, format);
+            rect = regions[0].GetBounds(_g);
 
             return new SizeF(rect.Width, rect.Height);
         }
@@ -38,7 +38,7 @@ namespace FormatTextControl
             StringFormat format = StringFormat.GenericTypographic;
             format.SetTabStops(0, _tabStops);
             format.FormatFlags = StringFormatFlags.FitBlackBox;
-            this._g.DrawString(str, font, new SolidBrush(textColor), x, y, format);
+            _g.DrawString(str, font, new SolidBrush(textColor), x, y, format);
         }
 
         public void DrawString(char c, Font font, SolidBrush textBrush, float x, float y)
@@ -46,7 +46,7 @@ namespace FormatTextControl
             StringFormat format = StringFormat.GenericTypographic;
             format.SetTabStops(0, _tabStops);
             format.FormatFlags = StringFormatFlags.FitBlackBox;
-            this._g.DrawString(c.ToString(), font, textBrush, x, y, format);
+            _g.DrawString(c.ToString(), font, textBrush, x, y, format);
         }
     }
 }

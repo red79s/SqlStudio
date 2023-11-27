@@ -1,4 +1,5 @@
-﻿using SqlExecute;
+﻿using Common.Model;
+using SqlExecute;
 using System;
 using System.Diagnostics;
 

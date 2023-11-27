@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-using SqlExecute;
 using System.Drawing;
 using CfgDataStore;
 using Common;
+using Common.Model;
 
 namespace SqlStudio
 {
@@ -19,12 +19,11 @@ namespace SqlStudio
         private bool _filterRow = true;
         private List<TextBox> _filterControlls = null;
         private ISearchControl _searchControl = null;
+        private IServiceProvider _serviceProvider = null;
 
-        public TabDataGridContainer(ConfigDataStore configDataStore, IExecuteQueryCallback executeQueryCallback, IDatabaseSchemaInfo databaseSchemaInfo)
+        public TabDataGridContainer(IServiceProvider serviceProvider)
         {
-            _executeQueryCallback = executeQueryCallback;
-            _databaseSchemaInfo = databaseSchemaInfo;
-
+            _serviceProvider = serviceProvider;    
             _filterControlls = new List<TextBox>();
 
             _searchControl = new SearchControl();
@@ -35,14 +34,14 @@ namespace SqlStudio
             _searchControl.IsVisible = true;
             Controls.Add(_searchControl as UserControl);
 
-            _tdg = new TabDataGrid(configDataStore, executeQueryCallback, _databaseSchemaInfo);
+            _tdg = new TabDataGrid(_serviceProvider);
             _tdg.UpdatedResults += new TabDataGrid.UpdatedResultsDelegate(_tdg_UpdatedResults);
             _tdg.ColumnWidthChanged += new DataGridViewColumnEventHandler(_tdg_ColumnWidthChanged);
             _tdg.Scroll += new ScrollEventHandler(_tdg_Scroll);
             _tdg.Dock = DockStyle.Fill;
             _tdg.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithAutoHeaderText;
             _tdg.CellDoubleClick += _tdg_CellDoubleClick;
-            this.Controls.Add(_tdg);
+            Controls.Add(_tdg);
 
             SetLayout();
         }
@@ -50,6 +49,8 @@ namespace SqlStudio
         const int WM_KEYDOWN = 0x100;
         private readonly IExecuteQueryCallback _executeQueryCallback;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
+        private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
+        private readonly IColumnValueDescriptionProvider _columnMetadataInfo;
 
         protected override bool ProcessKeyPreview(ref Message m)
         {
@@ -138,10 +139,10 @@ namespace SqlStudio
 
         public bool FilterRow
         {
-            get { return this._filterRow; }
+            get { return _filterRow; }
             set
             {
-                this._filterRow = value;
+                _filterRow = value;
                 SetLayout();
             }
         }
@@ -153,13 +154,13 @@ namespace SqlStudio
 
         private void SetLayout()
         {
-            if (FilterRow == false || this._tdg.RowCount < 1)
+            if (FilterRow == false || _tdg.RowCount < 1)
             {
                 _tdg.Dock = DockStyle.Fill;
                 _tdg.Top = 0;
                 _tdg.Left = 0;
-                _tdg.Width = this.Width;
-                _tdg.Height = this.Height;
+                _tdg.Width = Width;
+                _tdg.Height = Height;
                 return;
             }
 
@@ -173,22 +174,22 @@ namespace SqlStudio
             var filterTop = _searchControl.IsVisible ? searchControl.Height + 1 : 0;
 
             int gridTop = 0;
-            if (this._filterControlls.Count < 1)
+            if (_filterControlls.Count < 1)
                 InitFilterRow();
-            if (this._filterControlls.Count > 0)
-                gridTop = this._filterControlls[0].Height + 1 + filterTop;
+            if (_filterControlls.Count > 0)
+                gridTop = _filterControlls[0].Height + 1 + filterTop;
 
 
-            this._tdg.Dock = DockStyle.None;
-            this._tdg.Top = gridTop;
-            this._tdg.Left = 0;
-            this._tdg.Width = this.Width;
-            this._tdg.Height = this.Height - gridTop;
+            _tdg.Dock = DockStyle.None;
+            _tdg.Top = gridTop;
+            _tdg.Left = 0;
+            _tdg.Width = Width;
+            _tdg.Height = Height - gridTop;
 
-            for (int i = 0; i < this._filterControlls.Count; i++)
+            for (int i = 0; i < _filterControlls.Count; i++)
             {
-                Rectangle rec = this._tdg.GetCellDisplayRectangle(i, -1, true);
-                TextBox tb = this._filterControlls[i];
+                Rectangle rec = _tdg.GetCellDisplayRectangle(i, -1, true);
+                TextBox tb = _filterControlls[i];
                 tb.Top = filterTop;
                 tb.Left = rec.Left;
                 tb.Width = rec.Width;
@@ -202,14 +203,14 @@ namespace SqlStudio
                 return;
             }
 
-            this._filterControlls.Clear();
+            _filterControlls.Clear();
 
-            for (int i = 0; i < this._tdg.Columns.Count; i++)
+            for (int i = 0; i < _tdg.Columns.Count; i++)
             {
                 TextBox tb = new TextBox();
                 tb.TextChanged += new EventHandler(tb_TextChanged);
-                this._filterControlls.Add(tb);
-                this.Controls.Add(tb);
+                _filterControlls.Add(tb);
+                Controls.Add(tb);
             }
         }
 
@@ -222,7 +223,7 @@ namespace SqlStudio
 
         private void FilterChanged()
         {
-            string filterStr = this.GetFilterString();
+            string filterStr = GetFilterString();
 
             foreach (var hideVal in _hideFilterStrings)
             {
@@ -268,18 +269,18 @@ namespace SqlStudio
 
         private string GetFilterString()
         {
-            if (this._filterControlls == null)
+            if (_filterControlls == null)
                 return "";
 
             StringBuilder sbFilter = new StringBuilder();
-            for (int i = 0; i < this._filterControlls.Count; i++)
+            for (int i = 0; i < _filterControlls.Count; i++)
             {
-                TextBox tb = this._filterControlls[i];
+                TextBox tb = _filterControlls[i];
                 if (tb.Text == "")
                     continue;
 
-                string colName = this._tdg.SqlResult.DataTable.Columns[i].ColumnName;
-                Type colType = this._tdg.SqlResult.DataTable.Columns[i].DataType;
+                string colName = _tdg.SqlResult.DataTable.Columns[i].ColumnName;
+                Type colType = _tdg.SqlResult.DataTable.Columns[i].DataType;
 
                 string filter = "";
                 if (sbFilter.Length > 0)

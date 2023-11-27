@@ -1,4 +1,6 @@
 using CfgDataStore;
+using Common;
+using Common.Model;
 using SqlExecute;
 using System;
 using System.Collections.Generic;
@@ -7,10 +9,9 @@ using System.Threading;
 
 namespace SqlStudio
 {
-    public class Executer
+    public class Executer : ISqlExecuter
     {
-        public delegate void ExecutionFinishedDelegate(object sender, List<SqlResult> results);
-        public event ExecutionFinishedDelegate ExecutionFinished;
+        public EventHandler<IList<SqlResult>> ExecutionFinished;
 
         private SqlExecuter _sqlExecuter = null;
         public SqlExecuter SqlExecuter
@@ -31,7 +32,7 @@ namespace SqlStudio
             _cmdControl = cmdControl;
             _cfgDataStore = cfgDataStore;
             _sqlExecuter = new SqlExecuter();
-            _sqlExecuter.Executed += new SqlExecuter.ExecutedDelegate(_sqlExecuter_Executed);
+            _sqlExecuter.Executed += _sqlExecuter_Executed;
         }
 
         public string CurrentScriptPath 
@@ -115,20 +116,6 @@ namespace SqlStudio
         public void Cancel()
         {
             _sqlExecuter.Cancel();
-        }
-
-        public void CancelExecution()
-        {
-            lock (this)
-            {
-                if (!_bussy)
-                    return;
-                if (_thread == null)
-                    return;
-                if (_thread.IsAlive && _thread.ThreadState == ThreadState.Running)
-                    _thread.Abort();
-                _bussy = false;
-            }
         }
 
         public void Execute()
@@ -299,7 +286,7 @@ namespace SqlStudio
             return input;
         }
 
-        void _sqlExecuter_Executed(object sender, List<SqlExecute.SqlResult> results)
+        private void _sqlExecuter_Executed(object sender, IList<SqlResult> results)
         {
             if (ExecutionFinished != null)
             {
@@ -314,6 +301,11 @@ namespace SqlStudio
 
         public void ExecuteScriptFile(string fileName)
         {
+        }
+
+        public SqlResult Execute(string sqlQuerys)
+        {
+            return SqlExecuter.ExecuteSql(sqlQuerys);
         }
     }
 }

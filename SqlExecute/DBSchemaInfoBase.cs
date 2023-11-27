@@ -1,3 +1,4 @@
+using Common.Model;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -11,8 +12,8 @@ namespace SqlExecute
 
         public DBSchemaInfoBase(DbConnection connection, DbProviderFactory factory)
         {
-            this._connection = connection;
-            this._factory = factory;
+            _connection = connection;
+            _factory = factory;
         }
 
         public static DBSchemaInfoBase GetSchemaClass(SqlExecute.SqlExecuter.DatabaseProvider provider, DbConnection connection, DbProviderFactory factory)
@@ -30,12 +31,12 @@ namespace SqlExecute
 
         protected DbConnection Connection
         {
-            get { return this._connection; }
+            get { return _connection; }
         }
 
         protected DbProviderFactory ProviderFactory
         {
-            get { return this._factory; }
+            get { return _factory; }
         }
 
         public virtual DataTable GetTableInfo(string tableSearch)
@@ -89,6 +90,11 @@ namespace SqlExecute
         public virtual DataTable GetSchema(string collectionName, string[] restrictionValues)
         {
             return _connection.GetSchema(collectionName, restrictionValues);
+        }
+
+        public virtual List<ForeignKeyInfo> GetForeignKeyInfo()
+        {
+            return new List<ForeignKeyInfo>();
         }
 
         protected DataTable GetTablesTemplate()

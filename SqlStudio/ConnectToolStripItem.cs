@@ -19,46 +19,46 @@ namespace SqlStudio
 
         public ConnectToolStripItem(string text, long key)
         {
-            this.Text = text;
-            this._key = key;
+            Text = text;
+            _key = key;
 
             ToolStripMenuItem tsmiConnect = new ToolStripMenuItem("Connect");
             tsmiConnect.Click += new EventHandler(tsmiConnect_Click);
-            this.DropDownItems.Add(tsmiConnect);
+            DropDownItems.Add(tsmiConnect);
 
             ToolStripItem tsmiEdit = new ToolStripMenuItem("Edit...");
             tsmiEdit.Click += new EventHandler(tsmiEdit_Click);
-            this.DropDownItems.Add(tsmiEdit);
+            DropDownItems.Add(tsmiEdit);
 
             ToolStripMenuItem tsmiDelete = new ToolStripMenuItem("Delete");
             tsmiDelete.Click += new EventHandler(tsmiDelete_Click);
-            this.DropDownItems.Add(tsmiDelete);
+            DropDownItems.Add(tsmiDelete);
         }
 
         public long Key
         {
-            get { return this._key; }
-            set { this._key = value; }
+            get { return _key; }
+            set { _key = value; }
         }
 
         void tsmiConnect_Click(object sender, EventArgs e)
         {
-            if (this.OnConnectionClick != null)
-                this.OnConnectionClick(this, this._key);
+            if (OnConnectionClick != null)
+                OnConnectionClick(this, _key);
         }
 
         void tsmiDelete_Click(object sender, EventArgs e)
         {
-            if (this.OnDeleteConnection != null)
+            if (OnDeleteConnection != null)
             {
-                this.OnDeleteConnection(this, this._key);
+                OnDeleteConnection(this, _key);
             }
         }
 
         void tsmiEdit_Click(object sender, EventArgs e)
         {
-            if (this.OnEditConnection != null)
-                this.OnEditConnection(this, this._key);
+            if (OnEditConnection != null)
+                OnEditConnection(this, _key);
         }
     }
 }
