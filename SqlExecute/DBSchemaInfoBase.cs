@@ -1,3 +1,4 @@
+using Common.Model;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -89,6 +90,11 @@ namespace SqlExecute
         public virtual DataTable GetSchema(string collectionName, string[] restrictionValues)
         {
             return _connection.GetSchema(collectionName, restrictionValues);
+        }
+
+        public virtual List<ForeignKeyInfo> GetForeignKeyInfo()
+        {
+            return new List<ForeignKeyInfo>();
         }
 
         protected DataTable GetTablesTemplate()

@@ -1,4 +1,6 @@
 using CfgDataStore;
+using Common;
+using Common.Model;
 using SqlExecute;
 using System;
 using System.Collections.Generic;
@@ -7,7 +9,7 @@ using System.Threading;
 
 namespace SqlStudio
 {
-    public class Executer
+    public class Executer : ISqlExecuter
     {
         public delegate void ExecutionFinishedDelegate(object sender, List<SqlResult> results);
         public event ExecutionFinishedDelegate ExecutionFinished;
@@ -285,7 +287,7 @@ namespace SqlStudio
             return input;
         }
 
-        void _sqlExecuter_Executed(object sender, List<SqlExecute.SqlResult> results)
+        void _sqlExecuter_Executed(object sender, List<SqlResult> results)
         {
             if (ExecutionFinished != null)
             {
@@ -300,6 +302,11 @@ namespace SqlStudio
 
         public void ExecuteScriptFile(string fileName)
         {
+        }
+
+        public SqlResult Execute(string sqlQuerys)
+        {
+            return SqlExecuter.ExecuteSql(sqlQuerys);
         }
     }
 }

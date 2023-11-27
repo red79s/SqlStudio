@@ -1,6 +1,9 @@
 ﻿using CfgDataStore;
 using Common;
+using Common.Model;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SqlCommandCompleter;
 using SqlExecute;
 using SqlStudio.ColumnMetaDataInfo;
@@ -17,7 +20,7 @@ using System.Windows.Forms;
 
 namespace SqlStudio
 {
-	public partial class DatabaseConnectionUserControl : UserControl, IExecuteQueryCallback, IDatabaseConnectionUserControl, ILogger
+    public partial class DatabaseConnectionUserControl : UserControl, IExecuteQueryCallback, IDatabaseConnectionUserControl, ILogger
 	{
 		private Executer _executer = null;
 		private ConfigDataStore _cfgDataStore = null;
@@ -39,9 +42,16 @@ namespace SqlStudio
 		{
 			InitializeComponent();
 
-			_cfgDataStore = cfgDataStore;
+            HostApplicationBuilder builder = Host.CreateApplicationBuilder();
+
+            _cfgDataStore = cfgDataStore;
+			builder.Services.AddSingleton<ConfigDataStore>(cfgDataStore);
+			builder.Services.AddSingleton<ILogger>(this);
+			builder.Services.AddSingleton<IColumnValueDescriptionProvider>(columnValueDescriptionProvider);
 
 			_databaseKeywordEscape = new DatabaseKeywordEscapeManager();
+			builder.Services.AddSingleton<IDatabaseKeywordEscape>(_databaseKeywordEscape);
+
 			_columnMetadataInfo = columnValueDescriptionProvider;
 
 			_cmdBuffer = new List<string>();

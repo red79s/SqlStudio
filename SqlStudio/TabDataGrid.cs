@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.Windows.Forms;
-using SqlExecute;
 using System.Drawing;
 using System.Data.Common;
 using System.IO;
@@ -15,6 +14,7 @@ using SqlStudio.AutoLayoutForm;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Common.Model;
 
 namespace SqlStudio
 {
@@ -58,6 +58,14 @@ namespace SqlStudio
             ToolStripMenuItem miSave = new ToolStripMenuItem("Save");
             miSave.Click += miSave_Click;
             ContextMenuStrip.Items.Add(miSave);
+
+            ToolStripMenuItem miDelete = new ToolStripMenuItem("Delete");
+            miDelete.Click += miDelete_Click;
+            ContextMenuStrip.Items.Add(miDelete);
+
+            var miDeleteAll = new ToolStripMenuItem("Delete Selected Rows");
+            miDeleteAll.Click += miDelete_Click;
+            ContextMenuStrip.Items.Add(miDeleteAll);
 
             ToolStripMenuItem miFill = new ToolStripMenuItem("Fill");
             miFill.ShortcutKeys = Keys.F7;
@@ -1408,6 +1416,20 @@ namespace SqlStudio
             }
         }
 
+        void miDelete_Click(object sender, EventArgs e)
+        {
+            if (_sqlResult == null || _sqlResult.DataAdapter == null)
+                return;
+
+            var tableInfo = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName.Equals(_sqlResult.TableName, StringComparison.CurrentCultureIgnoreCase));
+            var keys = tableInfo?.Columns.Where(x => x.IsPrimaryKey).ToList();
+            DataGridViewSelectedRowCollection selRows = SelectedRows;
+            foreach (DataGridViewRow dgRow in selRows)
+            {
+                
+            }
+        }
+
         public SqlResult SqlResult
         {
             get { return _sqlResult; }
@@ -1495,7 +1517,6 @@ namespace SqlStudio
                         Columns[i].Width = Columns[i].GetPreferredWidth(DataGridViewAutoSizeColumnMode.AllCells, true);
                     }
                 }
-                    
             }
             else
             {

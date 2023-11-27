@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
-
-using SqlExecute;
 using CfgDataStore;
 using Common;
+using Common.Model;
 
 #pragma warning disable CA1416
 

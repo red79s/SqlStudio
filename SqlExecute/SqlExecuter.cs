@@ -1,5 +1,6 @@
 
 using Common;
+using Common.Model;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -71,6 +72,7 @@ namespace SqlExecute
         private DbSchemaCache.DbSchemaCache _dbCache = null;
         private int _iCommandTimeout = 20;
         private object _cacheLockObj = new object();
+        private List<ForeignKeyInfo> _foreignKeyInfos = null;
 
         public SqlExecuter()
         {
@@ -113,12 +115,24 @@ namespace SqlExecute
                     DataRow[] rows = _dbCache.ColumnCache.Select();
                     for (int r = 0; r<rows.Length; r++)
                     {
-                        ti.Columns.Add( new ColumnInfo { ColumnName = (string)rows[r]["column_name"] });
+                        ti.Columns.Add( new ColumnInfo { ColumnName = (string)rows[r]["column_name"], ColumnType = (string)rows[r]["data_type"], IsNullable = (bool)rows[r]["is_nullable"], IsPrimaryKey = (bool)rows[r]["primary_key"] });
                     }
                     ret.Add(ti);
                 }
                 return ret;
             }
+        }
+
+        public IList<ForeignKeyInfo> ForeignKeys
+        {
+            get 
+            {
+                if (_foreignKeyInfos == null)
+                {
+                    _foreignKeyInfos = _schemaInfo.GetForeignKeyInfo();
+                }
+                return _foreignKeyInfos;
+            } 
         }
 
         public void SetTimeout(int iTimeout) //in seconds

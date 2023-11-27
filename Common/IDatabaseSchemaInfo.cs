@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Common.Model;
+using System.Collections.Generic;
 
 namespace Common
 {
@@ -7,5 +8,6 @@ namespace Common
         string ConnectionString { get; }
         string DatabaseName { get; }
         IList <TableInfo> Tables { get; }
+        IList <ForeignKeyInfo> ForeignKeys { get; }
     }
 }
