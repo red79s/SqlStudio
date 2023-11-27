@@ -1,21 +1,17 @@
 ﻿using CfgDataStore;
 using Common;
 using Common.Model;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SqlCommandCompleter;
 using SqlExecute;
-using SqlStudio.ColumnMetaDataInfo;
 using SqlStudio.CvsImport;
 using SqlStudio.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace SqlStudio
@@ -34,9 +30,6 @@ namespace SqlStudio
 		private int _bulkOk = 0;
 		private DateTime _excutionStarted;
 		private string _userConfigDbFile;
-		private ISqlCompleter _sqlCompleter = null;
-		private IDatabaseKeywordEscape _databaseKeywordEscape = null;
-		private IColumnValueDescriptionProvider _columnMetadataInfo = null;
 		private IHost _host = null;
 
 		public DatabaseConnectionUserControl(ConfigDataStore cfgDataStore, IColumnValueDescriptionProvider columnValueDescriptionProvider)
@@ -51,8 +44,6 @@ namespace SqlStudio
 			builder.Services.AddSingleton<IColumnValueDescriptionProvider>(columnValueDescriptionProvider);
 
 			builder.Services.AddSingleton<IDatabaseKeywordEscape, DatabaseKeywordEscapeManager>();
-
-			_columnMetadataInfo = columnValueDescriptionProvider;
 
 			_cmdBuffer = new List<string>();
 			_userConfigDbFile = Directory.GetParent(Application.UserAppDataPath) + @"\sqlstudio.cfg";

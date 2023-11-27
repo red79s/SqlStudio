@@ -6,6 +6,7 @@ using System.Drawing;
 using CfgDataStore;
 using Common;
 using Common.Model;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SqlStudio
 {
@@ -19,11 +20,14 @@ namespace SqlStudio
         private bool _filterRow = true;
         private List<TextBox> _filterControlls = null;
         private ISearchControl _searchControl = null;
+        private readonly IExecuteQueryCallback _executeQueryCallback;
         private IServiceProvider _serviceProvider = null;
 
         public TabDataGridContainer(IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;    
+            _serviceProvider = serviceProvider;
+            _executeQueryCallback = serviceProvider.GetService<IExecuteQueryCallback>();
+
             _filterControlls = new List<TextBox>();
 
             _searchControl = new SearchControl();
@@ -47,10 +51,7 @@ namespace SqlStudio
         }
 
         const int WM_KEYDOWN = 0x100;
-        private readonly IExecuteQueryCallback _executeQueryCallback;
-        private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
-        private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
-        private readonly IColumnValueDescriptionProvider _columnMetadataInfo;
+        
 
         protected override bool ProcessKeyPreview(ref Message m)
         {
