@@ -1,6 +1,7 @@
 ﻿using CfgDataStore;
 using Common;
 using Common.Model;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using SqlStudio.AutoLayoutForm;
 using System;
@@ -120,6 +121,10 @@ namespace SqlStudio
             ToolStripMenuItem miCreateScriptWithCode = new ToolStripMenuItem("Create Script Code");
             miCreateScriptWithCode.Click += miCreateScriptWithCode_Click;
             scriptDropdownMenu.DropDownItems.Add(miCreateScriptWithCode);
+
+            var miCreateDto = new ToolStripMenuItem("Create C# DTO");
+            miCreateDto.Click += miCreateDto_Click;
+            scriptDropdownMenu.DropDownItems.Add(miCreateDto);
 
             _generatedDataMenuItem = new ToolStripMenuItem("Generated");
             ContextMenuStrip.Items.Add(_generatedDataMenuItem);
@@ -756,6 +761,16 @@ namespace SqlStudio
             PrintScripts(blobCode, "{0}" + Environment.NewLine);
         }
 
+        void miCreateDto_Click(object sender, EventArgs e)
+        {
+            var dto = CreateDtoFromData(false);
+            if (dto != null)
+            {
+                PrintScript(dto);
+                Clipboard.SetText(dto);
+            }
+        }
+
         private void PrintScript(string statement)
         {
             ((SqlOutputTabContainer)Parent.Parent.Parent).SetOutputText(statement);
@@ -807,6 +822,82 @@ namespace SqlStudio
             }
 
             return insertStatements;
+        }
+
+        private string CreateDtoFromData(bool uppercaseProperties)
+        {
+            var rows = GetSelectedRows();
+
+            List<string> insertStatements = new List<string>();
+
+            if (rows.Count > 0)
+            {
+                var cells = rows[0];
+
+                cells.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
+                Dictionary<string, string> colValues = new Dictionary<string, string>();
+
+                var tablename = SqlResult.TableName;
+                var tableInfo = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName == tablename);
+                if (tableInfo == null)
+                    return $"Table: {tablename} not found in schema info";
+
+                string dtoName = tablename.Substring(0, 1).ToUpper() + tablename.Substring(1);
+                string dto = $"public class {dtoName}{Environment.NewLine}{{" + Environment.NewLine;
+                for (int i = 0; i < cells.Count; i++)
+                {
+                    string colName = cells[i].OwningColumn.Name;
+                    var dbColInfo = tableInfo.Columns.FirstOrDefault(x => x.ColumnName == colName);
+
+                    if (uppercaseProperties)
+                    {
+                        colName = colName.Substring(0, 1).ToUpper() + colName.Substring(1);
+                    }
+                    Type type = cells[i].ValueType;
+                    var dotNetType = type.Name;
+                    if (dbColInfo != null)
+                    {
+                        dotNetType = GetDotNetType(dbColInfo.ColumnType);
+                        dotNetType += dbColInfo.IsNullable ? "?" : "";
+                    }
+                    dto += $"    public {dotNetType} {colName} {{ get; set; }}" + Environment.NewLine;
+                }
+                dto += "}";
+
+                return dto;
+            }
+
+            return null;
+        }
+
+        private string GetDotNetType(string databaseTypeName)
+        {
+            switch (databaseTypeName)
+            {
+                case "int":
+                    return "int";
+                case "bigint":
+                    return "long";
+                case "smallint":
+                    return "short";
+                case "tinyint":
+                    return "byte";
+                case "bit":
+                    return "bool";
+                case "float":
+                    return "float";
+                case "decimal":
+                    return "decimal";
+                case "datetime":
+                    return "DateTime";
+                case "varchar":
+                case "nvarchar":
+                case "text":
+                case "ntext":
+                    return "string";
+                default:
+                    return "object";
+            }
         }
 
         private void CreateScript(string fileName)
