@@ -107,7 +107,17 @@ namespace SqlStudio
 			cmdLineControl_CommandReady(this, query);
 		}
 
-		private void SetDatabasesOnToolsMenu(List<string> databases)
+        public void ExecuteCascadingDelete(string tablename, List<ColumnValue> keys, bool inNewTab, string datatabLabel)
+        {
+            if (inNewTab)
+            {
+                sqlOutput.CreateNewDataTab(datatabLabel);
+            }
+
+			_executer.DeleteCascading(tablename, keys, true);
+        }
+
+        private void SetDatabasesOnToolsMenu(List<string> databases)
 		{
 			toolStripDatabaseConnectionsDropDownButton.DropDownItems.Clear();
 			foreach (string database in databases)

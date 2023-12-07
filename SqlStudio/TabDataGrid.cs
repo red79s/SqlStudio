@@ -56,9 +56,9 @@ namespace SqlStudio
             miSave.Click += miSave_Click;
             ContextMenuStrip.Items.Add(miSave);
 
-            //var miDeleteAll = new ToolStripMenuItem("Delete");
-            //miDeleteAll.Click += miDelete_Click;
-            //ContextMenuStrip.Items.Add(miDeleteAll);
+            var miDeleteCascading = new ToolStripMenuItem("Delete cascading");
+            miDeleteCascading.Click += miDeleteCascading_Click;
+            ContextMenuStrip.Items.Add(miDeleteCascading);
 
             ToolStripMenuItem miFill = new ToolStripMenuItem("Undo edit");
             miFill.ShortcutKeys = Keys.F7;
@@ -1452,7 +1452,7 @@ namespace SqlStudio
             }
         }
 
-        void miDelete_Click(object sender, EventArgs e)
+        void miDeleteCascading_Click(object sender, EventArgs e)
         {
             if (_sqlResult == null || _sqlResult.DataAdapter == null)
                 return;
@@ -1462,7 +1462,13 @@ namespace SqlStudio
             DataGridViewSelectedRowCollection selRows = SelectedRows;
             foreach (DataGridViewRow dgRow in selRows)
             {
-                
+                var columnKeys = new List<ColumnValue>();
+                foreach (var key in keys)
+                {
+                    columnKeys.Add(new ColumnValue { Column = key.ColumnName, Value = dgRow.Cells[key.ColumnName].Value.ToString() });
+                }
+                _executeQueryCallback.ExecuteCascadingDelete(_sqlResult.TableName, columnKeys, true, "Cascading delete");
+                return;
             }
         }
 

@@ -14,16 +14,16 @@ using System.Threading;
 
 namespace SqlExecute
 {
-    public class SqlExecuter : IDatabaseSchemaInfo
+    public class SqlExecuter : IDatabaseSchemaInfo, ISqlExecuter
     {
         public string ConnectionString { get; private set; }
-        public enum DatabaseProvider 
-        { 
-            SQLSERVER, 
-            SQLITE, 
-            ORACLE, 
-            ODBC, 
-            POSTGRESQL, 
+        public enum DatabaseProvider
+        {
+            SQLSERVER,
+            SQLITE,
+            ORACLE,
+            ODBC,
+            POSTGRESQL,
             SQLSERVERCE,
             MySql
         };
@@ -106,14 +106,14 @@ namespace SqlExecute
                 foreach (var table in _dbCache.GetTables(""))
                 {
                     var ti = new TableInfo { TableName = table };
-               
+
                     string sWhereClause = $"table_name = '{table}'";
                     _dbCache.ColumnCache.Clear();
                     _dbCache.ColumnCache.FillQuery(sWhereClause);
                     DataRow[] rows = _dbCache.ColumnCache.Select();
-                    for (int r = 0; r<rows.Length; r++)
+                    for (int r = 0; r < rows.Length; r++)
                     {
-                        ti.Columns.Add( new ColumnInfo { ColumnName = (string)rows[r]["column_name"], ColumnType = (string)rows[r]["data_type"], IsNullable = (bool)rows[r]["is_nullable"], IsPrimaryKey = (bool)rows[r]["primary_key"] });
+                        ti.Columns.Add(new ColumnInfo { ColumnName = (string)rows[r]["column_name"], ColumnType = (string)rows[r]["data_type"], IsNullable = (bool)rows[r]["is_nullable"], IsPrimaryKey = (bool)rows[r]["primary_key"] });
                     }
                     ret.Add(ti);
                 }
@@ -123,14 +123,14 @@ namespace SqlExecute
 
         public IList<ForeignKeyInfo> ForeignKeys
         {
-            get 
+            get
             {
                 if (_foreignKeyInfos == null)
                 {
                     _foreignKeyInfos = _schemaInfo.GetForeignKeyInfo();
                 }
                 return _foreignKeyInfos;
-            } 
+            }
         }
 
         public void SetTimeout(int iTimeout) //in seconds
@@ -218,7 +218,7 @@ namespace SqlExecute
             if (database != null)
                 result.DataBaseName = database;
             result.StartExectionTimer();
-            
+
             try
             {
                 switch (provider)
@@ -237,7 +237,7 @@ namespace SqlExecute
                 //Connect to db
                 result.Message = "Connected OK";
                 result.Success = true;
-                
+
                 _connection.Open();
                 _schemaInfo = DBSchemaInfoBase.GetSchemaClass(provider, _connection, _dbFactory);
                 GetMetaBackgroundThread();
@@ -296,7 +296,7 @@ namespace SqlExecute
                 result.Success = true;
 
                 _schemaInfo = DBSchemaInfoBase.GetSchemaClass(_provider, _connection, _dbFactory);
-                
+
                 FillCache(null);
             }
             catch (Exception ex)
@@ -345,7 +345,7 @@ namespace SqlExecute
                 }
                 _dbCache.ColumnCache.Save();
             }
-            
+
         }
 
         private bool GetDBBool(DataRow dr, string column, bool defValue)
@@ -448,7 +448,7 @@ namespace SqlExecute
         private void CreatePostgreSqlConnection(string server, string database, string user, string password)
         {
             //"Server=127.0.0.1;Port=5432;User Id=joe;Password=secret;Database=joedata;"
-            string connectionString = ""; 
+            string connectionString = "";
             if (server != null && server.Length > 0)
             {
                 connectionString += string.Format("Server = {0};", server);
@@ -509,7 +509,7 @@ namespace SqlExecute
             _connectionString = connectionString;
             _provider = DatabaseProvider.ODBC;
         }
- 
+
         private void CreateODBCConnection(string connectionString)
         {
             ConnectionString = ConnectionString;
@@ -615,7 +615,7 @@ namespace SqlExecute
             result.Success = true;
             result.TableName = "SCHEMA_INFO_COLUMNS";
             result.StartExectionTimer();
-            
+
             try
             {
                 result.DataTable = GetColumnsInternal(tableSearch, columnSearch);
@@ -715,7 +715,7 @@ namespace SqlExecute
         private DbCommand _currentCommand;
         public SqlResult ExecuteSql(string sql, DbTransaction transaction = null)
         {
-              
+
             SqlResult result = new SqlResult();
             result.Message = "Executed OK";
             result.Success = true;
@@ -831,5 +831,13 @@ namespace SqlExecute
         {
             result.DataAdapter.Update(result.DataTable);
         }
+
+        public List<SqlResult> DeleteCascading(string tableName, List<ColumnValue> keyValues, bool onlyDisplayAffectedRows)
+        {
+            var deleter = new CascadingDeleter(this, this);
+            return deleter.Delete(tableName, keyValues, onlyDisplayAffectedRows);
+        }
+
+
     }
 }

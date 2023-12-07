@@ -6,10 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SqlStudio
 {
-    public class Executer : ISqlExecuter
+    public class Executer : IExecuter
     {
         public EventHandler<IList<SqlResult>> ExecutionFinished;
 
@@ -100,6 +101,15 @@ namespace SqlStudio
             _thread = new Thread(new ThreadStart(Execute));
             _thread.IsBackground = false;
             _thread.Start();
+        }
+
+        public void DeleteCascading(string tableName, List<ColumnValue> keys, bool onlyDisplayAffectedRows)
+        {
+            Task.Run(() =>
+            {
+                var res = _sqlExecuter.DeleteCascading(tableName, keys, onlyDisplayAffectedRows);
+                ExecutionFinished?.Invoke(this, res);
+            });
         }
 
         public bool IsBussy
