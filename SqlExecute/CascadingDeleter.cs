@@ -24,6 +24,10 @@ namespace SqlExecute
             var res = new List<SqlResult>();
             var sql = GenerateSelect(tableName, keys);
             var tableRes = _sqlExecuter.ExecuteSql(sql);
+            
+            if (tableRes.DataTable.Rows.Count == 0)
+                return res;
+
             res.Add(tableRes);
 
             foreach (DataRow row in tableRes.DataTable.Rows )
