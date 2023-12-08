@@ -39,6 +39,15 @@ namespace SqlStudio
             return _results;
         }
 
+        private string GetToolTipText(IList<SqlResult> results)
+        {
+            string toolTipText = string.Empty;
+            foreach (SqlResult result in results)
+            {
+                toolTipText += result.SqlQuery + Environment.NewLine;
+            }
+            return toolTipText;
+        }
         public void SetResults(IList<SqlResult> results)
         {
             _results = results;
@@ -48,7 +57,8 @@ namespace SqlStudio
 
             if (results.Count > 0)
             {
-                ToolTipText = results[0].SqlQuery;
+                ToolTipText = GetToolTipText(results);
+
                 if (results.Count == 1)
                 {
                     Text = results[0].TableName;
