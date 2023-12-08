@@ -60,7 +60,7 @@ namespace SqlStudio
 				}
 			}
 
-			_executer = new Executer(cmdLineControl, _cfgDataStore);
+			_executer = new Executer(cmdLineControl, _cfgDataStore, this);
 			_executer.ExecutionFinished += _executer_ExecutionFinished;
 
 			builder.Services.AddSingleton<IExecuteQueryCallback>(this);

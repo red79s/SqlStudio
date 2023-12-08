@@ -26,13 +26,16 @@ namespace SqlStudio
         private string[] _currentCommandLines = null;
         private CommandPrompt.CmdLineControl _cmdControl = null;
         private ConfigDataStore _cfgDataStore = null;
+        private readonly ILogger _logger;
+
         public DbConnectionInfo CurrentConnection { get; private set; }
 
-        public Executer(CommandPrompt.CmdLineControl cmdControl, ConfigDataStore cfgDataStore)
+        public Executer(CommandPrompt.CmdLineControl cmdControl, ConfigDataStore cfgDataStore, ILogger logger)
         {
+            _logger = logger;
             _cmdControl = cmdControl;
             _cfgDataStore = cfgDataStore;
-            _sqlExecuter = new SqlExecuter();
+            _sqlExecuter = new SqlExecuter(_logger);
             _sqlExecuter.Executed += _sqlExecuter_Executed;
         }
 

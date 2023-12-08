@@ -10,11 +10,13 @@ namespace SqlExecute
     {
         private readonly ISqlExecuter _sqlExecuter;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
+        private readonly ILogger _logger;
 
-        public CascadingDeleter(ISqlExecuter sqlExecuter, IDatabaseSchemaInfo databaseSchemaInfo) 
+        public CascadingDeleter(ISqlExecuter sqlExecuter, IDatabaseSchemaInfo databaseSchemaInfo, ILogger logger) 
         {
             _sqlExecuter = sqlExecuter;
             _databaseSchemaInfo = databaseSchemaInfo;
+            _logger = logger;
         }
 
         public List<SqlResult> Delete(string tableName, List<ColumnValue> keys, bool onlyExploreAffectedRows) 

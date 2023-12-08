@@ -72,9 +72,10 @@ namespace SqlExecute
         private object _cacheLockObj = new object();
         private List<ForeignKeyInfo> _foreignKeyInfos = null;
 
-        public SqlExecuter()
+        public SqlExecuter(ILogger logger)
         {
             _dbCache = new SqlExecute.DbSchemaCache.DbSchemaCache();
+            _logger = logger;
         }
 
         void _completer_DebugMessage(object sender, string msg)
@@ -802,6 +803,8 @@ namespace SqlExecute
         }
 
         private Regex blobRegex = new Regex("[(,]@(?<param>[a-zA-Z]+_blob_id_[a-zA-Z0-9_-]+)[,)]");
+        private readonly ILogger _logger;
+
         private string GetBlobIdParameter(string sql)
         {
             Match m = blobRegex.Match(sql);
@@ -834,7 +837,7 @@ namespace SqlExecute
 
         public List<SqlResult> DeleteCascading(string tableName, List<ColumnValue> keyValues, bool onlyDisplayAffectedRows)
         {
-            var deleter = new CascadingDeleter(this, this);
+            var deleter = new CascadingDeleter(this, this, _logger);
             return deleter.Delete(tableName, keyValues, onlyDisplayAffectedRows);
         }
 
