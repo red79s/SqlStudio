@@ -32,7 +32,7 @@ namespace SqlExecute
                     var foreignKeys = new List<ColumnValue>();
                     foreach (var item in foreignKeyTable)
                     {
-                        foreignKeys.Add(new ColumnValue { Column = item.ForeignColumnName, Value = row[item.ColumnName].ToString() });
+                        foreignKeys.Add(new ColumnValue { Column = item.ColumnName, Value = row[item.ForeignColumnName].ToString() });
                     }
 
                     res.AddRange(Delete(foreignKeyTable.Key, foreignKeys, onlyExploreAffectedRows));

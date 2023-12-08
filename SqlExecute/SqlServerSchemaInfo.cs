@@ -97,8 +97,7 @@ namespace SqlExecute
                         "   ,f.update_referential_action_desc  " + Environment.NewLine +
                         "FROM sys.foreign_keys AS f  " + Environment.NewLine +
                         "INNER JOIN sys.foreign_key_columns AS fc   " + Environment.NewLine +
-                        "   ON f.object_id = fc.constraint_object_id   " + Environment.NewLine +
-                        "WHERE f.parent_object_id = OBJECT_ID('HumanResources.Employee');";
+                        "   ON f.object_id = fc.constraint_object_id";
 
             DbCommand command = ProviderFactory.CreateCommand();
             command.Connection = Connection;
@@ -111,7 +110,7 @@ namespace SqlExecute
                 var foreignKeyInfo = new ForeignKeyInfo();
                 foreignKeyInfo.TableName = reader.GetString("table_name");
                 foreignKeyInfo.ColumnName = reader.GetString("column_name");
-                foreignKeyInfo.ForeignTableName = reader.GetString("referenced_object");
+                foreignKeyInfo.ForeignTableName = reader.GetString("referenced_table");
                 foreignKeyInfo.ForeignColumnName = reader.GetString("referenced_column_name");
                 foreignKeyInfo.ConstraintName = reader.GetString("foreign_key_name");
                 foreignKeys.Add(foreignKeyInfo);
