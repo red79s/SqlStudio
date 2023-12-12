@@ -72,10 +72,11 @@ namespace SqlExecute
         private object _cacheLockObj = new object();
         private List<ForeignKeyInfo> _foreignKeyInfos = null;
 
-        public SqlExecuter(ILogger logger)
+        public SqlExecuter(ILogger logger, IDatabaseKeywordEscape databaseKeywordEscape)
         {
             _dbCache = new SqlExecute.DbSchemaCache.DbSchemaCache();
             _logger = logger;
+            _databaseKeywordEscape = databaseKeywordEscape;
         }
 
         void _completer_DebugMessage(object sender, string msg)
@@ -269,9 +270,10 @@ namespace SqlExecute
             t.Start();
         }
 
-        void gsiThread_DataReady(object sender, DataTable dt, long executionTimeMS)
+        void gsiThread_DataReady(object sender, DataTable dt, List<ForeignKeyInfo> foreignKeyInfos, long executionTimeMS)
         {
             FillCache(dt);
+            _foreignKeyInfos = foreignKeyInfos;
 
             SqlResult result = new SqlResult(SqlResult.ResultType.BACKGROUND_INFO);
             result.ExecutionTimeMS = executionTimeMS;
@@ -804,6 +806,7 @@ namespace SqlExecute
 
         private Regex blobRegex = new Regex("[(,]@(?<param>[a-zA-Z]+_blob_id_[a-zA-Z0-9_-]+)[,)]");
         private readonly ILogger _logger;
+        private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
 
         private string GetBlobIdParameter(string sql)
         {
@@ -837,7 +840,7 @@ namespace SqlExecute
 
         public List<SqlResult> DeleteCascading(string tableName, List<ColumnValue> keyValues, bool onlyDisplayAffectedRows)
         {
-            var deleter = new CascadingDeleter(this, this, _logger);
+            var deleter = new CascadingDeleter(this, this, _databaseKeywordEscape, _logger);
             return deleter.Delete(tableName, keyValues, onlyDisplayAffectedRows);
         }
 

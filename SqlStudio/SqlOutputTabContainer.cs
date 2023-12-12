@@ -43,7 +43,7 @@ namespace SqlStudio
             _textBoxOutput.Multiline = true;
             _textBoxOutput.ScrollBars = ScrollBars.Both;
             _textBoxOutput.WordWrap = false;
-            _textBoxOutput.Font = new Font("Lucida Sans Typewriter", 12F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+            _textBoxOutput.Font = new Font(FontFamily.GenericMonospace, 12F);
             _outputTab.Controls.Add(_textBoxOutput);
             _textBoxOutput.Dock = DockStyle.Fill;
 
@@ -199,7 +199,7 @@ namespace SqlStudio
                 SqlResult res = results[i];
                 if (res.DisplayAsText && res.DataTable != null)
                 {
-                    SetOutputText(DataFormatingUtils.GetDataTableAsString(res.DataTable, true, _resCounter++));
+                    SetOutputText(DataFormatingUtils.GetDataTableAsString(res.DataTable, true, res.TableName, _resCounter++));
                     results.RemoveAt(i);
                 }
                 else if (res.DataTable == null)

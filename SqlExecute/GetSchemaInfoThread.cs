@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Common.Model;
 using System.Collections.Generic;
-using System.Text;
-using System.Data.Common;
 using System.Data;
+using System.Data.Common;
 
 namespace SqlExecute
 {
     public class GetSchemaInfoThread
     {
-        public delegate void DataReadyDelegate(object sender, DataTable dt, long executionTimeMS);
+        public delegate void DataReadyDelegate(object sender, DataTable dt, List<ForeignKeyInfo> foreignKeyInfos, long executionTimeMS);
         public event DataReadyDelegate DataReady;
 
         private DbProviderFactory _factory = null;
@@ -26,6 +25,7 @@ namespace SqlExecute
         {
             DataTable dt = null;
             long executionTime = 0;
+            List<ForeignKeyInfo> foreignKeyInfos = null;
 
             DbConnection con = _factory.CreateConnection();
             con.ConnectionString = _connectionString.Trim();
@@ -37,6 +37,7 @@ namespace SqlExecute
                 sw.Start();
                 DBSchemaInfoBase schema = DBSchemaInfoBase.GetSchemaClass(_provider, con, _factory);
                 dt = schema.GetColumnsInfo("", "");
+                foreignKeyInfos = schema.GetForeignKeyInfo();
                 sw.Stop();
                 executionTime = sw.ElapsedMilliseconds;
             }
@@ -45,7 +46,7 @@ namespace SqlExecute
                 con.Close();
             }
             if (dt != null && DataReady != null)
-                DataReady(this, dt, executionTime);
+                DataReady(this, dt, foreignKeyInfos, executionTime);
         }
     }
 }

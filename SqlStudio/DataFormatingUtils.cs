@@ -8,7 +8,7 @@ namespace SqlStudio
 {
     class DataFormatingUtils
     {
-        public static string GetDataTableAsString(DataTable dt, bool includeHeader, int headerNum)
+        public static string GetDataTableAsString(DataTable dt, bool includeHeader, string tableName, int headerNum)
         {
             StringBuilder sbRet = new StringBuilder();
 
@@ -39,7 +39,7 @@ namespace SqlStudio
 			// Print table data
             if (includeHeader)
 			{
-				sbRet.Append(Environment.NewLine + "[ result nr. " + headerNum.ToString() + " ]");
+				sbRet.Append(Environment.NewLine + $"[{tableName} Rows: {dt.Rows.Count}, ResultNum: {headerNum}]");
 				string r = Environment.NewLine;
 				int totLen = 0;
 				for(int i=0; i<cols; i++)

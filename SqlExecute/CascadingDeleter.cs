@@ -10,12 +10,14 @@ namespace SqlExecute
     {
         private readonly ISqlExecuter _sqlExecuter;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
+        private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
         private readonly ILogger _logger;
 
-        public CascadingDeleter(ISqlExecuter sqlExecuter, IDatabaseSchemaInfo databaseSchemaInfo, ILogger logger) 
+        public CascadingDeleter(ISqlExecuter sqlExecuter, IDatabaseSchemaInfo databaseSchemaInfo, IDatabaseKeywordEscape databaseKeywordEscape, ILogger logger) 
         {
             _sqlExecuter = sqlExecuter;
             _databaseSchemaInfo = databaseSchemaInfo;
+            _databaseKeywordEscape = databaseKeywordEscape;
             _logger = logger;
         }
 
@@ -24,9 +26,12 @@ namespace SqlExecute
             var res = new List<SqlResult>();
             var sql = GenerateSelect(tableName, keys);
             var tableRes = _sqlExecuter.ExecuteSql(sql);
+            tableRes.DisplayAsText = true;
             
             if (tableRes.DataTable.Rows.Count == 0)
                 return res;
+
+            _logger.Log(LogLevel.Debug, $"CascadingDeleter::Delete tableName: {tableName}, {string.Join(", ", keys.Select(x => x.Value))}, rows: {tableRes.DataTable.Rows.Count}");
 
             res.Add(tableRes);
 
@@ -50,7 +55,7 @@ namespace SqlExecute
 
         private string GenerateSelect(string tableName, List<ColumnValue> keys) 
         {
-            string sql = $"SELECT * FROM {tableName} WHERE ";
+            string sql = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(tableName)} WHERE ";
             bool first = true;
             foreach (var key in keys)
             {

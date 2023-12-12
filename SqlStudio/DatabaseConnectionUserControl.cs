@@ -43,7 +43,8 @@ namespace SqlStudio
 			builder.Services.AddSingleton<ILogger>(this);
 			builder.Services.AddSingleton<IColumnValueDescriptionProvider>(columnValueDescriptionProvider);
 
-			builder.Services.AddSingleton<IDatabaseKeywordEscape, DatabaseKeywordEscapeManager>();
+			var databaseKeywordEscape = new DatabaseKeywordEscapeManager();
+			builder.Services.AddSingleton<IDatabaseKeywordEscape>(databaseKeywordEscape);
 
 			_cmdBuffer = new List<string>();
 			_userConfigDbFile = Directory.GetParent(Application.UserAppDataPath) + @"\sqlstudio.cfg";
@@ -60,7 +61,7 @@ namespace SqlStudio
 				}
 			}
 
-			_executer = new Executer(cmdLineControl, _cfgDataStore, this);
+			_executer = new Executer(cmdLineControl, _cfgDataStore, databaseKeywordEscape, this);
 			_executer.ExecutionFinished += _executer_ExecutionFinished;
 
 			builder.Services.AddSingleton<IExecuteQueryCallback>(this);
@@ -271,7 +272,13 @@ namespace SqlStudio
 			}
 
 			var sqlCompleter = _host.Services.GetService<ISqlCompleter>();
-			return sqlCompleter.GetPossibleCompletions(realCmd, realIndex);
+			var res = sqlCompleter.GetPossibleCompletions(realCmd, realIndex);
+			if (realIndex != index)
+			{
+				res.CompletedTextStartIndex += (index - realIndex);
+			}
+
+			return res;
 		}
 
 		private void ExecuteTimerOnTick(object sender, EventArgs e)
@@ -532,12 +539,15 @@ namespace SqlStudio
 
 		public void Log(LogLevel logLevel, string message)
 		{
-			toolStripMessageLabel.Text = $"{logLevel}: {message}";
+			sqlOutput.BeginInvoke(new Action(() => { sqlOutput.SetOutputText($"{logLevel}: {message}"); }));
+			
+			//toolStripMessageLabel.Text = $"{logLevel}: {message}";
 		}
 
 		public void Log(LogLevel logLevel, string message, Exception ex)
 		{
-			toolStripMessageLabel.Text = $"{logLevel}: {message}, {ex.Message}";
+			sqlOutput.BeginInvoke(new Action(() => {sqlOutput.SetOutputText($"{logLevel}: {message}, {ex.Message}"); }));
+			//toolStripMessageLabel.Text = $"{logLevel}: {message}, {ex.Message}";
 		}
 
 		public void Connect(Connection connection)
