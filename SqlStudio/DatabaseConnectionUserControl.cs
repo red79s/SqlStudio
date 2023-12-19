@@ -108,14 +108,9 @@ namespace SqlStudio
 			cmdLineControl_CommandReady(this, query);
 		}
 
-        public void ExecuteCascadingDelete(string tablename, List<ColumnValue> keys, bool inNewTab, string datatabLabel)
+        public void ExecuteCascadingDelete(string tablename, List<ColumnValue> keys, bool onlyExploreAffectedRows)
         {
-            if (inNewTab)
-            {
-                sqlOutput.CreateNewDataTab(datatabLabel);
-            }
-
-			_executer.DeleteCascading(tablename, keys, true);
+			_executer.DeleteCascading(tablename, keys, onlyExploreAffectedRows);
         }
 
         private void SetDatabasesOnToolsMenu(List<string> databases)

@@ -31,7 +31,7 @@ namespace SqlExecute
             if (tableRes.DataTable.Rows.Count == 0)
                 return res;
 
-            _logger.Log(LogLevel.Debug, $"CascadingDeleter::Delete tableName: {tableName}, {string.Join(", ", keys.Select(x => x.Value))}, rows: {tableRes.DataTable.Rows.Count}");
+            _logger.Log(LogLevel.Debug, $"CascadingDeleter::FindRows tableName: {tableName}, {string.Join(", ", keys.Select(x => x.Value))}, rows: {tableRes.DataTable.Rows.Count}");
 
             res.Add(tableRes);
 
@@ -50,12 +50,41 @@ namespace SqlExecute
                 }
             }
 
+            if (!onlyExploreAffectedRows && tableRes.DataTable.Rows.Count > 0)
+            {
+                var delSql = GenerateDelete(tableName, keys);
+                var delRes = _sqlExecuter.ExecuteSql(delSql);
+                if (delRes.Success)
+                {
+                    _logger.Log(LogLevel.Debug, $"CascadingDeleter::Delete tableName: {tableName}, {string.Join(", ", keys.Select(x => x.Value))}, rows: {delRes.RowsAffected}");
+                }
+                else
+                {
+                    _logger.Log(LogLevel.Debug, $"CascadingDelete::Delete error: {delRes.Message}, tableName: {tableName}, {string.Join(", ", keys.Select(x => x.Value))}");
+                }
+            }
+
             return res;
         }
 
         private string GenerateSelect(string tableName, List<ColumnValue> keys) 
         {
             string sql = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(tableName)} WHERE ";
+            bool first = true;
+            foreach (var key in keys)
+            {
+                if (!first)
+                    sql += " AND ";
+                first = false;
+
+                sql += $"{key.Column} = {key.Value}";
+            }
+            return sql;
+        }
+
+        private string GenerateDelete(string tableName, List<ColumnValue> keys)
+        {
+            string sql = $"DELETE FROM {_databaseKeywordEscape.EscapeObject(tableName)} WHERE ";
             bool first = true;
             foreach (var key in keys)
             {

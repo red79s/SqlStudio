@@ -55,10 +55,17 @@ namespace SqlStudio
             ToolStripMenuItem miSave = new ToolStripMenuItem("Save");
             miSave.Click += miSave_Click;
             ContextMenuStrip.Items.Add(miSave);
+            
+            var miDelete = new ToolStripMenuItem("Delete");
+            ContextMenuStrip.Items.Add(miDelete);
 
             var miDeleteCascading = new ToolStripMenuItem("Delete cascading");
             miDeleteCascading.Click += miDeleteCascading_Click;
-            ContextMenuStrip.Items.Add(miDeleteCascading);
+            miDelete.DropDownItems.Add(miDeleteCascading);
+
+            var miExploreDeleteCascading = new ToolStripMenuItem("Delete cascading - view affected rows");
+            miExploreDeleteCascading.Click += MiExploreDeleteCascading_Click;
+            miDelete.DropDownItems.Add(miExploreDeleteCascading);
 
             ToolStripMenuItem miFill = new ToolStripMenuItem("Undo edit");
             miFill.ShortcutKeys = Keys.F7;
@@ -165,6 +172,7 @@ namespace SqlStudio
 
             ContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(ContextMenuStrip_Opening);
         }
+
 
         private void MiEdit_Click(object sender, EventArgs e)
         {
@@ -1454,6 +1462,16 @@ namespace SqlStudio
 
         void miDeleteCascading_Click(object sender, EventArgs e)
         {
+            DeleteCascading(false);
+        }
+
+        private void MiExploreDeleteCascading_Click(object sender, EventArgs e)
+        {
+            DeleteCascading(true);
+        }
+
+        private void DeleteCascading(bool onlyExploreAffectedRows)
+        {
             if (_sqlResult == null || _sqlResult.DataAdapter == null)
                 return;
 
@@ -1467,7 +1485,7 @@ namespace SqlStudio
                 {
                     columnKeys.Add(new ColumnValue { Column = key.ColumnName, Value = dgRow.Cells[key.ColumnName].Value.ToString() });
                 }
-                _executeQueryCallback.ExecuteCascadingDelete(_sqlResult.TableName, columnKeys, false, "Cascading delete");
+                _executeQueryCallback.ExecuteCascadingDelete(_sqlResult.TableName, columnKeys, onlyExploreAffectedRows);
                 return;
             }
         }
