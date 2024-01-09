@@ -1553,6 +1553,12 @@ namespace SqlStudio
             int iTotalWIdeal = 0;
             for (int i = 0; i < Columns.Count; i++)
             {
+                if (Columns[i].ValueType == typeof(byte[]))
+                {
+                    iTotalWIdeal += 1;
+                    continue;
+                }
+
                 if (Rows.Count > MaxRowsDetailedColumnWidthCalculationTreshold)
                 {
                     iTotalWIdeal += Columns[i].GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true);
@@ -1586,7 +1592,12 @@ namespace SqlStudio
                 int iAvgWidth = iTotalWIdeal / Columns.Count;
                 for (int i = 0; i < (Columns.Count); i++)
                 {
-                    int iWidthIdeal = Columns[i].GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true);
+                    int iWidthIdeal = 1;
+                    if (Columns[i].ValueType != typeof(byte[]))
+                    {
+                        iWidthIdeal = Columns[i].GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true);
+                    }
+                       
                     if (iWidthIdeal < (iAvgWidth + 20))
                         Columns[i].Width = iWidthIdeal;
                     else

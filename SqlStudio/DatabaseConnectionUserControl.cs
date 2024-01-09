@@ -373,15 +373,15 @@ namespace SqlStudio
 			sqlOutput.DisplayResults(results);
 			sw.Stop();
 
-			var infoMsg = $"Result have {results.Count} datasets. ";
-			foreach (var ds in results)
-			{
-                infoMsg += $"{ds.DataTable.Rows.Count} rows ";
-			}
-			infoMsg += $"Displaying results took {sw.ElapsedMilliseconds}ms";
+			//var infoMsg = $"Result have {results.Count} datasets. ";
+			//foreach (var ds in results)
+			//{
+   //             infoMsg += $"{ds.DataTable.Rows.Count} rows ";
+			//}
+			//infoMsg += $"Displaying results took {sw.ElapsedMilliseconds}ms";
 
-            sqlOutput.SetOutputText(infoMsg);
-
+			//Log(LogLevel.Info, infoMsg);
+			
 			if (_bulkExecute && _cmdBuffer.Count < 1)
 			{
 				_bulkExecute = false;
