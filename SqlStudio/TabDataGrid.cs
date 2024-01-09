@@ -1470,7 +1470,7 @@ namespace SqlStudio
             DeleteCascading(true);
         }
 
-        private void DeleteCascading(bool onlyExploreAffectedRows)
+        private async void DeleteCascading(bool onlyExploreAffectedRows)
         {
             if (_sqlResult == null || _sqlResult.DataAdapter == null)
                 return;
@@ -1485,8 +1485,7 @@ namespace SqlStudio
                 {
                     columnKeys.Add(new ColumnValue { Column = key.ColumnName, Value = dgRow.Cells[key.ColumnName].Value.ToString() });
                 }
-                _executeQueryCallback.ExecuteCascadingDelete(_sqlResult.TableName, columnKeys, onlyExploreAffectedRows);
-                return;
+                await _executeQueryCallback.ExecuteCascadingDelete(_sqlResult.TableName, columnKeys, onlyExploreAffectedRows);
             }
         }
 

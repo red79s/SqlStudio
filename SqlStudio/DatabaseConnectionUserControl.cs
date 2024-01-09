@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SqlStudio
@@ -108,9 +109,9 @@ namespace SqlStudio
 			cmdLineControl_CommandReady(this, query);
 		}
 
-        public void ExecuteCascadingDelete(string tablename, List<ColumnValue> keys, bool onlyExploreAffectedRows)
+        public Task ExecuteCascadingDelete(string tablename, List<ColumnValue> keys, bool onlyExploreAffectedRows)
         {
-			_executer.DeleteCascading(tablename, keys, onlyExploreAffectedRows);
+			return _executer.DeleteCascading(tablename, keys, onlyExploreAffectedRows);
         }
 
         private void SetDatabasesOnToolsMenu(List<string> databases)

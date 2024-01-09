@@ -108,9 +108,9 @@ namespace SqlStudio
             _thread.Start();
         }
 
-        public void DeleteCascading(string tableName, List<ColumnValue> keys, bool onlyDisplayAffectedRows)
+        public Task DeleteCascading(string tableName, List<ColumnValue> keys, bool onlyDisplayAffectedRows)
         {
-            Task.Run(() =>
+            return Task.Run(() =>
             {
                 var res = _sqlExecuter.DeleteCascading(tableName, keys, onlyDisplayAffectedRows);
                 ExecutionFinished?.Invoke(this, res);
