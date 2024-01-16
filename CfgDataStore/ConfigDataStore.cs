@@ -157,6 +157,15 @@ namespace CfgDataStore
             return ret;
         }
 
+        public void UpdateDatabaseOnConnection(long key, string database)
+        {
+			var con = _dbContext.Connections.FirstOrDefault(x => x.p_key == key);
+			if (con != null)
+            {
+				con.db = database;
+			}
+		}
+
         public void SetDefaultConnection(long key)
         {
             var connections = _dbContext.Connections.ToList();

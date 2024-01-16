@@ -142,6 +142,12 @@ namespace SqlStudio
 				_executer.CurrentConnection.Password);
 			cmdLineControl.ExecuteCommand(connectionCommand);
 
+			if (_configConnectionKey > 0)
+			{
+				_cfgDataStore.UpdateDatabaseOnConnection(_configConnectionKey, databaseName);
+				_cfgDataStore.Save();
+			}
+
 			UpdateTabText($"{_executer.CurrentConnection.Server} - {databaseName}");
 		}
 
@@ -546,6 +552,7 @@ namespace SqlStudio
 			//toolStripMessageLabel.Text = $"{logLevel}: {message}, {ex.Message}";
 		}
 
+		private long _configConnectionKey = 0;
 		public void Connect(Connection connection)
 		{
 			if (_executer.IsBussy)
@@ -560,6 +567,8 @@ namespace SqlStudio
 					connection.db,
 					connection.user,
 					connection.password));
+
+			_configConnectionKey = connection.p_key;
 
 			UpdateTabText($"{connection.server} - {connection.db}");
 		}

@@ -21,10 +21,22 @@ namespace SqlExecute
             _logger = logger;
         }
 
-        public List<SqlResult> Delete(string tableName, List<ColumnValue> keys, bool onlyExploreAffectedRows) 
+        public List<SqlResult> Delete(string tableName, List<ColumnValue> keys, bool onlyExploreAffectedRows, List<string> parentTables = null) 
         {
             var res = new List<SqlResult>();
-            var sql = GenerateSelect(tableName, keys);
+
+			if (parentTables == null)
+				parentTables = new List<string>();
+
+            if (parentTables.Contains(tableName))
+            {
+                _logger.Log(LogLevel.Warn, $"CascadingDeleter::Delete tableName: {tableName}, {string.Join(", ", keys.Select(x => x.Value))}, already explored");
+				return res;
+			}
+            
+            parentTables.Add(tableName);
+
+			var sql = GenerateSelect(tableName, keys);
             var tableRes = _sqlExecuter.ExecuteSql(sql);
             tableRes.DisplayAsText = true;
             
@@ -46,7 +58,7 @@ namespace SqlExecute
                         foreignKeys.Add(new ColumnValue { Column = item.ColumnName, Value = row[item.ForeignColumnName].ToString() });
                     }
 
-                    res.AddRange(Delete(foreignKeyTable.Key, foreignKeys, onlyExploreAffectedRows));
+                    res.AddRange(Delete(foreignKeyTable.Key, foreignKeys, onlyExploreAffectedRows, parentTables.ToList()));
                 }
             }
 
