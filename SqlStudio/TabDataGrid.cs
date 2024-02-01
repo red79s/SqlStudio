@@ -1158,10 +1158,16 @@ namespace SqlStudio
                 return;
 
             var descriptions = _columnMetadataInfo.GetDescriptionForColumn(_sqlResult.TableName, SelectedCells[0].OwningColumn.Name);
-            if (descriptions.Count == 0) 
-                return;
 
-            MessageBox.Show(string.Join(Environment.NewLine, descriptions), "Value - Description");
+            var columnInfo = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName == _sqlResult.TableName)?.Columns.FirstOrDefault(x => x.ColumnName == SelectedCells[0].OwningColumn.Name);
+            var message = descriptions.Count > 0 ? string.Join(Environment.NewLine, descriptions) : "no value descriptors found";
+            if (columnInfo != null)
+            {
+                message += Environment.NewLine + Environment.NewLine + $"Column type: {columnInfo.ColumnType}" + Environment.NewLine + $"Is nullable: {columnInfo.IsNullable}";
+            }
+            
+            MessageBox.Show(message, "Value - Description");
+
             //foreach (DataGridViewCell cell in SelectedCells)
             //{
             //    if (cell.Value == null)
