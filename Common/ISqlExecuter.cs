@@ -14,7 +14,7 @@ namespace Common
         IList<TableInfo> Tables { get; }
 
         void Cancel();
-        List<SqlResult> DeleteCascading(string tableName, List<ColumnValue> keyValues, bool onlyDisplayAffectedRows);
+        List<SqlResult> DeleteCascading(TableKeyValues tableKeyValues, bool onlyDisplayAffectedRows);
         void Disconnect();
         SqlResult ExecuteSql(string sql, DbTransaction transaction = null);
         List<SqlResult> ExecuteSql(string[] sql);

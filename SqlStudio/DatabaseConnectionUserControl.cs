@@ -109,9 +109,9 @@ namespace SqlStudio
 			cmdLineControl_CommandReady(this, query);
 		}
 
-        public Task ExecuteCascadingDelete(string tablename, List<ColumnValue> keys, bool onlyExploreAffectedRows)
+        public Task ExecuteCascadingDelete(TableKeyValues tableKeyValues, bool onlyExploreAffectedRows)
         {
-			return _executer.DeleteCascading(tablename, keys, onlyExploreAffectedRows);
+			return _executer.DeleteCascading(tableKeyValues, onlyExploreAffectedRows);
         }
 
         private void SetDatabasesOnToolsMenu(List<string> databases)

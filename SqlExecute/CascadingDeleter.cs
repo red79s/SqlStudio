@@ -21,35 +21,35 @@ namespace SqlExecute
             _logger = logger;
         }
 
-        public List<SqlResult> Delete(string tableName, List<ColumnValue> keys, bool onlyExploreAffectedRows, List<string> parentTables = null) 
+        public List<SqlResult> Delete(TableKeyValues tableKeyValues, bool onlyExploreAffectedRows, List<TableKeyValues> parentTableKeys = null) 
         {
             var res = new List<SqlResult>();
 
-			if (parentTables == null)
-				parentTables = new List<string>();
+			if (parentTableKeys == null)
+				parentTableKeys = new List<TableKeyValues>();
 
-            if (parentTables.Contains(tableName))
+            if (HaveVisited(tableKeyValues, parentTableKeys))
             {
-                _logger.Log(LogLevel.Warn, $"CascadingDeleter::Delete tableName: {tableName}, {string.Join(", ", keys.Select(x => x.Value))}, already explored");
+                _logger.Log(LogLevel.Warn, $"CascadingDeleter::Delete tableName: {tableKeyValues.TableName}, {string.Join(", ", tableKeyValues.Keys.Select(x => x.Value))}, already explored");
 				return res;
 			}
             
-            parentTables.Add(tableName);
+            parentTableKeys.Add(tableKeyValues);
 
-			var sql = GenerateSelect(tableName, keys);
+			var sql = GenerateSelect(tableKeyValues);
             var tableRes = _sqlExecuter.ExecuteSql(sql);
             tableRes.DisplayAsText = true;
             
             if (tableRes.DataTable.Rows.Count == 0)
                 return res;
 
-            _logger.Log(LogLevel.Debug, $"CascadingDeleter::FindRows tableName: {tableName}, {string.Join(", ", keys.Select(x => x.Value))}, rows: {tableRes.DataTable.Rows.Count}");
+            _logger.Log(LogLevel.Debug, $"CascadingDeleter::FindRows tableName: {tableKeyValues.TableName}, {string.Join(", ", tableKeyValues.Keys.Select(x => x.Value))}, rows: {tableRes.DataTable.Rows.Count}");
 
             res.Add(tableRes);
 
             foreach (DataRow row in tableRes.DataTable.Rows )
             {
-                var foreignKeysForTables = _databaseSchemaInfo.ForeignKeys.Where(x => x.ForeignTableName == tableName).GroupBy(x => x.TableName);
+                var foreignKeysForTables = _databaseSchemaInfo.ForeignKeys.Where(x => x.ForeignTableName == tableKeyValues.TableName).GroupBy(x => x.TableName);
                 foreach (var foreignKeyTable in foreignKeysForTables)
                 {
                     var foreignKeys = new List<ColumnValue>();
@@ -58,32 +58,57 @@ namespace SqlExecute
                         foreignKeys.Add(new ColumnValue { Column = item.ColumnName, Value = row[item.ForeignColumnName].ToString() });
                     }
 
-                    res.AddRange(Delete(foreignKeyTable.Key, foreignKeys, onlyExploreAffectedRows, parentTables.ToList()));
+                    res.AddRange(Delete(new TableKeyValues { TableName = foreignKeyTable.Key, Keys = foreignKeys }, onlyExploreAffectedRows, parentTableKeys));
                 }
             }
 
             if (!onlyExploreAffectedRows && tableRes.DataTable.Rows.Count > 0)
             {
-                var delSql = GenerateDelete(tableName, keys);
+                var delSql = GenerateDelete(tableKeyValues);
                 var delRes = _sqlExecuter.ExecuteSql(delSql);
                 if (delRes.Success)
                 {
-                    _logger.Log(LogLevel.Debug, $"CascadingDeleter::Delete tableName: {tableName}, {string.Join(", ", keys.Select(x => x.Value))}, rows: {delRes.RowsAffected}");
+                    _logger.Log(LogLevel.Debug, $"CascadingDeleter::Delete tableName: {tableKeyValues.TableName}, {string.Join(", ", tableKeyValues.Keys.Select(x => x.Value))}, rows: {delRes.RowsAffected}");
                 }
                 else
                 {
-                    _logger.Log(LogLevel.Debug, $"CascadingDelete::Delete error: {delRes.Message}, tableName: {tableName}, {string.Join(", ", keys.Select(x => x.Value))}");
+                    _logger.Log(LogLevel.Debug, $"CascadingDelete::Delete error: {delRes.Message}, tableName: {tableKeyValues.TableName}, {string.Join(", ", tableKeyValues.Keys.Select(x => x.Value))}");
                 }
             }
 
             return res;
         }
 
-        private string GenerateSelect(string tableName, List<ColumnValue> keys) 
+        private bool HaveVisited(TableKeyValues tableKeyValues, List<TableKeyValues> parentTables)
         {
-            string sql = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(tableName)} WHERE ";
+            foreach (var parentTable in parentTables)
+            {
+                if (parentTable.TableName == tableKeyValues.TableName)
+                {
+                    var haveVisited = true;
+                    foreach (var key in  parentTable.Keys)
+                    {
+                        var col = tableKeyValues.Keys.FirstOrDefault(x => x.Column == key.Column);
+                        if (col == null || col.Value != key.Value)
+                        {
+                            haveVisited = false;
+                        }
+                    }
+
+                    if (haveVisited)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private string GenerateSelect(TableKeyValues tableKeyValues) 
+        {
+            string sql = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(tableKeyValues.TableName)} WHERE ";
             bool first = true;
-            foreach (var key in keys)
+            foreach (var key in tableKeyValues.Keys)
             {
                 if (!first)
                     sql += " AND ";
@@ -94,11 +119,11 @@ namespace SqlExecute
             return sql;
         }
 
-        private string GenerateDelete(string tableName, List<ColumnValue> keys)
+        private string GenerateDelete(TableKeyValues tableKeyValues)
         {
-            string sql = $"DELETE FROM {_databaseKeywordEscape.EscapeObject(tableName)} WHERE ";
+            string sql = $"DELETE FROM {_databaseKeywordEscape.EscapeObject(tableKeyValues.TableName)} WHERE ";
             bool first = true;
-            foreach (var key in keys)
+            foreach (var key in tableKeyValues.Keys)
             {
                 if (!first)
                     sql += " AND ";

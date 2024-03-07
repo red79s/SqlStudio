@@ -1491,7 +1491,7 @@ namespace SqlStudio
                 {
                     columnKeys.Add(new ColumnValue { Column = key.ColumnName, Value = dgRow.Cells[key.ColumnName].Value.ToString() });
                 }
-                await _executeQueryCallback.ExecuteCascadingDelete(_sqlResult.TableName, columnKeys, onlyExploreAffectedRows);
+                await _executeQueryCallback.ExecuteCascadingDelete(new TableKeyValues { TableName = _sqlResult.TableName, Keys = columnKeys }, onlyExploreAffectedRows);
             }
         }
 

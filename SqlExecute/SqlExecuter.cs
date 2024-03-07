@@ -838,10 +838,10 @@ namespace SqlExecute
             result.DataAdapter.Update(result.DataTable);
         }
 
-        public List<SqlResult> DeleteCascading(string tableName, List<ColumnValue> keyValues, bool onlyDisplayAffectedRows)
+        public List<SqlResult> DeleteCascading(TableKeyValues tableKeyValues, bool onlyDisplayAffectedRows)
         {
             var deleter = new CascadingDeleter(this, this, _databaseKeywordEscape, _logger);
-            return deleter.Delete(tableName, keyValues, onlyDisplayAffectedRows);
+            return deleter.Delete(tableKeyValues, onlyDisplayAffectedRows);
         }
 
 
