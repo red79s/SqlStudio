@@ -1528,7 +1528,18 @@ namespace SqlStudio
         public string Filter
         {
             get { return _view.RowFilter; }
-            set { _view.RowFilter = value; }
+            set 
+            {
+                try
+                {
+                    _view.RowFilter = value;
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Failed to set filter: " + value);
+                    _view.RowFilter = "";
+                }
+            }
         }
 
         private void InitializeResults()

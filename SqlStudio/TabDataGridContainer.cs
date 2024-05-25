@@ -273,7 +273,7 @@ namespace SqlStudio
             if (_filterControlls == null)
                 return "";
 
-            StringBuilder sbFilter = new StringBuilder();
+            var sbFilter = "";
             for (int i = 0; i < _filterControlls.Count; i++)
             {
                 TextBox tb = _filterControlls[i];
@@ -283,23 +283,35 @@ namespace SqlStudio
                 string colName = _tdg.SqlResult.DataTable.Columns[i].ColumnName;
                 Type colType = _tdg.SqlResult.DataTable.Columns[i].DataType;
 
-                string filter = "";
+                
                 if (sbFilter.Length > 0)
-                    filter = " AND ";
+                    sbFilter += " AND ";
 
-                FilterValue fv = new FilterValue(tb.Text, colType);
-                if (fv.Operator == "" || fv.Filter == "")
-                    continue;
+                var filterValues = FilterValue.CreateFilterValues(tb.Text, colType);
+                var insertAnd = false;
+                for (int j = 0; j < filterValues.Count; j++)
+                {
+                    string filter = "";
 
-                if (colType == typeof(Guid) || colType == typeof(DateTime))
-                    filter += "Convert([" + colName + "], 'System.String') " + fv.Operator + " " + fv.Filter;
-                else
-                    filter += "[" + colName + "] " + fv.Operator + " " + fv.Filter;
+                    var fv = filterValues[j];
 
-                sbFilter.Append(filter);
+                    if (fv.Operator == "" || fv.Filter == "")
+                        continue;
+
+                    if (insertAnd)
+                        filter += " AND ";
+
+                    if (colType == typeof(Guid) || colType == typeof(DateTime))
+                        filter += "Convert([" + colName + "], 'System.String') " + fv.Operator + " " + fv.Filter;
+                    else
+                        filter += "[" + colName + "] " + fv.Operator + " " + fv.Filter;
+
+                    sbFilter += filter;
+                    insertAnd = true;
+                }
             }
 
-            return sbFilter.ToString();
+            return sbFilter;
         }
     }
 
@@ -313,6 +325,20 @@ namespace SqlStudio
     {
         private string _filter = "";
         private string _operator = "";
+
+        public static List<FilterValue> CreateFilterValues(string filter, Type type)
+        {
+            List<FilterValue> ret = new List<FilterValue>();
+            string[] filters = filter.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < filters.Length; i++)
+            {
+                
+
+                ret.Add(new FilterValue(filters[i], type));
+            }
+
+            return ret;
+        }
 
         public FilterValue(string filter, Type type)
         {
