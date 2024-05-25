@@ -39,6 +39,7 @@ namespace SqlCommandCompleter
             "LEFT",
             "FULL",
             "OUTER",
+            "ON",
             "INTO",
             "VALUES"
         };
@@ -117,6 +118,18 @@ namespace SqlCommandCompleter
             {
                 var tables = GetTableNames();
                 tables.Insert(0, "WHERE");
+                tables.Insert(0, "LEFT JOIN");
+                tables.Insert(0, "FULL OUTER JOIN");
+                tables.Insert(0, "JOIN");
+                tables.Insert(0, "RIGHT JOIN");
+
+                return MergePossible(tables, symbol);
+            }
+
+            if (keyWord.Text.Equals("JOIN", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var tables = GetTableNames();
+                tables.Insert(0, "ON");
 
                 return MergePossible(tables, symbol);
             }
@@ -149,7 +162,8 @@ namespace SqlCommandCompleter
             }
 
             //column list
-            if (keyWord.Text.Equals("WHERE", StringComparison.CurrentCultureIgnoreCase))
+            if (keyWord.Text.Equals("WHERE", StringComparison.CurrentCultureIgnoreCase) ||
+                keyWord.Text.Equals("ON", StringComparison.CurrentCultureIgnoreCase))
             {
                 var tables = GetTableInfo(symbols);
                 var columns = GetColumnNames(symbol.Text.Length == 0, tables, symbol);

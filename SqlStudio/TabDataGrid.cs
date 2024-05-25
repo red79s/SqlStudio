@@ -1164,6 +1164,14 @@ namespace SqlStudio
             if (columnInfo != null)
             {
                 message += Environment.NewLine + Environment.NewLine + $"Column type: {columnInfo.ColumnType}" + Environment.NewLine + $"Is nullable: {columnInfo.IsNullable}";
+                if (columnInfo.ColumnLength != null && columnInfo.ColumnLength > 0)
+                {
+                    message += Environment.NewLine + $"Length: {columnInfo.ColumnLength}";
+                }
+                if (columnInfo.ColumnPrecision != null && columnInfo.ColumnPrecision > 0)
+                {
+                    message += Environment.NewLine + $"Precision: {columnInfo.ColumnPrecision}";
+                }
             }
             
             MessageBox.Show(message, "Value - Description");

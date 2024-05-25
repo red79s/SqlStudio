@@ -19,6 +19,10 @@ namespace SqlStudio.SyntaxHighlight
                 case "inner":
                 case "outer":
                 case "join":
+                case "left":
+                case "right":
+                case "full":
+                case "on":
                 case "insert":
                 case "into":
                 case "values":

@@ -115,7 +115,15 @@ namespace SqlExecute
                     DataRow[] rows = _dbCache.ColumnCache.Select();
                     for (int r = 0; r < rows.Length; r++)
                     {
-                        ti.Columns.Add(new ColumnInfo { ColumnName = (string)rows[r]["column_name"], ColumnType = (string)rows[r]["data_type"], IsNullable = (bool)rows[r]["is_nullable"], IsPrimaryKey = (bool)rows[r]["primary_key"] });
+                        ti.Columns.Add(new ColumnInfo 
+                        { 
+                            ColumnName = (string)rows[r]["column_name"], 
+                            ColumnType = (string)rows[r]["data_type"], 
+                            ColumnLength = (int)rows[r]["column_length"],
+                            //ColumnPrecision = (int)rows[r]["column_precision"],
+                            IsNullable = (bool)rows[r]["is_nullable"], 
+                            IsPrimaryKey = (bool)rows[r]["primary_key"],
+                        });
                     }
                     ret.Add(ti);
                 }
