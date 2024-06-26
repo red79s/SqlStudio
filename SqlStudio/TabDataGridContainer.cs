@@ -62,7 +62,7 @@ namespace SqlStudio
                     var res = _tdg.GetLastSqlResult();
                     if (res != null && res.SqlQuery != null )
                     {
-                        _executeQueryCallback.ExecuteQuery(res.SqlQuery, false, "");
+                        _executeQueryCallback.ExecuteQueryAndDisplay(res.SqlQuery, false, "");
                     }
                 }
                 return true;

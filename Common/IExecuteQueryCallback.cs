@@ -6,7 +6,8 @@ namespace Common
 {
     public interface IExecuteQueryCallback
     {
-        void ExecuteQuery(string query, bool inNewTab, string datatabLabel);
+        void ExecuteQueryAndDisplay(string query, bool inNewTab, string datatabLabel);
+        SqlResult ExecuteQuery(string query);
         Task ExecuteCascadingDelete(TableKeyValues tableKeyValues, bool onlyExploreAffectedRows);
     }
 }

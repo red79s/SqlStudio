@@ -146,7 +146,7 @@ namespace SqlStudio
                 if (queries != "")
                 {
                     var executeCallback = _serviceProvider.GetService<IExecuteQueryCallback>();
-                    executeCallback.ExecuteQuery(queries, false, "");
+                    executeCallback.ExecuteQueryAndDisplay(queries, false, "");
                 }
             }
         }

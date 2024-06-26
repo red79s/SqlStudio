@@ -415,7 +415,7 @@ namespace SqlStudio
             if (_logSearchParametersDialog.ShowDialog() == DialogResult.OK)
             {
                 var queryString = _logSearchParametersDialog.QueryString;
-                tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.ExecuteQuery(queryString, false, "");
+                tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.ExecuteQueryAndDisplay(queryString, false, "");
             }
         }
 

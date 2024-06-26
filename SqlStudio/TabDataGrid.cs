@@ -80,6 +80,14 @@ namespace SqlStudio
             miGetColumnInfo.Click += GetColumnInfo_MenuItemClick;
             ContextMenuStrip.Items.Add(miGetColumnInfo);
 
+            var miGetRelatedInfo = new ToolStripMenuItem("Get Related Info");
+            miGetRelatedInfo.Click += MiGetRelatedInfo_Click;
+            ContextMenuStrip.Items.Add(miGetRelatedInfo);
+
+            var miGetRelatedInfoPopup = new ToolStripMenuItem("Get Related Info popup");
+            miGetRelatedInfoPopup.Click += MiGetRelatedInfoPopup_Click;
+            ContextMenuStrip.Items.Add(miGetRelatedInfoPopup);
+
             var miBlob = new ToolStripMenuItem("Blob");
             ContextMenuStrip.Items.Add(miBlob);
 
@@ -173,6 +181,85 @@ namespace SqlStudio
             ContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(ContextMenuStrip_Opening);
         }
 
+        private string GetRelatedInfoQuery()
+        {
+            if (SelectedCells.Count < 1)
+                return null;
+
+            var columnIndex = SelectedCells[0].ColumnIndex;
+
+            var values = new List<object>();
+
+            foreach (DataGridViewCell cell in SelectedCells)
+            {
+                if (cell.ColumnIndex != columnIndex)
+                    continue;
+
+                values.Add(cell.Value);
+            }
+
+
+            var columnName = SelectedCells[0].OwningColumn.Name;
+            var value = SelectedCells[0].Value;
+            var type = SelectedCells[0].ValueType;
+
+            if (columnName.EndsWith("id", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var tableName = columnName.Substring(0, columnName.Length - 2);
+                foreach (var table in _databaseSchemaInfo.Tables)
+                {
+                    if (tableName.EndsWith(table.TableName, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        var col = table.Columns.FirstOrDefault(x => x.ColumnName.Equals("id", StringComparison.CurrentCultureIgnoreCase));
+                        if (col == null)
+                        {
+                            col = table.Columns.FirstOrDefault(x => x.ColumnName.Equals(columnName, StringComparison.CurrentCultureIgnoreCase));
+                        }
+
+                        if (col != null)
+                        {
+                            var queryStr = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_databaseKeywordEscape.EscapeObject(col.ColumnName)} IN (";
+                            for (int i = 0; i < values.Count; i++)
+                            {
+                                if (i > 0)
+                                    queryStr += ", ";
+                                queryStr += GetDbStringValue(type, values[i], false);
+                            }
+                            queryStr += ")";
+                            return queryStr;
+                            _executeQueryCallback.ExecuteQueryAndDisplay(queryStr, true, $"Related info for {table.TableName}");
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+        private void MiGetRelatedInfo_Click(object sender, EventArgs e)
+        {
+            var query = GetRelatedInfoQuery();
+            if (query != null)
+            {
+                _executeQueryCallback.ExecuteQueryAndDisplay(query, true, "Related info");
+                return;
+            }
+
+            MessageBox.Show($"No related info found");
+        }
+
+        private void MiGetRelatedInfoPopup_Click(object sender, EventArgs e)
+        {
+            var query = GetRelatedInfoQuery();
+            if (query != null)
+            {
+                var res = _executeQueryCallback.ExecuteQuery(query);
+                var str = DataFormatingUtils.GetDataTableAsString(res.DataTable, true, res.TableName, 0);
+                MessageBox.Show(str, "Related info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            MessageBox.Show($"No related info found");
+        }
 
         private void MiEdit_Click(object sender, EventArgs e)
         {
@@ -337,7 +424,7 @@ namespace SqlStudio
 
             var query = autoQuery.Command;
             var substitutedQuery = SubstitueColumnValues(query);
-            _executeQueryCallback.ExecuteQuery(substitutedQuery, true, autoQuery.Description);
+            _executeQueryCallback.ExecuteQueryAndDisplay(substitutedQuery, true, autoQuery.Description);
         }
 
         private void AutoQueryMenuItem_Click(object sender, EventArgs e)
@@ -355,7 +442,7 @@ namespace SqlStudio
 
             var query = autoQuery.Command;
             var substitutedQuery = SubstitueColumnValues(query);
-            _executeQueryCallback.ExecuteQuery(substitutedQuery, true, autoQuery.Description);
+            _executeQueryCallback.ExecuteQueryAndDisplay(substitutedQuery, true, autoQuery.Description);
         }
 
         private string SubstitueColumnValues(string query)

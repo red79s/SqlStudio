@@ -8,7 +8,7 @@ namespace SqlStudio.Interfaces
         void Connect(Connection connectionInfo);
         void CloseConnection();
         void CancelExecution();
-        void ExecuteQuery(string query, bool inNewTab, string datatabLabel);
+        void ExecuteQueryAndDisplay(string query, bool inNewTab, string datatabLabel);
         void SetDislayFilterRow(bool showFilterRow);
         void InsertNewDataTab();
         void CreateNewScriptTab();

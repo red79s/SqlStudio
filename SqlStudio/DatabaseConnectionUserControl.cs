@@ -97,7 +97,7 @@ namespace SqlStudio
 			cmdLineControl.GetCommand();
 		}
 
-		public void ExecuteQuery(string query, bool inNewTab, string datatabLabel)
+		public void ExecuteQueryAndDisplay(string query, bool inNewTab, string datatabLabel)
 		{
 			if (inNewTab)
 			{
@@ -113,6 +113,11 @@ namespace SqlStudio
         {
 			return _executer.DeleteCascading(tableKeyValues, onlyExploreAffectedRows);
         }
+
+		public SqlResult ExecuteQuery(string query)
+		{
+			return _executer.Execute(query);
+		}
 
         private void SetDatabasesOnToolsMenu(List<string> databases)
 		{
