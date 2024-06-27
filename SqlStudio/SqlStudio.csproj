@@ -25,6 +25,8 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	<PlatformName>windows</PlatformName>
+	  <NoWarn>CA1416</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

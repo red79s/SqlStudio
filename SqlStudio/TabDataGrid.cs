@@ -32,6 +32,7 @@ namespace SqlStudio
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
         private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
         private readonly IColumnValueDescriptionProvider _columnMetadataInfo;
+        private readonly IServiceProvider _serviceProvider;
 
         public TabDataGrid(IServiceProvider serviceProvider)
         {
@@ -179,6 +180,7 @@ namespace SqlStudio
             ContextMenuStrip.Items.Add(miFindTimeDiff);
 
             ContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(ContextMenuStrip_Opening);
+            _serviceProvider = serviceProvider;
         }
 
         private string GetRelatedInfoQuery()
@@ -253,8 +255,10 @@ namespace SqlStudio
             if (query != null)
             {
                 var res = _executeQueryCallback.ExecuteQuery(query);
-                var str = DataFormatingUtils.GetDataTableAsString(res.DataTable, true, res.TableName, 0);
-                MessageBox.Show(str, "Related info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                var sqlResultForm = new SqlResultForm(_serviceProvider, res);
+                sqlResultForm.Show();
+                //workaround to fix render issue in TabDataGridContainer
+                sqlResultForm.Width = sqlResultForm.Width + 100;
                 return;
             }
 
