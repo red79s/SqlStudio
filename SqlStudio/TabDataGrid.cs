@@ -229,12 +229,68 @@ namespace SqlStudio
                             }
                             queryStr += ")";
                             return queryStr;
-                            _executeQueryCallback.ExecuteQueryAndDisplay(queryStr, true, $"Related info for {table.TableName}");
                         }
                     }
                 }
             }
 
+            foreach (var table in _databaseSchemaInfo.Tables)
+            {
+                if (columnName.StartsWith(table.TableName, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    var col = table.Columns.FirstOrDefault(x => x.IsPrimaryKey);
+                    if (col != null)
+                    {
+                        var queryStr = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_databaseKeywordEscape.EscapeObject(col.ColumnName)} IN (";
+                        for (int i = 0; i < values.Count; i++)
+                        {
+                            if (i > 0)
+                                queryStr += ", ";
+                            queryStr += GetDbStringValue(type, values[i], false);
+                        }
+                        queryStr += ")";
+                        return queryStr;
+                    }
+                }
+            }
+
+            foreach (var table in _databaseSchemaInfo.Tables)
+            {
+                if (columnName.Contains(table.TableName, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    var col = table.Columns.FirstOrDefault(x => x.IsPrimaryKey);
+                    if (col != null)
+                    {
+                        var queryStr = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_databaseKeywordEscape.EscapeObject(col.ColumnName)} IN (";
+                        for (int i = 0; i < values.Count; i++)
+                        {
+                            if (i > 0)
+                                queryStr += ", ";
+                            queryStr += GetDbStringValue(type, values[i], false);
+                        }
+                        queryStr += ")";
+                        return queryStr;
+                    }
+                }
+            }
+
+            if (columnName.StartsWith("Parent", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var table = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName.Equals(_sqlResult.TableName, StringComparison.CurrentCultureIgnoreCase));
+                var col = table.Columns.FirstOrDefault(x => x.IsPrimaryKey);
+                if (col != null)
+                {
+                    var queryStr = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_databaseKeywordEscape.EscapeObject(col.ColumnName)} IN (";
+                    for (int i = 0; i < values.Count; i++)
+                    {
+                        if (i > 0)
+                            queryStr += ", ";
+                        queryStr += GetDbStringValue(type, values[i], false);
+                    }
+                    queryStr += ")";
+                    return queryStr;
+                }
+            }
             return null;
         }
         private void MiGetRelatedInfo_Click(object sender, EventArgs e)
