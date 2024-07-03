@@ -291,6 +291,24 @@ namespace SqlStudio
                     return queryStr;
                 }
             }
+
+            if (columnName.EndsWith("ById", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var table = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName.Equals("Person", StringComparison.CurrentCultureIgnoreCase));
+                var col = table.Columns.FirstOrDefault(x => x.IsPrimaryKey);
+                if (col != null)
+                {
+                    var queryStr = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject("Person")} WHERE {_databaseKeywordEscape.EscapeObject(col.ColumnName)} IN (";
+                    for (int i = 0; i < values.Count; i++)
+                    {
+                        if (i > 0)
+                            queryStr += ", ";
+                        queryStr += GetDbStringValue(type, values[i], false);
+                    }
+                    queryStr += ")";
+                    return queryStr;
+                }
+            }
             return null;
         }
         private void MiGetRelatedInfo_Click(object sender, EventArgs e)
