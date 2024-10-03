@@ -152,6 +152,7 @@ namespace SqlStudio
 				_cfgDataStore.UpdateDatabaseOnConnection(_configConnectionKey, databaseName);
 				_cfgDataStore.Save();
 			}
+			
 
 			UpdateTabText($"{_executer.CurrentConnection.Server} - {databaseName}");
 		}
@@ -575,7 +576,9 @@ namespace SqlStudio
 
 			_configConnectionKey = connection.p_key;
 
-			UpdateTabText($"{connection.server} - {connection.db}");
+			cmdLineControl.BackColor = connection.IsProduction.HasValue && connection.IsProduction.Value ? Color.FromArgb(245, 235, 245) : Color.White;
+
+            UpdateTabText($"{connection.server} - {connection.db}");
 		}
 
 		public void SetDislayFilterRow(bool showFilterRow)

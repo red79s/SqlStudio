@@ -11,6 +11,7 @@ namespace CfgDataStore
         {
             _configFile = configFile;
             EnusureTablesExists();
+            EnsureColumnsExists();
         }
 
         public DbSet<Connection> Connections { get; set; }
@@ -28,6 +29,25 @@ namespace CfgDataStore
         {
             EnsureTableExists("AutoQueries", "AutoQueryId INTEGER primary key , description nvarchar(255), tablename nvarchar(255), columnname nvarchar(255) , command nvarchar(5000)");
             EnsureTableExists("HistoryLogItems", "Id INTEGER Primary key, command nvarchar(1000), LastExecuted DateTime");
+        }
+
+        public void EnsureColumnsExists()
+        {
+            EnsureColumnExists("Connections", "IsProduction", "boolean");
+        }
+
+        public bool EnsureColumnExists(string tablename, string columnName, string columnType)
+        {
+            try
+            {
+                Database.ExecuteSqlRaw($"Select {columnName} from {tablename}");
+                return true;
+            }
+            catch
+            {
+                Database.ExecuteSqlRaw($"alter table {tablename} add column {columnName} {columnType}");
+                return false;
+            }
         }
 
         public void EnsureTableExists(string tablename, string tableCreateSql)

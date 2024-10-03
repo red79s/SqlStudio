@@ -30,7 +30,8 @@ namespace CfgDataStore
 		public bool integrated_security { get; set; }
 
         public bool default_connection { get; set; }
+		public bool? IsProduction { get; set; }
 
-		public string description { get; set; }
+        public string description { get; set; }
 	}
 }

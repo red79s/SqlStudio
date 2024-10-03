@@ -90,6 +90,7 @@ namespace SqlStudio
             textBoxPassword.Text = _conRow.password;
             checkBoxIntegratedSecurity.Checked = _conRow.integrated_security;
             checkBoxDefaultConnection.Checked = _conRow.default_connection;
+            checkBoxIsProduction.Checked = _conRow.IsProduction.HasValue ? _conRow.IsProduction.Value : false;
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
@@ -102,6 +103,7 @@ namespace SqlStudio
             _conRow.password = textBoxPassword.Text;
             _conRow.integrated_security = checkBoxIntegratedSecurity.Checked;
             _conRow.default_connection = checkBoxDefaultConnection.Checked;
+            _conRow.IsProduction = checkBoxIsProduction.Checked;
             DialogResult = DialogResult.OK;
             Close();
         }
