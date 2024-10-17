@@ -14,7 +14,7 @@ namespace SqlStudio.AutoQueryEditor
     public partial class AutoQueryEditor : Form
     {
         private DataTable _dtAutoQueries;
-        private ConfigDataStore _configDataStore;
+        private IConfigDataStore _configDataStore;
         private List<AutoQuery> _autoQueries;
 
         public AutoQueryEditor()
@@ -22,7 +22,7 @@ namespace SqlStudio.AutoQueryEditor
             InitializeComponent();
         }
 
-        public void Init(ConfigDataStore configDataStore)
+        public void Init(IConfigDataStore configDataStore)
         {
             _configDataStore = configDataStore;
 

@@ -27,7 +27,7 @@ namespace SqlStudio
         private DataView _view = null;
         private ToolStripMenuItem _dynamicDataMenuItem;
         private ToolStripMenuItem _generatedDataMenuItem;
-        private ConfigDataStore _configDataStore;
+        private IConfigDataStore _configDataStore;
         private readonly IExecuteQueryCallback _executeQueryCallback;
         private readonly IDatabaseSchemaInfo _databaseSchemaInfo;
         private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
@@ -36,7 +36,7 @@ namespace SqlStudio
 
         public TabDataGrid(IServiceProvider serviceProvider)
         {
-            _configDataStore = serviceProvider.GetRequiredService<ConfigDataStore>();
+            _configDataStore = serviceProvider.GetRequiredService<IConfigDataStore>();
             _executeQueryCallback = serviceProvider.GetService<IExecuteQueryCallback>();
             _databaseSchemaInfo = serviceProvider.GetService<IDatabaseSchemaInfo>();
             _databaseKeywordEscape = serviceProvider.GetService<IDatabaseKeywordEscape>();

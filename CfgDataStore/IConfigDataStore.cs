@@ -17,7 +17,6 @@ namespace CfgDataStore
         List<AutoQuery> GetAutoQueries();
         string GetConnectCommand(Connection connection);
         string GetConnectCommand(string provider, string server, string db, string user, string password);
-        Connection GetConnection(long key);
         List<Connection> GetConnections();
         Connection GetDefaultConnection();
         long GetLongValue(string name);
@@ -27,11 +26,11 @@ namespace CfgDataStore
         void Refresh();
         bool RemoveAlias(string aliasName);
         void RemoveAutoQuery(AutoQuery query);
-        void RemoveConnection(long key);
+        void RemoveConnection(Connection connection);
         void Save();
-        void SetDefaultConnection(long key);
+        void SetDefaultConnection(Connection connection);
         void SetValue(string name, long value);
         void SetValue(string name, string value);
-        void UpdateDatabaseOnConnection(long key, string database);
+        void UpdateDatabaseOnConnection(Connection connection, string database);
     }
 }

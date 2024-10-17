@@ -25,13 +25,13 @@ namespace SqlStudio
         private Thread _thread = null;
         private string[] _currentCommandLines = null;
         private CommandPrompt.CmdLineControl _cmdControl = null;
-        private ConfigDataStore _cfgDataStore = null;
+        private IConfigDataStore _cfgDataStore = null;
         private readonly IDatabaseKeywordEscape _databaseKeywordEscape;
         private readonly ILogger _logger;
 
-        public DbConnectionInfo CurrentConnection { get; private set; }
+        public Connection CurrentConnection { get; private set; }
 
-        public Executer(CommandPrompt.CmdLineControl cmdControl, ConfigDataStore cfgDataStore, IDatabaseKeywordEscape databaseKeywordEscape, ILogger logger)
+        public Executer(CommandPrompt.CmdLineControl cmdControl, IConfigDataStore cfgDataStore, IDatabaseKeywordEscape databaseKeywordEscape, ILogger logger)
         {
             _logger = logger;
             _cmdControl = cmdControl;
@@ -165,7 +165,7 @@ namespace SqlStudio
                         string user = args.GetNamedArg("u");
                         string password = args.GetNamedArg("p");
 
-                        CurrentConnection = new DbConnectionInfo { ProviderName = nonNamed[0], Server = server, Database = db, User = user, Password = password };
+                        CurrentConnection = new Connection { provider = nonNamed[0], server = server, db = db, user = user, password = password };
 
                         _sqlExecuter.Connect(server, db, user, password, provider);
                         bTranselated = true;

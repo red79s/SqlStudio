@@ -9,9 +9,9 @@ namespace SqlStudio
     class BuiltInCommands
     {
         CommandPrompt.CmdLineControl _cmdLineControl = null;
-        ConfigDataStore _cfgDataStore = null;
+        IConfigDataStore _cfgDataStore = null;
 
-        public BuiltInCommands(CommandPrompt.CmdLineControl cmdLineControl, ConfigDataStore cfgDataStore)
+        public BuiltInCommands(CommandPrompt.CmdLineControl cmdLineControl, IConfigDataStore cfgDataStore)
         {
             _cfgDataStore = cfgDataStore;
             _cmdLineControl = cmdLineControl;

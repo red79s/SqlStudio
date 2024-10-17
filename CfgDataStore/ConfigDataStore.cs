@@ -166,21 +166,21 @@ namespace CfgDataStore
             return ret;
         }
 
-        public void UpdateDatabaseOnConnection(long key, string database)
+        public void UpdateDatabaseOnConnection(Connection connection, string database)
         {
-            var con = _dbContext.Connections.FirstOrDefault(x => x.p_key == key);
+            var con = _dbContext.Connections.FirstOrDefault(x => x.p_key == connection.p_key);
             if (con != null)
             {
                 con.db = database;
             }
         }
 
-        public void SetDefaultConnection(long key)
+        public void SetDefaultConnection(Connection connection)
         {
             var connections = _dbContext.Connections.ToList();
             foreach (var row in connections)
             {
-                if (row.p_key != key)
+                if (row.p_key != connection.p_key)
                     row.default_connection = false;
                 else
                     row.default_connection = true;
@@ -220,9 +220,9 @@ namespace CfgDataStore
             _dbContext.Connections.Add(con);
         }
 
-        public void RemoveConnection(long key)
+        public void RemoveConnection(Connection connection)
         {
-            var con = _dbContext.Connections.FirstOrDefault(x => x.p_key == key);
+            var con = _dbContext.Connections.FirstOrDefault(x => x.p_key == connection.p_key);
             if (con != null)
             {
                 _dbContext.Connections.Remove(con);

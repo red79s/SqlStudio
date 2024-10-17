@@ -13,7 +13,7 @@ namespace SqlStudio
 {
     public partial class MainWindow : Form, ILogger
     {
-        private ConfigDataStore _cfgDataStore = null;
+        private IConfigDataStore _cfgDataStore = null;
         private string _userConfigDbFile;
         private IColumnValueDescriptionProvider _columnMetadataInfo = null;
 
@@ -54,32 +54,32 @@ namespace SqlStudio
             }
         }
 
-        private void AddConnectionToMenu(Connection drConnection)
+        private void AddConnectionToMenu(Connection connection)
         {
-            ConnectToolStripItem conToolItem = new ConnectToolStripItem(drConnection.description, drConnection.p_key);
+            ConnectToolStripItem conToolItem = new ConnectToolStripItem(connection);
             conToolItem.OnConnectionClick += new ConnectToolStripItem.OnConnectionClickDelegate(conToolItem_OnConnectionClick);
             conToolItem.OnEditConnection += new ConnectToolStripItem.OnEditConnectionDelegate(conToolItem_OnEditConnection);
             conToolItem.OnDeleteConnection += new ConnectToolStripItem.OnDeleteConnectionDelegate(conToolItem_OnDeleteConnection);
             connectToolStripMenuItem.DropDownItems.Insert(connectToolStripMenuItem.DropDownItems.Count - 2, conToolItem);
         }
 
-        private void AddConnectionToToolsMenu(Connection drConnection)
+        private void AddConnectionToToolsMenu(Connection connection)
         {
-            var button = new ToolStripButton(drConnection.description);
-            button.Tag = drConnection;
-            button.ToolTipText = $"{drConnection.db} - {drConnection.server}";
+            var button = new ToolStripButton(connection.description);
+            button.Tag = connection;
+            button.ToolTipText = $"{connection.db} - {connection.server}";
             button.Margin = new Padding(4, 1, 0, 2);
-            button.Click += (sender, args) => conToolItem_OnConnectionClick(this, drConnection.p_key);
+            button.Click += (sender, args) => conToolItem_OnConnectionClick(this, connection);
             toolStripMainWindow.Items.Add(button);
         }
 
-        void conToolItem_OnDeleteConnection(object sender, long key)
+        void conToolItem_OnDeleteConnection(object sender, Connection connection)
         {
-            _cfgDataStore.RemoveConnection(key);
+            _cfgDataStore.RemoveConnection(connection);
             for (int i = 0; i < connectToolStripMenuItem.DropDownItems.Count; i++)
             {
                 if (connectToolStripMenuItem.DropDownItems[i] is ConnectToolStripItem &&
-                    ((ConnectToolStripItem)connectToolStripMenuItem.DropDownItems[i]).Key == key)
+                    ((ConnectToolStripItem)connectToolStripMenuItem.DropDownItems[i]).Connection == connection)
                 {
                     connectToolStripMenuItem.DropDownItems.RemoveAt(i);
                     break;
@@ -91,7 +91,7 @@ namespace SqlStudio
                 if (item is ToolStripButton)
                 {
                     var con = ((ToolStripButton)item).Tag as Connection;
-                    if (con != null && con.p_key == key)
+                    if (con != null && con == connection)
                     {
                         toolStripMainWindow.Items.Remove((ToolStripItem)item);
                         break;
@@ -114,38 +114,36 @@ namespace SqlStudio
             return null;
         }
 
-        void conToolItem_OnEditConnection(object sender, long key)
+        void conToolItem_OnEditConnection(object sender, Connection connection)
         {
-            Connection con = _cfgDataStore.GetConnection(key);
-            var button = GetToolStripButton(con);
+            var button = GetToolStripButton(connection);
 
             NewDBConnectionForm dbConForm = new NewDBConnectionForm();
-            dbConForm.ConnectionRow = con;
+            dbConForm.ConnectionRow = connection;
             if (dbConForm.ShowDialog() == DialogResult.OK)
             {
-                if (con.default_connection)
-                    _cfgDataStore.SetDefaultConnection(con.p_key);
+                if (connection.default_connection)
+                    _cfgDataStore.SetDefaultConnection(connection);
                 _cfgDataStore.Save();
 
                 var toolStripItem = sender as ConnectToolStripItem;
                 if (toolStripItem != null)
                 {
-                    toolStripItem.Text = con.description;
+                    toolStripItem.Text = connection.description;
                 }
 
                 if (button != null)
                 {
-                    button.Text = con.description;
+                    button.Text = connection.description;
                 }
             }
         }
 
-        void conToolItem_OnConnectionClick(object sender, long key)
+        void conToolItem_OnConnectionClick(object sender, Connection connection)
         {
-            var server = _cfgDataStore.GetConnection(key).server;
-            var databaseConnection = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab(server, _columnMetadataInfo);
+            var databaseConnection = tabControlDatabaseConnections.CreateNewDatabaseConnectionTab(connection.server, _columnMetadataInfo);
             databaseConnection.SetDislayFilterRow(DisplayFilterRow);
-            databaseConnection.Connect(_cfgDataStore.GetConnection(key));
+            databaseConnection.Connect(connection);
         }
 
 
@@ -166,8 +164,6 @@ namespace SqlStudio
 
             base.OnFormClosing(e);
         }
-
-
 
         protected override void OnLoad(EventArgs e)
         {
@@ -192,7 +188,7 @@ namespace SqlStudio
 
             Connection defaultConnection = _cfgDataStore.GetDefaultConnection();
             if (defaultConnection != null)
-                conToolItem_OnConnectionClick(this, defaultConnection.p_key);
+                conToolItem_OnConnectionClick(this, defaultConnection);
         }
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)

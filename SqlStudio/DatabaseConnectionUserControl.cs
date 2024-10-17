@@ -20,7 +20,7 @@ namespace SqlStudio
     public partial class DatabaseConnectionUserControl : UserControl, IExecuteQueryCallback, IDatabaseConnectionUserControl, ILogger
 	{
 		private Executer _executer = null;
-		private ConfigDataStore _cfgDataStore = null;
+		private IConfigDataStore _cfgDataStore = null;
 		private SyntaxHighlight.SQLSyntaxHighlight _syntaxHighLight = null;
 		private BuiltInCommands _builtIn = null;
 		private List<string> _cmdBuffer = null;
@@ -33,14 +33,14 @@ namespace SqlStudio
 		private string _userConfigDbFile;
 		private IHost _host = null;
 
-		public DatabaseConnectionUserControl(ConfigDataStore cfgDataStore, IColumnValueDescriptionProvider columnValueDescriptionProvider)
+		public DatabaseConnectionUserControl(IConfigDataStore cfgDataStore, IColumnValueDescriptionProvider columnValueDescriptionProvider)
 		{
 			InitializeComponent();
 
             HostApplicationBuilder builder = Host.CreateApplicationBuilder();
 
             _cfgDataStore = cfgDataStore;
-			builder.Services.AddSingleton<ConfigDataStore>(cfgDataStore);
+			builder.Services.AddSingleton<IConfigDataStore>(cfgDataStore);
 			builder.Services.AddSingleton<ILogger>(this);
 			builder.Services.AddSingleton<IColumnValueDescriptionProvider>(columnValueDescriptionProvider);
 
@@ -140,21 +140,15 @@ namespace SqlStudio
 				return;
 			}
 
-			var connectionCommand = _cfgDataStore.GetConnectCommand(_executer.CurrentConnection.ProviderName,
-				_executer.CurrentConnection.Server,
-				databaseName,
-				_executer.CurrentConnection.User,
-				_executer.CurrentConnection.Password);
+			_executer.CurrentConnection.db = databaseName;
+
+            var connectionCommand = _cfgDataStore.GetConnectCommand(_executer.CurrentConnection);
 			cmdLineControl.ExecuteCommand(connectionCommand);
 
-			if (_configConnectionKey > 0)
-			{
-				_cfgDataStore.UpdateDatabaseOnConnection(_configConnectionKey, databaseName);
-				_cfgDataStore.Save();
-			}
+			_cfgDataStore.UpdateDatabaseOnConnection(_executer.CurrentConnection, databaseName);
+			_cfgDataStore.Save();
 			
-
-			UpdateTabText($"{_executer.CurrentConnection.Server} - {databaseName}");
+			UpdateTabText($"{_executer.CurrentConnection.server} - {databaseName}");
 		}
 
 		private void UpdateTabText(string text)
@@ -567,14 +561,7 @@ namespace SqlStudio
 				return;
 			}
 			cmdLineControl.ExecuteCommand(
-				_cfgDataStore.GetConnectCommand(
-					connection.provider,
-					connection.server,
-					connection.db,
-					connection.user,
-					connection.password));
-
-			_configConnectionKey = connection.p_key;
+				_cfgDataStore.GetConnectCommand(connection));
 
 			cmdLineControl.BackColor = connection.IsProduction.HasValue && connection.IsProduction.Value ? Color.FromArgb(245, 235, 245) : Color.White;
 

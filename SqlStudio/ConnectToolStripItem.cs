@@ -1,26 +1,25 @@
+using CfgDataStore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-using System.Drawing;
 
 namespace SqlStudio
 {
     public class ConnectToolStripItem : ToolStripMenuItem
     {
-        public delegate void OnConnectionClickDelegate(object sender, long key);
+        public delegate void OnConnectionClickDelegate(object sender, Connection connection);
         public event OnConnectionClickDelegate OnConnectionClick;
-        public delegate void OnEditConnectionDelegate(object sender, long key);
+        public delegate void OnEditConnectionDelegate(object sender, Connection connection);
         public event OnEditConnectionDelegate OnEditConnection;
-        public delegate void OnDeleteConnectionDelegate(object sender, long key);
+        public delegate void OnDeleteConnectionDelegate(object sender, Connection connection);
         public event OnDeleteConnectionDelegate OnDeleteConnection;
 
-        private long _key = 0;
+        public Connection Connection { get; set; }
 
-        public ConnectToolStripItem(string text, long key)
+        public ConnectToolStripItem(Connection connection)
         {
-            Text = text;
-            _key = key;
+            Connection = connection;
+
+            Text = connection.description;
 
             ToolStripMenuItem tsmiConnect = new ToolStripMenuItem("Connect");
             tsmiConnect.Click += new EventHandler(tsmiConnect_Click);
@@ -35,30 +34,24 @@ namespace SqlStudio
             DropDownItems.Add(tsmiDelete);
         }
 
-        public long Key
-        {
-            get { return _key; }
-            set { _key = value; }
-        }
-
         void tsmiConnect_Click(object sender, EventArgs e)
         {
             if (OnConnectionClick != null)
-                OnConnectionClick(this, _key);
+                OnConnectionClick(this, Connection);
         }
 
         void tsmiDelete_Click(object sender, EventArgs e)
         {
             if (OnDeleteConnection != null)
             {
-                OnDeleteConnection(this, _key);
+                OnDeleteConnection(this, Connection);
             }
         }
 
         void tsmiEdit_Click(object sender, EventArgs e)
         {
             if (OnEditConnection != null)
-                OnEditConnection(this, _key);
+                OnEditConnection(this, Connection);
         }
     }
 }

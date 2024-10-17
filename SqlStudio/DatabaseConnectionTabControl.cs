@@ -24,7 +24,7 @@ namespace SqlStudio
 		}
 
 		public IList<IDatabaseConnectionUserControl> DatabaseConnectionUIControls { get; } = new List<IDatabaseConnectionUserControl>();
-		public ConfigDataStore ConfigDataStore { get; set; }
+		public IConfigDataStore ConfigDataStore { get; set; }
 
 		public DatabaseConnectionTabControl()
         {
