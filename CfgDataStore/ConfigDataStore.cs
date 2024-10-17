@@ -1,6 +1,5 @@
-using Common;
 using Common.Model;
-using SqlExecute;
+using Microsoft.VisualBasic.ApplicationServices;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,7 +7,7 @@ using System.Linq;
 
 namespace CfgDataStore
 {
-    public class ConfigDataStore : ICommandHistoryStore
+    public class ConfigDataStore : IConfigDataStore
     {
         public int MaxHistoryItems { get; set; } = 100;
         ConfigDbContext _dbContext;
@@ -132,13 +131,23 @@ namespace CfgDataStore
             return _dbContext.Connections.FirstOrDefault(x => x.p_key == key);
         }
 
-        public string GetConnectCommand(long key)
+        public string GetConnectCommand(Connection connection)
         {
-            var con = GetConnection(key);
-            if (con == null)
-                return "";
+            if (connection == null)
+                return null;
 
-            return GetConnectCommand(con.provider, con.server, con.db, con.user, con.password);
+            string ret = string.Format("connect \"{0}\"", connection.provider);
+
+            if (!string.IsNullOrEmpty(connection.server))
+                ret += " --s \"" + connection.server + "\"";
+            if (!string.IsNullOrEmpty(connection.db))
+                ret += " --d \"" + connection.db + "\"";
+            if (!string.IsNullOrEmpty(connection.user))
+                ret += " --u \"" + connection.user + "\"";
+            if (!string.IsNullOrEmpty(connection.password))
+                ret += " --p \"" + connection.password + "\"";
+
+            return ret;
         }
 
         public string GetConnectCommand(string provider, string server, string db, string user, string password)
@@ -159,12 +168,12 @@ namespace CfgDataStore
 
         public void UpdateDatabaseOnConnection(long key, string database)
         {
-			var con = _dbContext.Connections.FirstOrDefault(x => x.p_key == key);
-			if (con != null)
+            var con = _dbContext.Connections.FirstOrDefault(x => x.p_key == key);
+            if (con != null)
             {
-				con.db = database;
-			}
-		}
+                con.db = database;
+            }
+        }
 
         public void SetDefaultConnection(long key)
         {
