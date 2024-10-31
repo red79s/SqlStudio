@@ -1654,17 +1654,24 @@ namespace SqlStudio
             if (_sqlResult == null || _sqlResult.DataAdapter == null)
                 return;
 
-            var tableInfo = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName.Equals(_sqlResult.TableName, StringComparison.CurrentCultureIgnoreCase));
-            var keys = tableInfo?.Columns.Where(x => x.IsPrimaryKey).ToList();
-            DataGridViewSelectedRowCollection selRows = SelectedRows;
-            foreach (DataGridViewRow dgRow in selRows)
+            try
             {
-                var columnKeys = new List<ColumnValue>();
-                foreach (var key in keys)
+                var tableInfo = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName.Equals(_sqlResult.TableName, StringComparison.CurrentCultureIgnoreCase));
+                var keys = tableInfo?.Columns.Where(x => x.IsPrimaryKey).ToList();
+                DataGridViewSelectedRowCollection selRows = SelectedRows;
+                foreach (DataGridViewRow dgRow in selRows)
                 {
-                    columnKeys.Add(new ColumnValue { Column = key.ColumnName, Value = dgRow.Cells[key.ColumnName].Value.ToString() });
+                    var columnKeys = new List<ColumnValue>();
+                    foreach (var key in keys)
+                    {
+                        columnKeys.Add(new ColumnValue { Column = key.ColumnName, Value = dgRow.Cells[key.ColumnName].Value.ToString() });
+                    }
+                    await _executeQueryCallback.ExecuteCascadingDelete(new TableKeyValues { TableName = _sqlResult.TableName, Keys = columnKeys }, onlyExploreAffectedRows);
                 }
-                await _executeQueryCallback.ExecuteCascadingDelete(new TableKeyValues { TableName = _sqlResult.TableName, Keys = columnKeys }, onlyExploreAffectedRows);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Failed to delete", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

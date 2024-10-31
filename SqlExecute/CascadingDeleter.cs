@@ -34,6 +34,12 @@ namespace SqlExecute
 				return res;
 			}
             
+            if (parentTableKeys.Count > 1000)
+            {
+                _logger.Log(LogLevel.Error, $"CascadingDeleter::Delete tableName: {tableKeyValues.TableName}. Infinite loop detected, abort");
+                throw new System.Exception("Infinite loop detected");
+            }
+
             parentTableKeys.Add(tableKeyValues);
 
 			var sql = GenerateSelect(tableKeyValues);
@@ -43,7 +49,7 @@ namespace SqlExecute
             if (tableRes.DataTable.Rows.Count == 0)
                 return res;
 
-            _logger.Log(LogLevel.Debug, $"CascadingDeleter::FindRows tableName: {tableKeyValues.TableName}, {string.Join(", ", tableKeyValues.Keys.Select(x => x.Value))}, rows: {tableRes.DataTable.Rows.Count}");
+            _logger.Log(LogLevel.Debug, $"CascadingDeleter::FindRows {GetParentTables(parentTableKeys)}->{tableKeyValues.TableName}, {string.Join(", ", tableKeyValues.Keys.Select(x => x.Value))}, rows: {tableRes.DataTable.Rows.Count}");
 
             res.Add(tableRes);
 
@@ -77,6 +83,14 @@ namespace SqlExecute
             }
 
             return res;
+        }
+
+        private string GetParentTables(List<TableKeyValues> parentTableKeys)
+        {
+            if (parentTableKeys == null || parentTableKeys.Count == 0)
+                return string.Empty;
+
+            return string.Join(", ", parentTableKeys.Select(x => $"{x.TableName} {string.Join("->", x.Keys.Select(y => y.Value))}"));
         }
 
         private bool HaveVisited(TableKeyValues tableKeyValues, List<TableKeyValues> parentTables)

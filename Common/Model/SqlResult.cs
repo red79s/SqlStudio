@@ -5,7 +5,7 @@ namespace Common.Model
 {
     public class SqlResult
     {
-        public enum ResultType { CONNECT, DISCONNECT, SELECT, UPDATE, INSERT, DELETE, SCHEMA_INFO, INFO, UNKNOWN, BACKGROUND_INFO };
+        public enum ResultType { CONNECT, DISCONNECT, SELECT, UPDATE, INSERT, DELETE, SCHEMA_INFO, INFO, UNKNOWN, BACKGROUND_INFO, ERROR };
 
         private System.Diagnostics.Stopwatch _sw = null;
         public SqlResult(ResultType resultType)
