@@ -6,7 +6,6 @@ namespace CfgDataStore
 {
     public interface IConfigDataStore : ICommandHistoryStore
     {
-
         void AddAlias(string aliasName, string alias);
         void AddAutoQuery(AutoQuery query);
         void AddConnection(Connection con);

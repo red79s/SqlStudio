@@ -3,6 +3,8 @@ using Common;
 using Common.Model;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using Mysqlx.Session;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using SqlStudio.AutoLayoutForm;
 using System;
 using System.Collections.Generic;
@@ -159,9 +161,9 @@ namespace SqlStudio
             }
             ContextMenuStrip.Items.Add(_dynamicDataMenuItem);
 
-            var miCreateCrudCode = new ToolStripMenuItem("Create CRUD Template Code");
-            miCreateCrudCode.Click += MiCreateCrudCode_Click;
-            ContextMenuStrip.Items.Add(miCreateCrudCode);
+            var miCheckUsage = new ToolStripMenuItem("Check usage");
+            miCheckUsage.Click += CheckUsage_Click;
+            ContextMenuStrip.Items.Add(miCheckUsage);
 
             var miShowText = new ToolStripMenuItem("Show Text");
             miShowText.Click += MiShowTextOnClick;
@@ -528,6 +530,43 @@ namespace SqlStudio
             var matchEvalutator = new MatchEvaluator(ColumnMatchEveluator);
             var substQuery = Regex.Replace(query, "{[a-zA-Z0-9_]+}", matchEvalutator);
             return substQuery;
+        }
+
+        private void CheckUsage_Click(object sender, EventArgs e)
+        {
+            if (SelectedCells.Count < 1)
+                return;
+
+            foreach (DataGridViewCell cell in SelectedCells)
+            {
+                var numReferences = 0;
+                var colName = cell.OwningColumn.Name;
+                if (cell.OwningColumn.Name.Equals("id", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    colName = _sqlResult.TableName + "Id";
+                }
+
+                var tables = _databaseSchemaInfo.Tables.Where(x => x.Columns.Any(y => y.ColumnName.EndsWith(colName, StringComparison.CurrentCultureIgnoreCase)) && x.TableName != _sqlResult.TableName).ToList();
+                foreach (var table in tables)
+                {
+                    var col = table.Columns.FirstOrDefault(x => x.ColumnName.EndsWith(colName, StringComparison.CurrentCultureIgnoreCase));
+                    if (col != null)
+                    {
+                        var sqlVal = GetDbStringValue(cell.ValueType, cell.Value, false);
+                        var query = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_databaseKeywordEscape.EscapeObject(col.ColumnName)} = {sqlVal};";
+                        var res = _executeQueryCallback.ExecuteQuery(query);
+
+                        if (res.RowsAffected > 0)
+                        {
+                            numReferences += res.RowsAffected;
+                            var resStr = $"{table.TableName}:{col.ColumnName} = {sqlVal} contains: {res.RowsAffected}";
+                            ((SqlOutputTabContainer)Parent.Parent.Parent).SetOutputText(resStr);
+                        }
+                    }
+                }
+
+                ((SqlOutputTabContainer)Parent.Parent.Parent).SetOutputText($"Number of references to {colName} : {numReferences}");
+            }
         }
 
         private string ColumnMatchEveluator(Match m)
