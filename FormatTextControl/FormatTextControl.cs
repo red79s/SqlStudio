@@ -1329,7 +1329,31 @@ namespace FormatTextControl
             string selText = GetSelectedText();
             if (selText.Length > 0)
             {
-                Clipboard.SetText(selText, TextDataFormat.UnicodeText);
+                int retryCount = 10;
+                if (retryCount > 0)
+                {
+                    while (retryCount > 0)
+                    {
+                        try
+                        {
+                            Clipboard.ContainsText();
+                            Clipboard.SetText(selText, TextDataFormat.UnicodeText);
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            retryCount--;
+                            if (retryCount == 0)
+                            {
+                                MessageBox.Show("Failed to copy text to clipboard");
+                            }
+                            else
+                            {
+                                System.Threading.Thread.Sleep(10);
+                            }
+                        }
+                    }
+                }
             }
         }
 

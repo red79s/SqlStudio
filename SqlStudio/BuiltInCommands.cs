@@ -59,6 +59,8 @@ namespace SqlStudio
             string alias = _cfgDataStore.GetAlias(args.GetCommand());
             if (alias == null)
                 return cmd;
+            
+            alias = alias.Trim();
 
             if (args.NumNonNamedArgs > 0)
             {
