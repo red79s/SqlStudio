@@ -48,8 +48,15 @@ namespace SqlStudio
             ContextMenuStrip = new ContextMenuStrip();
 
             ToolStripMenuItem miCopy = new ToolStripMenuItem("Copy");
-            miCopy.Click += miCopy_Click;
             ContextMenuStrip.Items.Add(miCopy);
+
+            var miCopySimple = new ToolStripMenuItem("Simple");
+            miCopySimple.Click += miCopy_Click;
+            miCopy.DropDownItems.Add(miCopySimple);
+
+            var miCopyWithHeaders = new ToolStripMenuItem("With headers");
+            miCopyWithHeaders.Click += miCopyWithHeaders_Click;
+            miCopy.DropDownItems.Add(miCopyWithHeaders);
 
             var miEdit = new ToolStripMenuItem("Edit");
             miEdit.Click += MiEdit_Click;
@@ -850,6 +857,91 @@ namespace SqlStudio
                     MessageBox.Show(ex.Message, "Failed to copy content to clipboard", MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                 }
+            }
+        }
+
+        void miCopyWithHeaders_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var cvsOutput = "";
+                var htmlOutput = "<!DOCTYPE html><html><body><table>";
+                var plainOutput = "";
+
+                var rows = GetSelectedRows();
+
+                if (rows.Count > 0)
+                {
+                    var row = rows[0];
+                    row.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
+                    htmlOutput += "<tr>";
+                    for (int i = 0; i < row.Count; i++)
+                    {
+                        Type type = row[i].ValueType;
+                        if (type == typeof(byte[]))
+                            continue;
+
+                        if (i > 0)
+                        {
+                            cvsOutput += ",";
+                            plainOutput += "\t";
+                        }
+                        string colName = row[i].OwningColumn.Name;
+                        htmlOutput += $"<th>{colName}</th>";
+                        cvsOutput += $"{colName}";
+                        plainOutput += colName;
+                    }
+                    cvsOutput += Environment.NewLine;
+                    htmlOutput += "</tr>";
+                    plainOutput += Environment.NewLine;
+                }
+
+                foreach (List<DataGridViewCell> row in rows)
+                {
+                
+                    row.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
+                    Dictionary<string, string> colValues = new Dictionary<string, string>();
+
+                    htmlOutput += "<tr>";
+                    for (int i = 0; i < row.Count; i++)
+                    {
+                        Type type = row[i].ValueType;
+                        Object value = row[i].Value;
+
+                        if (type == typeof(byte[]))
+                            continue;
+
+                        if (i > 0)
+                        {
+                            cvsOutput += ",";
+                            plainOutput += "\t";
+                        }
+
+                        string strValue = GetDbStringValue(type, value, false);
+                        
+                        htmlOutput += $"<td>{strValue}</td>";
+                        if (strValue.Contains(","))
+                            cvsOutput += $"\"{strValue}\"";
+                        else
+                            cvsOutput += strValue;
+                        plainOutput += strValue;
+                    }
+                    htmlOutput += "</tr>";
+                    cvsOutput += Environment.NewLine;
+                    plainOutput += Environment.NewLine;
+                }
+                htmlOutput += "</table></body></html>";
+
+                DataObject data = new DataObject();
+                //data.SetData(DataFormats.Html, htmlOutput);
+                //data.SetData(DataFormats.CommaSeparatedValue, cvsOutput);
+                data.SetData(DataFormats.Text, plainOutput);
+
+                Clipboard.SetDataObject(data);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to set clipboard: {ex.Message}");
             }
         }
 
