@@ -58,6 +58,14 @@ namespace SqlStudio
             miCopyWithHeaders.Click += miCopyWithHeaders_Click;
             miCopy.DropDownItems.Add(miCopyWithHeaders);
 
+            var miCopyWithHeadersCVS = new ToolStripMenuItem("With headers (CVS)");
+            miCopyWithHeadersCVS.Click += miCopyWithHeadersCvs_Click;
+            miCopy.DropDownItems.Add(miCopyWithHeadersCVS);
+
+            var miCopyWithHeadersHtml = new ToolStripMenuItem("With headers (HTML)");
+            miCopyWithHeadersHtml.Click += miCopyWithHeadersHtml_Click;
+            miCopy.DropDownItems.Add(miCopyWithHeadersHtml);
+
             var miEdit = new ToolStripMenuItem("Edit");
             miEdit.Click += MiEdit_Click;
             ContextMenuStrip.Items.Add(miEdit);
@@ -864,9 +872,75 @@ namespace SqlStudio
         {
             try
             {
-                var cvsOutput = "";
-                var htmlOutput = "<!DOCTYPE html><html><body><table>";
                 var plainOutput = "";
+
+                var rows = GetSelectedRows();
+
+                if (rows.Count > 0)
+                {
+                    var row = rows[0];
+                    row.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
+                    
+                    for (int i = 0; i < row.Count; i++)
+                    {
+                        Type type = row[i].ValueType;
+                        if (type == typeof(byte[]))
+                            continue;
+
+                        if (i > 0)
+                        {
+                            plainOutput += "\t";
+                        }
+                        string colName = row[i].OwningColumn.Name;
+                        plainOutput += colName;
+                    }
+                    plainOutput += Environment.NewLine;
+                }
+
+                foreach (List<DataGridViewCell> row in rows)
+                {
+                
+                    row.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
+                    Dictionary<string, string> colValues = new Dictionary<string, string>();
+
+                    for (int i = 0; i < row.Count; i++)
+                    {
+                        Type type = row[i].ValueType;
+                        Object value = row[i].Value;
+
+                        if (type == typeof(byte[]))
+                            continue;
+
+                        if (i > 0)
+                        {
+                            plainOutput += "\t";
+                        }
+
+                        string strValue = GetDbStringValue(type, value, false);
+                        
+                        plainOutput += strValue;
+                    }
+                    plainOutput += Environment.NewLine;
+                }
+
+                DataObject data = new DataObject();
+                //data.SetData(DataFormats.Html, htmlOutput);
+                //data.SetData(DataFormats.CommaSeparatedValue, cvsOutput);
+                data.SetData(DataFormats.Text, plainOutput);
+
+                Clipboard.SetDataObject(data);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to set clipboard: {ex.Message}");
+            }
+        }
+
+        void miCopyWithHeadersHtml_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var htmlOutput = "<!DOCTYPE html><html><body><table>";
 
                 var rows = GetSelectedRows();
 
@@ -881,24 +955,16 @@ namespace SqlStudio
                         if (type == typeof(byte[]))
                             continue;
 
-                        if (i > 0)
-                        {
-                            cvsOutput += ",";
-                            plainOutput += "\t";
-                        }
+                        
                         string colName = row[i].OwningColumn.Name;
                         htmlOutput += $"<th>{colName}</th>";
-                        cvsOutput += $"{colName}";
-                        plainOutput += colName;
                     }
-                    cvsOutput += Environment.NewLine;
                     htmlOutput += "</tr>";
-                    plainOutput += Environment.NewLine;
                 }
 
                 foreach (List<DataGridViewCell> row in rows)
                 {
-                
+
                     row.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
                     Dictionary<string, string> colValues = new Dictionary<string, string>();
 
@@ -911,31 +977,89 @@ namespace SqlStudio
                         if (type == typeof(byte[]))
                             continue;
 
-                        if (i > 0)
-                        {
-                            cvsOutput += ",";
-                            plainOutput += "\t";
-                        }
+                        
 
                         string strValue = GetDbStringValue(type, value, false);
-                        
+
                         htmlOutput += $"<td>{strValue}</td>";
-                        if (strValue.Contains(","))
-                            cvsOutput += $"\"{strValue}\"";
-                        else
-                            cvsOutput += strValue;
-                        plainOutput += strValue;
                     }
                     htmlOutput += "</tr>";
-                    cvsOutput += Environment.NewLine;
-                    plainOutput += Environment.NewLine;
                 }
                 htmlOutput += "</table></body></html>";
 
                 DataObject data = new DataObject();
                 //data.SetData(DataFormats.Html, htmlOutput);
                 //data.SetData(DataFormats.CommaSeparatedValue, cvsOutput);
-                data.SetData(DataFormats.Text, plainOutput);
+                data.SetData(DataFormats.Text, htmlOutput);
+
+                Clipboard.SetDataObject(data);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to set clipboard: {ex.Message}");
+            }
+        }
+
+        void miCopyWithHeadersCvs_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var cvsOutput = "";
+
+                var rows = GetSelectedRows();
+
+                if (rows.Count > 0)
+                {
+                    var row = rows[0];
+                    row.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
+                    for (int i = 0; i < row.Count; i++)
+                    {
+                        Type type = row[i].ValueType;
+                        if (type == typeof(byte[]))
+                            continue;
+
+                        if (i > 0)
+                        {
+                            cvsOutput += ",";
+                        }
+                        string colName = row[i].OwningColumn.Name;
+                        cvsOutput += $"{colName}";
+                    }
+                    cvsOutput += Environment.NewLine;
+                }
+
+                foreach (List<DataGridViewCell> row in rows)
+                {
+
+                    row.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
+                    Dictionary<string, string> colValues = new Dictionary<string, string>();
+
+                    for (int i = 0; i < row.Count; i++)
+                    {
+                        Type type = row[i].ValueType;
+                        Object value = row[i].Value;
+
+                        if (type == typeof(byte[]))
+                            continue;
+
+                        if (i > 0)
+                        {
+                            cvsOutput += ",";
+                        }
+
+                        string strValue = GetDbStringValue(type, value, false);
+
+                        if (strValue.Contains(","))
+                            cvsOutput += $"\"{strValue}\"";
+                        else
+                            cvsOutput += strValue;
+                    }
+                    cvsOutput += Environment.NewLine;
+                }
+
+                DataObject data = new DataObject();
+
+                data.SetData(DataFormats.Text, cvsOutput);
 
                 Clipboard.SetDataObject(data);
             }
