@@ -66,6 +66,10 @@ namespace SqlStudio
             miCopyWithHeadersHtml.Click += miCopyWithHeadersHtml_Click;
             miCopy.DropDownItems.Add(miCopyWithHeadersHtml);
 
+            var miCopyCommaList = new ToolStripMenuItem("Comma seperated list");
+            miCopyCommaList.Click += miCopyCommaList_Click;
+            miCopy.DropDownItems.Add(miCopyCommaList);
+            
             var miEdit = new ToolStripMenuItem("Edit");
             miEdit.Click += MiEdit_Click;
             ContextMenuStrip.Items.Add(miEdit);
@@ -868,6 +872,36 @@ namespace SqlStudio
             }
         }
 
+        private void miCopyCommaList_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var outputText = "";
+
+                bool isFirst = true;
+                foreach (DataGridViewCell cell in SelectedCells)
+                {
+                    var strValue = GetDbStringValue(cell.ValueType, cell.Value, false);
+
+                    if (!isFirst)
+                    {
+                        outputText += ", ";
+                    }
+                    isFirst = false;
+
+                    outputText += strValue;
+                }
+
+                DataObject data = new DataObject();
+                data.SetData(DataFormats.Text, outputText);
+
+                Clipboard.SetDataObject(data);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to set clipboard: {ex.Message}");
+            }
+        }
         void miCopyWithHeaders_Click(object sender, EventArgs e)
         {
             try
