@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
-    Microsoft ResX Schema 
+    Microsoft ResX Schema
 
     Version 2.0
 
@@ -48,7 +48,7 @@
     value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
     value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
@@ -124,33 +124,33 @@
   <data name="toolStripButtonNewScript.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABKSURBVDhPYwCB+CkC/8nBFGmG4UFoAAzgYyNjnAbgAujq
-        aecFXABdPd4wIEZ8OLoAhGGAkBgIYzUAhHEBdHU4DSAWU5QjGRgYGAAA3WjHsRLc2wAAAABJRU5ErkJg
-        gg==
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABfSURBVDhPrZNBCsAgEAPzhP7QT/W/FQ8tkmV01QYCS0jm
+        tpKkcl/Pjtt2e/xBPFj1/4BXozsFIHk/AFYdADN5HwHZHAEk7yMgmyOA5P0A6CGzDAH9wOU9BGR99JFt
+        WwEA3WjHXY7QmgAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="toolStripButtonOpenScript.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABLSURBVDhPYwCB+CkC/8nBFGmG4UFoADpAl0fHKAZg04AO
-        0OUxDEAHyPIwNch8gi5Ax+hqhpsBIEwIoKvHMIBUPAgMoCRHMjAwMAAACeE3XSA/ShwAAAAASUVORK5C
-        YII=
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABSSURBVDhPY2BgYGCInyLwnxwM0ku2Zrgh6AKkYuobgA7Q
+        5dExigHYNKADdHkMA9ABugZ0MQwD0DWgY3Q1w80AmAJ8AF09hgGk4kFgACU5EqQXAAnhN10oh0jwAAAA
+        AElFTkSuQmCC
 </value>
   </data>
   <data name="toolStripButtoSaveScript.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABVSURBVDhPYwCB+CkC/8nBFGmGYeoaQCxA1kMbA5DFkDEM
-        IIsNVxcQAsh68BqALIcsjyyGYgAIIwNkPjobhjEMAGEYwMeGYawGkIIpN4CSHMnAwMAAAOd9kknGc34f
-        AAAAAElFTkSuQmCC
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABYSURBVDhPY2BgYGCInyLwnxwM0ku2Zrgh6AKkYhQDiAW0
+        NwBZjJA8VgMIAYIGoNuMTx6rAYQA/QxAlkOWx2kAuiHompDZOA1AV4iLjdcAUjDlBlCSI0F6Aed9kknj
+        YtodAAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="toolStripButtonRunScript.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABNSURBVDhPYwCB+CkC/8nBFGmG4UFqADLAJo+MCRoAAtjU
-        wDBRBoAANnUgTLQBIIBNLf0MwKYOhGkfiNjkkTFWA0jBg8AASnIkAwMDAwCs3EE/b9dY5QAAAABJRU5E
-        rkJggg==
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABRSURBVDhPY2BgYGCInyLwnxwM0ku2Zrgh6AKkYtoYgAzQ
+        5dAxQQMIGUKUASCAroZkA0AAXR19DUBXQ5IB6PIkGYAuh46xGkAKHgQGUJIjQXoBrNxBPwLBUtMAAAAA
+        SUVORK5CYII=
 </value>
   </data>
   <metadata name="statusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">

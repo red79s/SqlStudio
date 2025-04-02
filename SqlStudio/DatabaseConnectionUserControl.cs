@@ -44,6 +44,8 @@ namespace SqlStudio
 			builder.Services.AddSingleton<ILogger>(this);
 			builder.Services.AddSingleton<IColumnValueDescriptionProvider>(columnValueDescriptionProvider);
 
+            toolStripDatabaseConnectionsComboBox.SelectedIndexChanged += ToolStripDatabaseConnectionsComboBox_SelectedIndexChanged;
+
 			var databaseKeywordEscape = new DatabaseKeywordEscapeManager();
 			builder.Services.AddSingleton<IDatabaseKeywordEscape>(databaseKeywordEscape);
 
@@ -97,7 +99,7 @@ namespace SqlStudio
 			cmdLineControl.GetCommand();
 		}
 
-		public void ExecuteQueryAndDisplay(string query, bool inNewTab, string datatabLabel)
+        public void ExecuteQueryAndDisplay(string query, bool inNewTab, string datatabLabel)
 		{
 			if (inNewTab)
 			{
@@ -119,20 +121,36 @@ namespace SqlStudio
 			return _executer.Execute(query);
 		}
 
-        private void SetDatabasesOnToolsMenu(List<string> databases)
+		private bool _isSettingInitialDatabase = false;
+        private void SetDatabasesOnToolsMenu(List<string> databases, string currentDatabase = null)
 		{
-			toolStripDatabaseConnectionsDropDownButton.DropDownItems.Clear();
-			foreach (string database in databases)
-			{
-				var button = new ToolStripButton(database);
-				button.Tag = database;
-				button.Margin = new Padding(4, 1, 0, 2);
-				button.Click += (sender, args) => ConnectToDatabaseOnSameServer(database);
-				toolStripDatabaseConnectionsDropDownButton.DropDownItems.Add(button);
-			}
-		}
+			toolStripDatabaseConnectionsComboBox.Items.Clear();
+            foreach (string database in databases)
+            {
+                toolStripDatabaseConnectionsComboBox.Items.Add(database);
+            }
 
-		private void ConnectToDatabaseOnSameServer(string databaseName)
+			if (string.IsNullOrEmpty(currentDatabase))
+				return;
+
+			var index = toolStripDatabaseConnectionsComboBox.Items.IndexOf(currentDatabase);
+            if (index >= 0)
+            {
+                _isSettingInitialDatabase = true;
+                toolStripDatabaseConnectionsComboBox.SelectedIndex = index;
+                _isSettingInitialDatabase = false;
+            }
+        }
+
+        private void ToolStripDatabaseConnectionsComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_isSettingInitialDatabase)
+                return;
+
+            ConnectToDatabaseOnSameServer(toolStripDatabaseConnectionsComboBox.SelectedItem.ToString());
+        }
+
+        private void ConnectToDatabaseOnSameServer(string databaseName)
 		{
 			if (_executer.CurrentConnection == null)
 			{
@@ -140,6 +158,11 @@ namespace SqlStudio
 				return;
 			}
 
+			var index = toolStripDatabaseConnectionsComboBox.Items.IndexOf(databaseName);
+			if (index >= 0) {
+                toolStripDatabaseConnectionsComboBox.SelectedIndex = index;
+			}
+            
 			_executer.CurrentConnection.db = databaseName;
 
             var connectionCommand = _cfgDataStore.GetConnectCommand(_executer.CurrentConnection);
@@ -324,7 +347,7 @@ namespace SqlStudio
 						}
 
 						var databases = _executer.GetDatabases();
-						SetDatabasesOnToolsMenu(databases);
+						SetDatabasesOnToolsMenu(databases, res.DataBaseName);
 					}
 					else if (res.ResType == SqlResult.ResultType.DISCONNECT)
 					{
