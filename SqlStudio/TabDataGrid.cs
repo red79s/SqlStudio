@@ -229,57 +229,15 @@ namespace SqlStudio
             if (columnName.EndsWith("id", StringComparison.CurrentCultureIgnoreCase))
             {
                 var tableName = columnName.Substring(0, columnName.Length - 2);
-                foreach (var table in _databaseSchemaInfo.Tables)
+                var tableMatches = _databaseSchemaInfo.Tables.Where(x => x.TableName.EndsWith(tableName, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                foreach (var table in tableMatches)
                 {
-                    if (tableName.EndsWith(table.TableName, StringComparison.CurrentCultureIgnoreCase))
+                    var col = table.Columns.FirstOrDefault(x => x.ColumnName.Equals("id", StringComparison.CurrentCultureIgnoreCase));
+                    if (col == null)
                     {
-                        var col = table.Columns.FirstOrDefault(x => x.ColumnName.Equals("id", StringComparison.CurrentCultureIgnoreCase));
-                        if (col == null)
-                        {
-                            col = table.Columns.FirstOrDefault(x => x.ColumnName.Equals(columnName, StringComparison.CurrentCultureIgnoreCase));
-                        }
-
-                        if (col != null)
-                        {
-                            var queryStr = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_databaseKeywordEscape.EscapeObject(col.ColumnName)} IN (";
-                            for (int i = 0; i < values.Count; i++)
-                            {
-                                if (i > 0)
-                                    queryStr += ", ";
-                                queryStr += GetDbStringValue(type, values[i], false);
-                            }
-                            queryStr += ")";
-                            return queryStr;
-                        }
+                        col = table.Columns.FirstOrDefault(x => x.ColumnName.Equals(columnName, StringComparison.CurrentCultureIgnoreCase));
                     }
-                }
-            }
 
-            foreach (var table in _databaseSchemaInfo.Tables)
-            {
-                if (columnName.StartsWith(table.TableName, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    var col = table.Columns.FirstOrDefault(x => x.IsPrimaryKey);
-                    if (col != null)
-                    {
-                        var queryStr = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_databaseKeywordEscape.EscapeObject(col.ColumnName)} IN (";
-                        for (int i = 0; i < values.Count; i++)
-                        {
-                            if (i > 0)
-                                queryStr += ", ";
-                            queryStr += GetDbStringValue(type, values[i], false);
-                        }
-                        queryStr += ")";
-                        return queryStr;
-                    }
-                }
-            }
-
-            foreach (var table in _databaseSchemaInfo.Tables)
-            {
-                if (columnName.Contains(table.TableName, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    var col = table.Columns.FirstOrDefault(x => x.IsPrimaryKey);
                     if (col != null)
                     {
                         var queryStr = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_databaseKeywordEscape.EscapeObject(col.ColumnName)} IN (";
@@ -313,6 +271,50 @@ namespace SqlStudio
                 }
             }
 
+            var tableStartsWith = _databaseSchemaInfo.Tables.Where(x => columnName.StartsWith(x.TableName, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            foreach (var table in tableStartsWith)
+            {
+                if (columnName.StartsWith(table.TableName, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    var col = table.Columns.FirstOrDefault(x => x.IsPrimaryKey);
+                    if (col != null)
+                    {
+                        var queryStr = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_databaseKeywordEscape.EscapeObject(col.ColumnName)} IN (";
+                        for (int i = 0; i < values.Count; i++)
+                        {
+                            if (i > 0)
+                                queryStr += ", ";
+                            queryStr += GetDbStringValue(type, values[i], false);
+                        }
+                        queryStr += ")";
+                        return queryStr;
+                    }
+                }
+            }
+
+            var tableContains = _databaseSchemaInfo.Tables.Where(x => columnName.Contains(x.TableName, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            foreach (var table in _databaseSchemaInfo.Tables)
+            {
+                if (columnName.Contains(table.TableName, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    var col = table.Columns.FirstOrDefault(x => x.IsPrimaryKey);
+                    if (col != null)
+                    {
+                        var queryStr = $"SELECT * FROM {_databaseKeywordEscape.EscapeObject(table.TableName)} WHERE {_databaseKeywordEscape.EscapeObject(col.ColumnName)} IN (";
+                        for (int i = 0; i < values.Count; i++)
+                        {
+                            if (i > 0)
+                                queryStr += ", ";
+                            queryStr += GetDbStringValue(type, values[i], false);
+                        }
+                        queryStr += ")";
+                        return queryStr;
+                    }
+                }
+            }
+
+            
+
             if (columnName.EndsWith("ById", StringComparison.CurrentCultureIgnoreCase))
             {
                 var table = _databaseSchemaInfo.Tables.FirstOrDefault(x => x.TableName.Equals("Person", StringComparison.CurrentCultureIgnoreCase));
@@ -332,6 +334,7 @@ namespace SqlStudio
             }
             return null;
         }
+
         private void MiGetRelatedInfo_Click(object sender, EventArgs e)
         {
             var query = GetRelatedInfoQuery();
