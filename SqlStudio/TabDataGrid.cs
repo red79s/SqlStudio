@@ -1,15 +1,11 @@
 ﻿using CfgDataStore;
 using Common;
 using Common.Model;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
-using Mysqlx.Session;
-using Org.BouncyCastle.Asn1.X509.Qualified;
 using SqlStudio.AutoLayoutForm;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -909,57 +905,8 @@ namespace SqlStudio
         {
             try
             {
-                var plainOutput = "";
-
-                var rows = GetSelectedRows();
-
-                if (rows.Count > 0)
-                {
-                    var row = rows[0];
-                    row.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
-                    
-                    for (int i = 0; i < row.Count; i++)
-                    {
-                        Type type = row[i].ValueType;
-                        if (type == typeof(byte[]))
-                            continue;
-
-                        if (i > 0)
-                        {
-                            plainOutput += "\t";
-                        }
-                        string colName = row[i].OwningColumn.Name;
-                        plainOutput += colName;
-                    }
-                    plainOutput += Environment.NewLine;
-                }
-
-                foreach (List<DataGridViewCell> row in rows)
-                {
+                var plainOutput = GetPlainText();
                 
-                    row.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
-                    Dictionary<string, string> colValues = new Dictionary<string, string>();
-
-                    for (int i = 0; i < row.Count; i++)
-                    {
-                        Type type = row[i].ValueType;
-                        Object value = row[i].Value;
-
-                        if (type == typeof(byte[]))
-                            continue;
-
-                        if (i > 0)
-                        {
-                            plainOutput += "\t";
-                        }
-
-                        string strValue = GetDbStringValue(type, value, false);
-                        
-                        plainOutput += strValue;
-                    }
-                    plainOutput += Environment.NewLine;
-                }
-
                 DataObject data = new DataObject();
                 //data.SetData(DataFormats.Html, htmlOutput);
                 //data.SetData(DataFormats.CommaSeparatedValue, cvsOutput);
@@ -973,11 +920,67 @@ namespace SqlStudio
             }
         }
 
+        private string GetPlainText()
+        {
+            var plainOutput = "";
+
+            var rows = GetSelectedRows();
+
+            if (rows.Count > 0)
+            {
+                var row = rows[0];
+                row.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
+
+                for (int i = 0; i < row.Count; i++)
+                {
+                    Type type = row[i].ValueType;
+                    if (type == typeof(byte[]))
+                        continue;
+
+                    if (i > 0)
+                    {
+                        plainOutput += "\t";
+                    }
+                    string colName = row[i].OwningColumn.Name;
+                    plainOutput += colName;
+                }
+                plainOutput += Environment.NewLine;
+            }
+
+            foreach (List<DataGridViewCell> row in rows)
+            {
+
+                row.Sort(delegate (DataGridViewCell c1, DataGridViewCell c2) { return c1.ColumnIndex.CompareTo(c2.ColumnIndex); });
+                Dictionary<string, string> colValues = new Dictionary<string, string>();
+
+                for (int i = 0; i < row.Count; i++)
+                {
+                    Type type = row[i].ValueType;
+                    Object value = row[i].Value;
+
+                    if (type == typeof(byte[]))
+                        continue;
+
+                    if (i > 0)
+                    {
+                        plainOutput += "\t";
+                    }
+
+                    string strValue = GetDbStringValue(type, value, false);
+
+                    plainOutput += strValue;
+                }
+                plainOutput += Environment.NewLine;
+            }
+
+            return plainOutput;
+        }
+
         void miCopyWithHeadersHtml_Click(object sender, EventArgs e)
         {
             try
             {
-                var htmlOutput = "<!DOCTYPE html><html><body><table>";
+                var htmlOutput = "<html><body><table>";
 
                 var rows = GetSelectedRows();
 
@@ -1024,12 +1027,8 @@ namespace SqlStudio
                 }
                 htmlOutput += "</table></body></html>";
 
-                DataObject data = new DataObject();
-                //data.SetData(DataFormats.Html, htmlOutput);
-                //data.SetData(DataFormats.CommaSeparatedValue, cvsOutput);
-                data.SetData(DataFormats.Text, htmlOutput);
-
-                Clipboard.SetDataObject(data);
+                var plainOutput = GetPlainText();
+                ClipboardHelper.CopyToClipboard(htmlOutput, plainOutput);
             }
             catch (Exception ex)
             {
