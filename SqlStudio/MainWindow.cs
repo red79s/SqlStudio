@@ -162,6 +162,8 @@ namespace SqlStudio
             }
             _cfgDataStore.Save();
 
+            e.Cancel = false;
+
             base.OnFormClosing(e);
         }
 
