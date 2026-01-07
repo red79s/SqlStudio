@@ -162,6 +162,10 @@ namespace SqlStudio
             miFindTimeDiff.Click += MiFindTimeDiffOnClick;
             ContextMenuStrip.Items.Add(miFindTimeDiff);
 
+            var miFindDuplicateValues = new ToolStripMenuItem("Find Rows With Equal Value");
+            miFindDuplicateValues.Click += MiFindNextDuplicateValue;
+            ContextMenuStrip.Items.Add(miFindDuplicateValues);
+
             ContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(ContextMenuStrip_Opening);
         }
 
@@ -396,6 +400,31 @@ namespace SqlStudio
                 return $"{String.Join(", ", dbStrValues)}";
             }
         }
+
+        private void MiFindNextDuplicateValue(object sender, EventArgs eventArgs)
+        {
+            if (SelectedCells == null || SelectedCells.Count != 1)
+                return;
+            var selectedCell = SelectedCells[0];
+            var searchValue = selectedCell.Value.ToString();
+            if (searchValue == null)
+                return;
+
+            for (int i = selectedCell.RowIndex + 1; i < Rows.Count; i++)
+            {
+                var cell = Rows[i].Cells[selectedCell.ColumnIndex];
+                var value = cell.Value.ToString();
+                if (value != null && value.Equals(searchValue))
+                {
+                    CurrentCell = cell;
+                    return;
+                }
+                searchValue = value;
+            }
+
+            MessageBox.Show("No more duplicates found");
+        }
+
         private void MiFindTimeDiffOnClick(object sender, EventArgs eventArgs)
         {
             if (SelectedCells == null)
