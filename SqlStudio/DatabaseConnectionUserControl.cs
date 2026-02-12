@@ -716,6 +716,11 @@ namespace SqlStudio
 			gdf.ShowDialog();
 		}
 
+		public void OpenSetUserPermissionsTool()
+        {
+			var sup = new SetUserPermissionsForm(_executer.SqlExecuter);
+			sup.ShowDialog();
+		}
         public void InsertNewDataTab()
         {
 			sqlOutput.CreateNewDataTab(null);

@@ -498,5 +498,10 @@ namespace SqlStudio
             textOutputDialog.StartPosition = FormStartPosition.CenterParent;
             textOutputDialog.ShowDialog();
         }
+
+        private void setUserPermissionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.OpenSetUserPermissionsTool();
+        }
     }
 }

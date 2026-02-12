@@ -39,6 +39,9 @@
     <Compile Update="ConnectToolStripItem.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="SetIUserPermissionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="GraphOutputTabPage.cs">
       <SubType>Component</SubType>
     </Compile>

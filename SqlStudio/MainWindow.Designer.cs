@@ -58,6 +58,7 @@ namespace SqlStudio
             copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             formatQueryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            formatTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             copyConnectionStringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             displayFilterRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,7 +83,7 @@ namespace SqlStudio
             toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tabControlDatabaseConnections = new DatabaseConnectionTabControl();
-            formatTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            setUserPermissionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuStripTop.SuspendLayout();
             cmScriptTabs.SuspendLayout();
             SuspendLayout();
@@ -279,6 +280,13 @@ namespace SqlStudio
             formatQueryToolStripMenuItem.Text = "Format Query...";
             formatQueryToolStripMenuItem.Click += formatQueryToolStripMenuItem_Click;
             // 
+            // formatTextToolStripMenuItem
+            // 
+            formatTextToolStripMenuItem.Name = "formatTextToolStripMenuItem";
+            formatTextToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            formatTextToolStripMenuItem.Text = "Format Text...";
+            formatTextToolStripMenuItem.Click += formatTextToolStripMenuItem_Click;
+            // 
             // copyConnectionStringToolStripMenuItem
             // 
             copyConnectionStringToolStripMenuItem.Name = "copyConnectionStringToolStripMenuItem";
@@ -303,50 +311,50 @@ namespace SqlStudio
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, logSearchToolStripMenuItem, generatePasswordToolStripMenuItem, generateDataToolStripMenuItem, importEnumValuesToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, logSearchToolStripMenuItem, generatePasswordToolStripMenuItem, generateDataToolStripMenuItem, importEnumValuesToolStripMenuItem, setUserPermissionsToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             toolsToolStripMenuItem.Text = "Tools";
             // 
             // aliasesToolStripMenuItem
             // 
             aliasesToolStripMenuItem.Name = "aliasesToolStripMenuItem";
-            aliasesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            aliasesToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             aliasesToolStripMenuItem.Text = "Aliases...";
             aliasesToolStripMenuItem.Click += aliasesToolStripMenuItem_Click;
             // 
             // autoQueriesToolStripMenuItem
             // 
             autoQueriesToolStripMenuItem.Name = "autoQueriesToolStripMenuItem";
-            autoQueriesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            autoQueriesToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             autoQueriesToolStripMenuItem.Text = "Auto Queries...";
             autoQueriesToolStripMenuItem.Click += autoQueriesToolStripMenuItem_Click;
             // 
             // logSearchToolStripMenuItem
             // 
             logSearchToolStripMenuItem.Name = "logSearchToolStripMenuItem";
-            logSearchToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            logSearchToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             logSearchToolStripMenuItem.Text = "LogSearch...";
             logSearchToolStripMenuItem.Click += logSearchToolStripMenuItem_Click;
             // 
             // generatePasswordToolStripMenuItem
             // 
             generatePasswordToolStripMenuItem.Name = "generatePasswordToolStripMenuItem";
-            generatePasswordToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            generatePasswordToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             generatePasswordToolStripMenuItem.Text = "Generate password";
             generatePasswordToolStripMenuItem.Click += generatePasswordToolStripMenuItem_Click;
             // 
             // generateDataToolStripMenuItem
             // 
             generateDataToolStripMenuItem.Name = "generateDataToolStripMenuItem";
-            generateDataToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            generateDataToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             generateDataToolStripMenuItem.Text = "Generate data";
             generateDataToolStripMenuItem.Click += generateDataToolStripMenuItem_Click;
             // 
             // importEnumValuesToolStripMenuItem
             // 
             importEnumValuesToolStripMenuItem.Name = "importEnumValuesToolStripMenuItem";
-            importEnumValuesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            importEnumValuesToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             importEnumValuesToolStripMenuItem.Text = "Import enum values...";
             importEnumValuesToolStripMenuItem.Click += importEnumValuesToolStripMenuItem_Click;
             // 
@@ -450,12 +458,12 @@ namespace SqlStudio
             tabControlDatabaseConnections.Size = new System.Drawing.Size(946, 697);
             tabControlDatabaseConnections.TabIndex = 3;
             // 
-            // formatTextToolStripMenuItem
+            // setUserPermissionsToolStripMenuItem
             // 
-            formatTextToolStripMenuItem.Name = "formatTextToolStripMenuItem";
-            formatTextToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            formatTextToolStripMenuItem.Text = "Format Text...";
-            formatTextToolStripMenuItem.Click += formatTextToolStripMenuItem_Click;
+            setUserPermissionsToolStripMenuItem.Name = "setUserPermissionsToolStripMenuItem";
+            setUserPermissionsToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            setUserPermissionsToolStripMenuItem.Text = "Set user permissions...";
+            setUserPermissionsToolStripMenuItem.Click += setUserPermissionsToolStripMenuItem_Click;
             // 
             // MainWindow
             // 
@@ -531,6 +539,7 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripMenuItem importEnumValuesToolStripMenuItem;
         private DatabaseConnectionTabControl tabControlDatabaseConnections;
         private System.Windows.Forms.ToolStripMenuItem formatTextToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setUserPermissionsToolStripMenuItem;
     }
 }
 
