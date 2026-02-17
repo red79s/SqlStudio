@@ -31,7 +31,7 @@
             btnRun = new System.Windows.Forms.Button();
             btnClose = new System.Windows.Forms.Button();
             button1 = new System.Windows.Forms.Button();
-            listViewUsers = new System.Windows.Forms.ListView();
+            checkedListBoxUsers = new System.Windows.Forms.CheckedListBox();
             SuspendLayout();
             // 
             // btnRun
@@ -66,21 +66,20 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += GetUsers_Click;
             // 
-            // listViewUsers
+            // checkedListBoxUsers
             // 
-            listViewUsers.CheckBoxes = true;
-            listViewUsers.Location = new System.Drawing.Point(8, 10);
-            listViewUsers.Name = "listViewUsers";
-            listViewUsers.Size = new System.Drawing.Size(780, 366);
-            listViewUsers.TabIndex = 11;
-            listViewUsers.UseCompatibleStateImageBehavior = false;
+            checkedListBoxUsers.FormattingEnabled = true;
+            checkedListBoxUsers.Location = new System.Drawing.Point(12, 9);
+            checkedListBoxUsers.Name = "checkedListBoxUsers";
+            checkedListBoxUsers.Size = new System.Drawing.Size(776, 364);
+            checkedListBoxUsers.TabIndex = 11;
             // 
             // SetUserPermissionsForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 428);
-            Controls.Add(listViewUsers);
+            Controls.Add(checkedListBoxUsers);
             Controls.Add(button1);
             Controls.Add(btnClose);
             Controls.Add(btnRun);
@@ -93,6 +92,6 @@
         private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ListView listViewUsers;
+        private System.Windows.Forms.CheckedListBox checkedListBoxUsers;
     }
 }

@@ -40,12 +40,14 @@ namespace CfgDataStore
         {
             try
             {
-                Database.ExecuteSql($"Select {columnName} from {tablename}");
+                var sql = $"Select {columnName} from {tablename}";
+                Database.ExecuteSqlRaw(sql);
                 return true;
             }
             catch
             {
-                Database.ExecuteSql($"alter table {tablename} add column {columnName} {columnType}");
+                var sql = $"alter table {tablename} add column {columnName} {columnType}";
+                Database.ExecuteSqlRaw(sql);
                 return false;
             }
         }
@@ -54,50 +56,14 @@ namespace CfgDataStore
         {
             try
             {
-                Database.ExecuteSql($"Select count (*) from {tablename}");
+                var sql = $"Select count (*) from {tablename}";
+                Database.ExecuteSqlRaw(sql);
             }
             catch
             {
-                Database.ExecuteSql($"create table {tablename}({tableCreateSql})");
+                var sql = $"create table {tablename}({tableCreateSql})";
+                Database.ExecuteSqlRaw(sql);
             }
         }
     }
-
-    //public class SqliteDbConfiguration : DbConfiguration
-    //{
-    //    public SqliteDbConfiguration()
-    //    {
-    //        string assemblyName = typeof(SQLiteProviderFactory).Assembly.GetName().Name;
-
-    //        RegisterDbProviderFactories(assemblyName);
-    //        SetProviderFactory(assemblyName, SQLiteFactory.Instance);
-    //        SetProviderFactory(assemblyName, SQLiteProviderFactory.Instance);
-    //        SetProviderServices(assemblyName,
-    //            (DbProviderServices)SQLiteProviderFactory.Instance.GetService(
-    //                typeof(DbProviderServices)));
-    //    }
-
-    //    static void RegisterDbProviderFactories(string assemblyName)
-    //    {
-    //        var dataSet = ConfigurationManager.GetSection("system.data") as DataSet;
-    //        if (dataSet != null)
-    //        {
-    //            var dbProviderFactoriesDataTable = dataSet.Tables.OfType<DataTable>()
-    //                .First(x => x.TableName == typeof(DbProviderFactories).Name);
-
-    //            var dataRow = dbProviderFactoriesDataTable.Rows.OfType<DataRow>()
-    //                .FirstOrDefault(x => x.ItemArray[2].ToString() == assemblyName);
-
-    //            if (dataRow != null)
-    //                dbProviderFactoriesDataTable.Rows.Remove(dataRow);
-
-    //            dbProviderFactoriesDataTable.Rows.Add(
-    //                "SQLite Data Provider (Entity Framework 6)",
-    //                ".NET Framework Data Provider for SQLite (Entity Framework 6)",
-    //                assemblyName,
-    //                typeof(SQLiteProviderFactory).AssemblyQualifiedName
-    //                );
-    //        }
-    //    }
-    //}
 }

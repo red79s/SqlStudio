@@ -17,15 +17,20 @@ namespace SqlStudio
 
         private void InitializeUserListView()
         {
-            
+
         }
 
         private async void btnRun_Click(object sender, EventArgs e)
         {
             var userId = GetSelectedUserId();
+            if (userId == null)
+            {
+                MessageBox.Show("Please select a user.");
+                return;
+            }
             
             long groupId = 0;
-            
+
             var res = _sqlExecuter.ExecuteSql("select Id from [Group] where Name = 'GroupAdminCanAssignAllRoles'");
             if (res.DataTable.Rows.Count > 0)
             {
@@ -52,7 +57,7 @@ namespace SqlStudio
             _sqlExecuter.ExecuteSql($"INSERT INTO PersonGroup (GroupId,PersonId) VALUES({groupId},{userId});");
         }
 
-        
+
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
@@ -64,7 +69,7 @@ namespace SqlStudio
         {
             try
             {
-                listViewUsers.Items.Clear();
+                checkedListBoxUsers.Items.Clear();
 
                 var sql = "select id, name from Person";
                 var res = _sqlExecuter.ExecuteSql(sql);
@@ -73,9 +78,8 @@ namespace SqlStudio
                 {
                     foreach (System.Data.DataRow row in res.DataTable.Rows)
                     {
-                        var item = new ListViewItem($"{row["id"].ToString()} - {row["name"].ToString()}");
-                        item.Tag = row["id"]; // Store the ID for later use
-                        listViewUsers.Items.Add(item);
+                        var item = new UserInfo { Id = (long)row["id"], Name = row["name"].ToString() };
+                        checkedListBoxUsers.Items.Add(item);
                     }
                 }
                 else
@@ -92,22 +96,34 @@ namespace SqlStudio
         // Helper method to get the selected user ID
         public long? GetSelectedUserId()
         {
-            if (listViewUsers.CheckedItems.Count > 0)
+            if (checkedListBoxUsers.CheckedItems.Count > 0)
             {
-                return (long?)listViewUsers.CheckedItems[0].Tag;
+                var userInfo = checkedListBoxUsers.CheckedItems[0] as UserInfo;
+                return userInfo?.Id;
             }
-            
+
             return null;
         }
 
         // Helper method to get the selected user name
         public string GetSelectedUserName()
         {
-            if (listViewUsers.SelectedItems.Count > 0)
+            if (checkedListBoxUsers.SelectedItems.Count > 0)
             {
-                return listViewUsers.SelectedItems[0].SubItems[1].Text;
+                var userInfo = checkedListBoxUsers.SelectedItems[0] as UserInfo;
+                return userInfo?.Name ?? "";
             }
-            return null;
+            return "";
+        }
+
+        private class UserInfo
+        {
+            public long Id { get; set; }
+            public string Name { get; set; }
+            public override string ToString()
+            {
+                return $"{Name}";
+            }
         }
     }
 }
