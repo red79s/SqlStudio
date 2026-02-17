@@ -52,6 +52,7 @@ namespace CommandPrompt
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string InputText
         {
             get { return txtInput.Text; }

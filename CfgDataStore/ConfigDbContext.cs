@@ -40,12 +40,12 @@ namespace CfgDataStore
         {
             try
             {
-                Database.ExecuteSqlRaw($"Select {columnName} from {tablename}");
+                Database.ExecuteSql($"Select {columnName} from {tablename}");
                 return true;
             }
             catch
             {
-                Database.ExecuteSqlRaw($"alter table {tablename} add column {columnName} {columnType}");
+                Database.ExecuteSql($"alter table {tablename} add column {columnName} {columnType}");
                 return false;
             }
         }
@@ -54,11 +54,11 @@ namespace CfgDataStore
         {
             try
             {
-                Database.ExecuteSqlRaw($"Select count (*) from {tablename}");
+                Database.ExecuteSql($"Select count (*) from {tablename}");
             }
             catch
             {
-                Database.ExecuteSqlRaw($"create table {tablename}({tableCreateSql})");
+                Database.ExecuteSql($"create table {tablename}({tableCreateSql})");
             }
         }
     }

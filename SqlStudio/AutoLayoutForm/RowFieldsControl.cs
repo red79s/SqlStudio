@@ -8,7 +8,6 @@ namespace SqlStudio.AutoLayoutForm
     {
         private GroupBox _groupBox;
         private int MinFieldWidth = 200;
-        private int MaxFieldWidth = 200;
         private readonly List<FieldInfo> _fields;
 
         public int TotalHeight { get; set; }

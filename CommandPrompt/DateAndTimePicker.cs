@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace CommandPrompt
@@ -10,6 +11,7 @@ namespace CommandPrompt
             InitializeComponent();
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public DateTime DateTime
         {
             get { return dateTimePicker1.Value; }

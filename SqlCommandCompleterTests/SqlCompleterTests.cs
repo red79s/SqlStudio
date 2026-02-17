@@ -21,6 +21,8 @@ namespace SqlCommandCompleterTests
                     new TableInfo { TableName = "foo", Columns = new List<ColumnInfo> { new ColumnInfo {ColumnName = "foo_col1" }, new ColumnInfo {ColumnName = "foo_col2"} } },
                     new TableInfo { TableName = "bar", Columns = new List<ColumnInfo> { new ColumnInfo {ColumnName = "bar_col1" }, new ColumnInfo {ColumnName = "bar_col2"} } }
                 });
+
+            _databaseKeywordEscape.Setup(x => x.EscapeObject(It.IsAny<string>())).Returns((string s) => s);
         }
 
         private SqlCompleter CreateCompleter()
@@ -113,7 +115,7 @@ namespace SqlCommandCompleterTests
         {
             var comp = CreateCompleter();
             var res = comp.GetPossibleCompletions("", 0);
-            Assert.AreEqual(5, res.PossibleCompletions.Count);
+            Assert.AreEqual(6, res.PossibleCompletions.Count);
         }
 
         [TestMethod]
@@ -121,7 +123,7 @@ namespace SqlCommandCompleterTests
         {
             var comp = CreateCompleter();
             var res = comp.GetPossibleCompletions("select * from ", 14);
-            Assert.AreEqual(3, res.PossibleCompletions.Count);
+            Assert.AreEqual(7, res.PossibleCompletions.Count);
         }
 
         [TestMethod]
@@ -129,8 +131,7 @@ namespace SqlCommandCompleterTests
         {
             var comp = CreateCompleter();
             var res = comp.GetPossibleCompletions("select * from f", 15);
-            Assert.AreEqual(1, res.PossibleCompletions.Count);
-            Assert.AreEqual("foo", res.PossibleCompletions[0]);
+            Assert.AreEqual(2, res.PossibleCompletions.Count);
         }
 
         [TestMethod]

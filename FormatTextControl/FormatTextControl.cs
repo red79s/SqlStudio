@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
@@ -192,6 +193,7 @@ namespace FormatTextControl
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color ForeColorLineNum
         {
             get { return _sbLineForeColor.Color; }
@@ -203,6 +205,7 @@ namespace FormatTextControl
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color BackColorLineNum
         {
             get { return _sbLineBackColor.Color; }
@@ -214,6 +217,7 @@ namespace FormatTextControl
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color BackColorSelection
         {
             get { return _sbBackColorSelection.Color; }
@@ -225,6 +229,7 @@ namespace FormatTextControl
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool ShowLineNumbers
         {
             get { return _bShowLineNumbers; }
@@ -239,6 +244,7 @@ namespace FormatTextControl
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color BackColorIconPane
         {
             get { return _sbIconBackColor.Color; }
@@ -250,6 +256,7 @@ namespace FormatTextControl
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool ShowIconPane
         {
             get { return _bShowIconField; }
@@ -264,6 +271,7 @@ namespace FormatTextControl
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool AcceptsKeyInput
         {
             get { return _acceptsKeyInput; }
@@ -409,6 +417,7 @@ namespace FormatTextControl
             return _lineBuffer.GetLine(line).Length;
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TextPos CaretPos
         {
             get { return _caretPos; }
@@ -443,12 +452,14 @@ namespace FormatTextControl
             return new TextPos(_lineBuffer.Count - 1, _lineBuffer.GetLine(_lineBuffer.Count - 1).Length);
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TextPos SelectionStart
         {
             get { return _selectionStart; }
             set { _selectionStart = value; }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TextPos SelectionEnd
         {
             get { return _selectionEnd; }

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace CommandPrompt
@@ -110,6 +111,7 @@ namespace CommandPrompt
                 listBoxSelections.SelectedIndex = 0;
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string SelectedItem
         {
             get { return _selectedItem; }

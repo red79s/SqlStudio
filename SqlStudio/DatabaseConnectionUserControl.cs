@@ -575,7 +575,6 @@ namespace SqlStudio
 			//toolStripMessageLabel.Text = $"{logLevel}: {message}, {ex.Message}";
 		}
 
-		private long _configConnectionKey = 0;
 		public void Connect(Connection connection)
 		{
 			if (_executer.IsBussy)
