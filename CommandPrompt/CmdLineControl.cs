@@ -80,6 +80,18 @@ namespace CommandPrompt
             ScrollToCaret();
         }
 
+        public void SetPendingCommand(string cmd)
+        {
+            GetCommand();
+            if (!string.IsNullOrEmpty(cmd))
+            {
+                var endPos = InsertTextAtPos(_cmdStartPos, cmd, true);
+                _cmdInputCaret = endPos;
+                CaretPos = endPos;
+            }
+            ScrollToCaret();
+        }
+
         private void InsertNewPrompt(string prompt)
         {
             int newLineAt = 0;
@@ -120,7 +132,7 @@ namespace CommandPrompt
             else if (_cmdMode == CmdMode.COMMAND)
             {
                 string cmd = GetText(_cmdStartPos, GetTextEnd());
-                if (cmd.IndexOf(";") >= 0)
+                if (cmd.IndexOf(";") >= 0 || cmd.TrimStart().StartsWith("?"))
                 {
                     AcceptsKeyInput = false;
                     CommandReady?.Invoke(this, cmd);

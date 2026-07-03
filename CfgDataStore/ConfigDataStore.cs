@@ -41,7 +41,7 @@ namespace CfgDataStore
             }
             else
             {
-                _dbContext.Cfg_Values.Add(new CfgValue { p_key = GetKey("cfg_value"), name = name, str_value = value, long_value = 0 });
+                _dbContext.Cfg_Values.Add(new CfgValue { p_key = GetKey("cfg_values"), name = name, str_value = value, long_value = 0 });
             }
         }
 

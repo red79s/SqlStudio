@@ -1,6 +1,7 @@
 ﻿using CfgDataStore;
 using Common;
 using Common.Model;
+using LlmService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SqlCommandCompleter;
@@ -32,6 +33,7 @@ namespace SqlStudio
 		private DateTime _excutionStarted;
 		private string _userConfigDbFile;
 		private IHost _host = null;
+		private ILlmService _llmService = null;
 
 		public DatabaseConnectionUserControl(IConfigDataStore cfgDataStore, IColumnValueDescriptionProvider columnValueDescriptionProvider)
 		{
@@ -70,6 +72,17 @@ namespace SqlStudio
 			builder.Services.AddSingleton<IExecuteQueryCallback>(this);
 			builder.Services.AddSingleton<IDatabaseSchemaInfo>(_executer.SqlExecuter);
 			builder.Services.AddSingleton<ISqlCompleter,  SqlCompleter>();
+
+			var apiKey = _cfgDataStore.GetStringValue("gemini_api_key");
+			if (!string.IsNullOrWhiteSpace(apiKey))
+			{
+				var llmOptions = new LlmOptions { ApiKey = apiKey };
+				var model = _cfgDataStore.GetStringValue("llm_model");
+				if (!string.IsNullOrWhiteSpace(model)) llmOptions.Model = model;
+				var endpoint = _cfgDataStore.GetStringValue("llm_endpoint");
+				if (!string.IsNullOrWhiteSpace(endpoint)) llmOptions.Endpoint = endpoint;
+				builder.Services.AddLlmService(llmOptions);
+			}
 
 			_host = builder.Build();
 			_llmService = _host.Services.GetService<ILlmService>();
@@ -237,6 +250,12 @@ namespace SqlStudio
 
 		void cmdLineControl_CommandReady(object sender, string cmd)
 		{
+			if (cmd.TrimStart().StartsWith("?"))
+			{
+				HandleLlmCommandAsync(cmd);
+				return;
+			}
+
 			try
 			{
 				CommandParser commandParser = new CommandParser();
@@ -275,6 +294,41 @@ namespace SqlStudio
 			catch (Exception ex)
 			{
 				cmdLineControl.InsertCommandOutput(Environment.NewLine + ex.Message);
+				cmdLineControl.GetCommand();
+			}
+		}
+
+		private async void HandleLlmCommandAsync(string cmd)
+		{
+			try
+			{
+				var request = cmd.TrimStart().Substring(1).Trim();
+				if (string.IsNullOrWhiteSpace(request))
+				{
+					cmdLineControl.InsertCommandOutput(Environment.NewLine + "Usage: ?<describe the query>");
+					cmdLineControl.GetCommand();
+					return;
+				}
+				if (_llmService == null)
+				{
+					cmdLineControl.InsertCommandOutput(Environment.NewLine +
+						"LLM not configured. Set 'gemini_api_key' in sqlstudio.cfg to enable '?' SQL generation.");
+					cmdLineControl.GetCommand();
+					return;
+				}
+
+				cmdLineControl.InsertCommandOutput(Environment.NewLine + "-- Generating SQL...");
+				var schema = _host.Services.GetService<IDatabaseSchemaInfo>();
+				var result = await _llmService.GenerateSqlAsync(request, schema);
+
+				var sql = (result.Sql ?? string.Empty).Trim();
+				if (sql.Length > 0 && !sql.EndsWith(";")) sql += ";";
+
+				cmdLineControl.SetPendingCommand(sql);
+			}
+			catch (Exception ex)
+			{
+				cmdLineControl.InsertCommandOutput(Environment.NewLine + "SQL generation failed: " + ex.Message);
 				cmdLineControl.GetCommand();
 			}
 		}
