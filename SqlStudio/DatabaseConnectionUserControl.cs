@@ -72,6 +72,7 @@ namespace SqlStudio
 			builder.Services.AddSingleton<ISqlCompleter,  SqlCompleter>();
 
 			_host = builder.Build();
+			_llmService = _host.Services.GetService<ILlmService>();
 			_syntaxHighLight = new SyntaxHighlight.SQLSyntaxHighlight();
 			_syntaxHighLight.DefaultColor = cmdLineControl.ForeColor;
 			_syntaxHighLight.IdentifiersColor = cmdLineControl.ForeColor;
