@@ -73,14 +73,9 @@ namespace SqlStudio
 			builder.Services.AddSingleton<IDatabaseSchemaInfo>(_executer.SqlExecuter);
 			builder.Services.AddSingleton<ISqlCompleter,  SqlCompleter>();
 
-			var apiKey = _cfgDataStore.GetStringValue("gemini_api_key");
-			if (!string.IsNullOrWhiteSpace(apiKey))
+			var llmOptions = LlmSettingsStore.Load(_cfgDataStore);
+			if (LlmSettingsStore.IsConfigured(llmOptions))
 			{
-				var llmOptions = new LlmOptions { ApiKey = apiKey };
-				var model = _cfgDataStore.GetStringValue("llm_model");
-				if (!string.IsNullOrWhiteSpace(model)) llmOptions.Model = model;
-				var endpoint = _cfgDataStore.GetStringValue("llm_endpoint");
-				if (!string.IsNullOrWhiteSpace(endpoint)) llmOptions.Endpoint = endpoint;
 				builder.Services.AddLlmService(llmOptions);
 			}
 

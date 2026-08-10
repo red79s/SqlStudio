@@ -7,30 +7,57 @@ namespace LlmService
 {
     /// <summary>
     /// Dependency-injection registration for <see cref="ILlmService"/>. This is the only
-    /// Gemini/provider-specific code — swapping to another OpenAI-compatible provider (or a real
-    /// OpenAI/Azure endpoint) only requires changing <see cref="LlmOptions"/> or adding a sibling
-    /// registration method.
+    /// provider-specific code — a different OpenAI-compatible provider (Gemini, a real OpenAI/Azure
+    /// endpoint) or a local Ollama server is selected purely through <see cref="LlmOptions"/>.
     /// </summary>
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Registers an <see cref="IChatClient"/> backed by the configured (Gemini) OpenAI-compatible
-        /// endpoint, plus the <see cref="ILlmService"/> that uses it.
+        /// Placeholder credential for endpoints that don't authenticate. Ollama ignores the
+        /// Authorization header, but the OpenAI client requires a non-empty key.
+        /// </summary>
+        private const string NoAuthApiKey = "ollama";
+
+        /// <summary>
+        /// Registers an <see cref="IChatClient"/> backed by the configured provider (an
+        /// OpenAI-compatible endpoint such as Gemini, or an Ollama server), plus the
+        /// <see cref="ILlmService"/> that uses it.
         /// </summary>
         public static IServiceCollection AddLlmService(this IServiceCollection services, LlmOptions options)
         {
             ArgumentNullException.ThrowIfNull(services);
             ArgumentNullException.ThrowIfNull(options);
 
-            var clientOptions = new OpenAIClientOptions { Endpoint = new Uri(options.Endpoint) };
-            IChatClient chatClient = new OpenAIClient(new ApiKeyCredential(options.ApiKey), clientOptions)
-                .GetChatClient(options.Model)
-                .AsIChatClient();
-
-            services.AddChatClient(chatClient);
+            services.AddChatClient(CreateChatClient(options));
             services.AddSingleton<ILlmService, LlmService>();
 
             return services;
+        }
+
+        /// <summary>
+        /// Builds the provider-specific <see cref="IChatClient"/>. Both providers speak the
+        /// OpenAI chat-completions protocol; they differ in endpoint and authentication.
+        /// </summary>
+        public static IChatClient CreateChatClient(LlmOptions options)
+        {
+            ArgumentNullException.ThrowIfNull(options);
+
+            var apiKey = options.Provider == LlmProvider.Ollama && string.IsNullOrWhiteSpace(options.ApiKey)
+                ? NoAuthApiKey
+                : options.ApiKey;
+
+            if (string.IsNullOrWhiteSpace(apiKey))
+            {
+                throw new InvalidOperationException(
+                    $"An API key is required for provider '{options.Provider}'.");
+            }
+
+            var endpoint = LlmProviderDefaults.NormalizeEndpoint(options.Provider, options.Endpoint);
+            var clientOptions = new OpenAIClientOptions { Endpoint = new Uri(endpoint) };
+
+            return new OpenAIClient(new ApiKeyCredential(apiKey), clientOptions)
+                .GetChatClient(options.Model)
+                .AsIChatClient();
         }
     }
 }
