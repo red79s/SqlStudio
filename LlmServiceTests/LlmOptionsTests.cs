@@ -180,7 +180,7 @@ namespace LlmServiceTests
         [TestMethod]
         public void CreateChatClient_OpenAiCompatibleWithoutApiKey_Throws()
         {
-            Assert.ThrowsException<InvalidOperationException>(
+            Assert.Throws<InvalidOperationException>(
                 () => ServiceCollectionExtensions.CreateChatClient(new LlmOptions()));
         }
 

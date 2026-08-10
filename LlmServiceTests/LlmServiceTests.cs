@@ -101,7 +101,7 @@ namespace LlmServiceTests
         {
             var service = CreateService("unused");
 
-            await Assert.ThrowsExceptionAsync<ArgumentException>(
+            await Assert.ThrowsAsync<ArgumentException>(
                 () => service.GenerateSqlAsync("  "));
         }
     }
