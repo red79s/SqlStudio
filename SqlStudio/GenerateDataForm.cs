@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Data.Entity.Core.Mapping;
 using System.Drawing;
 using System.Linq;
 using System.Linq.Expressions;
