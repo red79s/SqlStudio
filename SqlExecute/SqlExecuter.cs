@@ -66,6 +66,8 @@ namespace SqlExecute
         private string _connectionString = null;
         private DbProviderFactory _dbFactory = null;
         private DatabaseProvider _provider = DatabaseProvider.SQLITE;
+
+        public DatabaseProvider Provider => _provider;
         private DBSchemaInfoBase _schemaInfo = null;
         private DbSchemaCache.DbSchemaCache _dbCache = null;
         private int _iCommandTimeout = 20;

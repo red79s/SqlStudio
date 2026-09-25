@@ -66,6 +66,7 @@ namespace SqlStudio
 
 			_executer = new Executer(cmdLineControl, _cfgDataStore, databaseKeywordEscape, this);
 			_executer.ExecutionFinished += _executer_ExecutionFinished;
+			databaseKeywordEscape.ProviderSource = () => _executer.SqlExecuter.Provider;
 
 			builder.Services.AddSingleton<IExecuteQueryCallback>(this);
 			builder.Services.AddSingleton<IDatabaseSchemaInfo>(_executer.SqlExecuter);

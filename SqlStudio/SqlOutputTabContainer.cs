@@ -237,7 +237,26 @@ namespace SqlStudio
         private void InsertNewTabPage(TabPage tabPage)
         {
             TabPages.Insert(TabCount - 1, tabPage);
+            SelectTabKeepFocus(tabPage);
+        }
+
+        // Setting SelectedTab from code makes the TabControl take focus (it treats it as a UI selection),
+        // which steals focus from the command input window. Restore focus to whatever control had it.
+        private void SelectTabKeepFocus(TabPage tabPage)
+        {
+            var focusedControl = GetFocusedControl();
             SelectedTab = tabPage;
+            if (focusedControl != null && !focusedControl.Focused && focusedControl.CanFocus)
+                focusedControl.Focus();
+        }
+
+        private Control GetFocusedControl()
+        {
+            Control control = FindForm();
+            while (control is ContainerControl containerControl && containerControl.ActiveControl != null)
+                control = containerControl.ActiveControl;
+
+            return control != null && control.Focused ? control : null;
         }
 
         public void CreateNewImageTab(string label, Bitmap bm)
@@ -276,7 +295,7 @@ namespace SqlStudio
                 dstp.Text = GetNextTabLabel();
 
             TabPages.Insert(TabCount -1, dstp);
-            SelectedTab = dstp;
+            SelectTabKeepFocus(dstp);
             return dstp;
         }
 

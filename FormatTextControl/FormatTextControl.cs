@@ -38,6 +38,7 @@ namespace FormatTextControl
         private bool _bShowIconField = true;
         private int _iconFieldWidth = 20;
         private int _maxLineWidth = 1000;
+        private const int _caretScrollMargin = 30;
         private bool _treatTabAsSpaces = true;
         private int _numSpacesForTab = 5;
 
@@ -439,7 +440,59 @@ namespace FormatTextControl
         {
             int line = CaretPos.Line;
             int y = line * _lineHeight;
-            AutoScrollPosition = new Point(-AutoScrollPosition.X, y);
+            AutoScrollPosition = new Point(GetScrollXToShowCaret(), y);
+            PositionCaret();
+        }
+
+        /// <summary>
+        /// Scrolls the minimum amount, horizontally and vertically, needed to make the caret visible.
+        /// </summary>
+        public void EnsureCaretVisible()
+        {
+            int y = -AutoScrollPosition.Y;
+            int caretTop = CaretPos.Line * _lineHeight;
+            if (caretTop < y)
+                y = caretTop;
+            else if (caretTop + _lineHeight > y + ClientSize.Height)
+                y = caretTop + _lineHeight - ClientSize.Height;
+
+            var newScrollPos = new Point(GetScrollXToShowCaret(), y);
+            if (newScrollPos != new Point(-AutoScrollPosition.X, -AutoScrollPosition.Y))
+            {
+                AutoScrollPosition = newScrollPos;
+                PositionCaret();
+            }
+        }
+
+        private int GetScrollXToShowCaret()
+        {
+            int x = -AutoScrollPosition.X;
+            if (_charWidth == null)
+                return x;
+
+            int caretX = (int)GetLineXPos(CaretPos.Line, CaretPos.Index) - AutoScrollPosition.X;
+            if (caretX - _caretScrollMargin < x)
+                x = caretX + _caretScrollMargin <= ClientSize.Width ? 0 : caretX - _caretScrollMargin;
+            else if (caretX + _caretScrollMargin > x + ClientSize.Width)
+                x = caretX + _caretScrollMargin - ClientSize.Width;
+            return x;
+        }
+
+        private const int WM_KEYDOWN = 0x0100;
+        private const int WM_CHAR = 0x0102;
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == WM_KEYDOWN || m.Msg == WM_CHAR)
+            {
+                // Keep the caret visible while typing/navigating, also when derived controls handle the key themselves
+                var caretBefore = _caretPos;
+                base.WndProc(ref m);
+                if (_caretPos != caretBefore)
+                    EnsureCaretVisible();
+                return;
+            }
+            base.WndProc(ref m);
         }
 
         protected virtual bool OnBeforeCaretMove(TextPos oldPos, TextPos newPos)
@@ -513,21 +566,12 @@ namespace FormatTextControl
 
         private void SetAutoScrollMinSize()
         {
-            AutoScrollMinSize = new Size(_maxLineWidth + 10, (_lineBuffer.Count * _lineHeight) + 10);
+            AutoScrollMinSize = new Size(_maxLineWidth + _caretScrollMargin, (_lineBuffer.Count * _lineHeight) + 10);
         }
 
         public void ScrollLines(int lines)
         {
             AutoScrollPosition = new Point(-AutoScrollPosition.X, -AutoScrollPosition.Y + (lines * _lineHeight));
-        }
-
-        private bool IsCaretInsideScreen()
-        {
-            if (_textCaret.Position.Y < 0 || _textCaret.Position.Y > (ClientRectangle.Bottom - (_lineHeight + 1)))
-                return false;
-            if (_textCaret.Position.X < 1 || _textCaret.Position.X > (ClientRectangle.Right - 1))
-                return false;
-            return true;
         }
 
         private bool IsCordsInsideTextArea(Point p)
@@ -1661,10 +1705,7 @@ namespace FormatTextControl
             else
                 return;
 
-            if (!IsCaretInsideScreen())
-            {
-                ScrollLines(-1);
-            }
+            EnsureCaretVisible();
         }
 
         protected virtual void OnDownKey()
@@ -1677,10 +1718,7 @@ namespace FormatTextControl
             else
                 return;
 
-            if (!IsCaretInsideScreen())
-            {
-                ScrollLines(1);
-            }
+            EnsureCaretVisible();
         }
 
         protected virtual void Beep()
@@ -1805,8 +1843,7 @@ namespace FormatTextControl
 
             UpdateLineNumWidth();
             SetAutoScrollMinSize();
-            if (!IsCaretInsideScreen())
-                ScrollToCaret();
+            EnsureCaretVisible();
         }
     }
 }

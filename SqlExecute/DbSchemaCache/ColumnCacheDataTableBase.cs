@@ -151,7 +151,7 @@ namespace SqlExecute.DbSchemaCache
 		
         public void CreateTable(DbConnection connection)
         {
-            string sqlDrop = "DROP TABLE column_cache";
+            string sqlDrop = "DROP TABLE IF EXISTS column_cache";
             string sqlCreate = "CREATE TABLE column_cache " + GetColumnSpecification();
 
             DbCommand commandDrop = _dbFactory.CreateCommand();

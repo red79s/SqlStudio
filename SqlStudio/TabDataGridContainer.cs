@@ -261,7 +261,17 @@ namespace SqlStudio
                     if (row.DataBoundItem == obj)
                     {
                         row.Selected = true;
-                        _tdg.FirstDisplayedScrollingRowIndex = row.Index;
+                        if (!row.Displayed)
+                        {
+                            try
+                            {
+                                _tdg.FirstDisplayedScrollingRowIndex = row.Index;
+                            }
+                            catch (InvalidOperationException)
+                            {
+                                // Grid has no room to display rows (e.g. output pane too small or not laid out yet)
+                            }
+                        }
                         return;
                     }
                 }
