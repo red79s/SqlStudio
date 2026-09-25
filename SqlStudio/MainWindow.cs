@@ -503,5 +503,11 @@ namespace SqlStudio
         {
             tabControlDatabaseConnections.SelectedDatabaseConnectionUIControl?.OpenSetUserPermissionsTool();
         }
+
+        private void llmSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dlg = new LlmSettingsDialog(_cfgDataStore) { StartPosition = FormStartPosition.CenterParent };
+            dlg.ShowDialog();
+        }
     }
 }

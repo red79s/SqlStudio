@@ -84,6 +84,7 @@ namespace SqlStudio
             runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tabControlDatabaseConnections = new DatabaseConnectionTabControl();
             setUserPermissionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            llmSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuStripTop.SuspendLayout();
             cmScriptTabs.SuspendLayout();
             SuspendLayout();
@@ -311,7 +312,7 @@ namespace SqlStudio
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, logSearchToolStripMenuItem, generatePasswordToolStripMenuItem, generateDataToolStripMenuItem, importEnumValuesToolStripMenuItem, setUserPermissionsToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, logSearchToolStripMenuItem, generatePasswordToolStripMenuItem, generateDataToolStripMenuItem, importEnumValuesToolStripMenuItem, setUserPermissionsToolStripMenuItem, llmSettingsToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             toolsToolStripMenuItem.Text = "Tools";
@@ -464,7 +465,14 @@ namespace SqlStudio
             setUserPermissionsToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             setUserPermissionsToolStripMenuItem.Text = "Set user permissions...";
             setUserPermissionsToolStripMenuItem.Click += setUserPermissionsToolStripMenuItem_Click;
-            // 
+            //
+            // llmSettingsToolStripMenuItem
+            //
+            llmSettingsToolStripMenuItem.Name = "llmSettingsToolStripMenuItem";
+            llmSettingsToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            llmSettingsToolStripMenuItem.Text = "LLM Settings...";
+            llmSettingsToolStripMenuItem.Click += llmSettingsToolStripMenuItem_Click;
+            //
             // MainWindow
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -540,6 +548,7 @@ namespace SqlStudio
         private DatabaseConnectionTabControl tabControlDatabaseConnections;
         private System.Windows.Forms.ToolStripMenuItem formatTextToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setUserPermissionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem llmSettingsToolStripMenuItem;
     }
 }
 

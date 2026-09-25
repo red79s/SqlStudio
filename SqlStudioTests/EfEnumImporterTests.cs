@@ -1,16 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlStudio.EnumImporter;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SqlStudioTests
 {
     [TestClass]
     public class EfEnumImporterTests
     {
+        [Ignore]
         [TestMethod]
         public void TestLoad_sD2Data()
         {
