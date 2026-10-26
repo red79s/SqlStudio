@@ -103,14 +103,17 @@ namespace FormatTextControl
                 ContextMenuStrip.Items[1].Enabled = false;
             }
 
-            if (Clipboard.ContainsText())
+            bool containsText;
+            try
             {
-                ContextMenuStrip.Items[2].Enabled = true;
+                containsText = Clipboard.ContainsText();
             }
-            else
+            catch (Exception)
             {
-                ContextMenuStrip.Items[2].Enabled = false;
+                // Clipboard may be locked by another process; let the paste attempt handle it
+                containsText = true;
             }
+            ContextMenuStrip.Items[2].Enabled = containsText;
         }
 
         void miPaste_Click(object sender, EventArgs e)
@@ -1506,8 +1509,53 @@ namespace FormatTextControl
 
         protected virtual void OnPaste()
         {
-            string insText = Clipboard.GetText();
+            string insText = GetClipboardText();
+            if (string.IsNullOrEmpty(insText))
+            {
+                return;
+            }
             OnPaste(insText);
+        }
+
+        private static string GetClipboardText()
+        {
+            // The clipboard can be temporarily locked by another process (clipboard history,
+            // remote desktop, clipboard managers), so retry and try several text formats.
+            int retryCount = 10;
+            while (retryCount > 0)
+            {
+                try
+                {
+                    var dataObject = Clipboard.GetDataObject();
+                    if (dataObject != null)
+                    {
+                        foreach (var format in new[] { DataFormats.UnicodeText, DataFormats.Text, DataFormats.OemText, DataFormats.StringFormat })
+                        {
+                            if (dataObject.GetDataPresent(format) && dataObject.GetData(format) is string text && text.Length > 0)
+                            {
+                                return text;
+                            }
+                        }
+                    }
+
+                    string fallbackText = Clipboard.GetText(TextDataFormat.UnicodeText);
+                    if (!string.IsNullOrEmpty(fallbackText))
+                    {
+                        return fallbackText;
+                    }
+                }
+                catch (Exception)
+                {
+                }
+
+                retryCount--;
+                if (retryCount > 0)
+                {
+                    System.Threading.Thread.Sleep(20);
+                }
+            }
+
+            return string.Empty;
         }
 
         protected virtual void OnPaste(string insText)
