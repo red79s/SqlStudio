@@ -814,6 +814,186 @@ namespace SqlExecute
             return result;
         }
 
+        public bool IsConnected => _connection != null && _connection.State == ConnectionState.Open;
+
+        /// <summary>
+        /// Runs one batch (the text between two GO lines) as a single command, the way SSMS does: variables,
+        /// temp tables, IF/BEGIN/END and transactions all work inside it. Every result set is added to
+        /// resultSets; PRINT output, row counts and errors go to message in the order the server sends them.
+        /// scriptLineOffset is the 0-based script line the batch starts on, used in error line numbers.
+        /// Returns false if the batch raised an error.
+        /// </summary>
+        public bool ExecuteBatch(string sql, int scriptLineOffset, List<SqlResult> resultSets, Action<string> message)
+        {
+            bool hadError = false;
+            var command = _dbFactory.CreateCommand();
+            command.CommandText = sql;
+            command.Connection = _connection;
+            if (_provider != DatabaseProvider.SQLSERVERCE)
+                command.CommandTimeout = _iCommandTimeout;
+
+            var sqlConnection = _connection as SqlConnection;
+            var sqlCommand = command as SqlCommand;
+            var pgConnection = _connection as Npgsql.NpgsqlConnection;
+            bool oldFireOnUserErrors = false;
+
+            // SQL Server: PRINT/RAISERROR come as InfoMessage. With FireInfoMessageEventOnUserErrors the errors
+            // that do not end the batch come there as well instead of as an exception, so reading carries on
+            // with the result sets that follow, just like SSMS.
+            SqlInfoMessageEventHandler onInfo = (s, e) =>
+            {
+                foreach (SqlError err in e.Errors)
+                {
+                    if (err.Class > 10)
+                    {
+                        hadError = true;
+                        message(FormatSqlError(err, scriptLineOffset));
+                    }
+                    else
+                    {
+                        message(err.Message);
+                    }
+                }
+            };
+            StatementCompletedEventHandler onStatementCompleted = (s, e) =>
+                message($"({e.RecordCount} row{(e.RecordCount == 1 ? "" : "s")} affected)");
+            Npgsql.NoticeEventHandler onNotice = (s, e) => message(e.Notice.MessageText);
+
+            if (sqlConnection != null)
+            {
+                oldFireOnUserErrors = sqlConnection.FireInfoMessageEventOnUserErrors;
+                sqlConnection.FireInfoMessageEventOnUserErrors = true;
+                sqlConnection.InfoMessage += onInfo;
+            }
+            if (sqlCommand != null)
+                sqlCommand.StatementCompleted += onStatementCompleted;
+            if (pgConnection != null)
+                pgConnection.Notice += onNotice;
+
+            _currentCommand = command;
+            try
+            {
+                int recordsAffected;
+                using (var reader = command.ExecuteReader())
+                {
+                    do
+                    {
+                        if (reader.FieldCount > 0)
+                        {
+                            var result = new SqlResult(SqlResult.ResultType.SELECT);
+                            result.StartExectionTimer();
+                            result.SqlQuery = sql;
+                            result.Connection = _connection;
+                            result.DataTable = ReadResultSet(reader);
+                            result.RowsAffected = result.DataTable.Rows.Count;
+                            result.StopExectionTimer();
+                            resultSets.Add(result);
+
+                            if (sqlCommand == null)
+                                message($"({result.RowsAffected} row{(result.RowsAffected == 1 ? "" : "s")})");
+                        }
+                    }
+                    while (reader.NextResult());
+
+                    recordsAffected = reader.RecordsAffected;
+                }
+
+                if (sqlCommand == null && recordsAffected > 0)
+                    message($"({recordsAffected} row{(recordsAffected == 1 ? "" : "s")} affected)");
+            }
+            catch (SqlException ex)
+            {
+                hadError = true;
+                foreach (SqlError err in ex.Errors)
+                    message(FormatSqlError(err, scriptLineOffset));
+            }
+            catch (Exception ex)
+            {
+                hadError = true;
+                message("Error: " + ex.Message);
+            }
+            finally
+            {
+                _currentCommand = null;
+                if (sqlConnection != null)
+                {
+                    sqlConnection.InfoMessage -= onInfo;
+                    sqlConnection.FireInfoMessageEventOnUserErrors = oldFireOnUserErrors;
+                }
+                if (sqlCommand != null)
+                    sqlCommand.StatementCompleted -= onStatementCompleted;
+                if (pgConnection != null)
+                    pgConnection.Notice -= onNotice;
+                command.Dispose();
+            }
+
+            return !hadError;
+        }
+
+        /// <summary>Open transactions left on the connection (SQL Server only), or null when unknown.</summary>
+        public int? GetOpenTransactionCount()
+        {
+            if (_provider != DatabaseProvider.SQLSERVER || !IsConnected)
+                return null;
+
+            try
+            {
+                using (var command = _connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT @@TRANCOUNT";
+                    return Convert.ToInt32(command.ExecuteScalar());
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private static string FormatSqlError(SqlError err, int scriptLineOffset)
+        {
+            // SqlError.LineNumber is 1-based within the batch; add where the batch starts in the script.
+            int line = err.LineNumber > 0 ? err.LineNumber + scriptLineOffset : 0;
+            return $"Msg {err.Number}, Level {err.Class}, State {err.State}, Line {line}{Environment.NewLine}{err.Message}";
+        }
+
+        private static DataTable ReadResultSet(DbDataReader reader)
+        {
+            var table = new DataTable();
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                string name = reader.GetName(i);
+                if (string.IsNullOrEmpty(name))
+                    name = "(No column name)";
+
+                // A result set can repeat a column name (e.g. SELECT a.Id, b.Id); a DataTable can not.
+                string unique = name;
+                for (int n = 1; table.Columns.Contains(unique); n++)
+                    unique = $"{name}{n}";
+
+                Type type;
+                try
+                {
+                    type = reader.GetFieldType(i) ?? typeof(object);
+                }
+                catch (Exception)
+                {
+                    type = typeof(object);
+                }
+                table.Columns.Add(unique, type);
+            }
+
+            var values = new object[reader.FieldCount];
+            table.BeginLoadData();
+            while (reader.Read())
+            {
+                reader.GetValues(values);
+                table.Rows.Add(values);
+            }
+            table.EndLoadData();
+            return table;
+        }
+
         private Regex blobRegex = new Regex("[(,]@(?<param>[a-zA-Z]+_blob_id_[a-zA-Z0-9_-]+)[,)]");
         private readonly ILogger _logger;
         private readonly IDatabaseKeywordEscape _databaseKeywordEscape;

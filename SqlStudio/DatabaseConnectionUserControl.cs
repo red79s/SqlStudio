@@ -68,6 +68,7 @@ namespace SqlStudio
 
 			_executer = new Executer(cmdLineControl, _cfgDataStore, databaseKeywordEscape, this);
 			_executer.ExecutionFinished += _executer_ExecutionFinished;
+			_executer.ScriptExecutionFinished += _executer_ScriptExecutionFinished;
 			databaseKeywordEscape.ProviderSource = () => _executer.SqlExecuter.Provider;
 
 			builder.Services.AddSingleton<IExecuteQueryCallback>(this);
@@ -538,26 +539,56 @@ namespace SqlStudio
 			}
 		}
 
+		// Runs the script (or the selection) in batches split on GO lines, like SSMS. Each batch goes to the
+		// server whole, so variables, temp tables, IF/BEGIN/END blocks and transactions work.
 		private void toolStripButtonRunScript_Click(object sender, EventArgs e)
 		{
 			CommandPrompt.SQLScript script = tabControlMainDocs.SelectedTab.Controls[0] as CommandPrompt.SQLScript;
-			if (script != null)
+			if (script == null)
+				return;
+
+			if (!_executer.SqlExecuter.IsConnected)
 			{
-				var text = script.GetSelectedText();
-				var parser = new CommandParser();
-				List<string> commands = parser.GetCommands(text);
-
-				if (script.FileName != null)
-				{
-					_executer.CurrentScriptPath = new FileInfo(script.FileName).DirectoryName + @"\";
-				}
-
-				tabControlMainDocs.SelectedTab = tabControlMainDocs.TabPages[0]; //set input window as selected
-				for (int i = 1; i < commands.Count; i++)
-					_cmdBuffer.Add(commands[i]);
-				if (commands.Count > 0)
-					cmdLineControl.ExecuteCommand(commands[0]);
+				MessageBox.Show("Not connected to a database.", "Run script", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
 			}
+
+			if (_executer.IsBussy)
+			{
+				MessageBox.Show("A query is already running.", "Run script", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
+			var text = script.GetScriptToRun(out int startLine);
+			var batches = CommandPrompt.SqlBatchSplitter.Split(text);
+			if (batches.Count == 0)
+				return;
+
+			if (script.FileName != null)
+			{
+				_executer.CurrentScriptPath = new FileInfo(script.FileName).DirectoryName + @"\";
+			}
+
+			_executer.ExecuteScript(batches, startLine);
+			_excutionStarted = DateTime.Now;
+			toolStripMessageLabel.Text = "Executing script...";
+			_executeTimer.Start();
+		}
+
+		void _executer_ScriptExecutionFinished(object sender, ScriptExecutionResult result)
+		{
+			if (InvokeRequired)
+			{
+				BeginInvoke(_executer_ScriptExecutionFinished, new object[] { sender, result });
+				return;
+			}
+
+			_executeTimer.Stop();
+			sqlOutput.DisplayScriptResults(result);
+			toolStripMessageLabel.Text = string.Format("Script {0} in {1}, {2} result set(s)",
+				result.HasErrors ? "completed with ERRORS" : "completed",
+				ConvertMillisecondsToHumanReadableString(result.ElapsedMilliseconds),
+				result.ResultSets.Count);
 		}
 
 		private void closeToolStripMenuItem_Click(object sender, EventArgs e)

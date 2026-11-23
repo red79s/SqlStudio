@@ -5,6 +5,8 @@ using SqlExecute;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,6 +15,7 @@ namespace SqlStudio
     public class Executer : IExecuter
     {
         public EventHandler<IList<SqlResult>> ExecutionFinished;
+        public EventHandler<ScriptExecutionResult> ScriptExecutionFinished;
 
         private SqlExecuter _sqlExecuter = null;
         public SqlExecuter SqlExecuter
@@ -106,6 +109,91 @@ namespace SqlStudio
             _thread = new Thread(new ThreadStart(Execute));
             _thread.IsBackground = false;
             _thread.Start();
+        }
+
+        /// <summary>
+        /// Runs the batches of a script one after the other on a background thread and raises
+        /// ScriptExecutionFinished when done. Stops at the first batch that fails.
+        /// scriptStartLine is the 0-based editor line the script text starts on.
+        /// </summary>
+        public void ExecuteScript(IList<CommandPrompt.SqlBatch> batches, int scriptStartLine)
+        {
+            lock (this)
+            {
+                if (_bussy)
+                    throw new Exception("Already executing");
+                _bussy = true;
+            }
+
+            _thread = new Thread(() => RunScript(batches, scriptStartLine));
+            _thread.IsBackground = true;
+            _thread.Start();
+        }
+
+        private void RunScript(IList<CommandPrompt.SqlBatch> batches, int scriptStartLine)
+        {
+            var result = new ScriptExecutionResult();
+            var messages = new StringBuilder();
+            var sw = Stopwatch.StartNew();
+
+            try
+            {
+                if (!_sqlExecuter.IsConnected)
+                {
+                    result.HasErrors = true;
+                    messages.AppendLine("Not connected to a database.");
+                }
+                else
+                {
+                    for (int b = 0; b < batches.Count && !result.HasErrors; b++)
+                    {
+                        var batch = batches[b];
+                        int lineOffset = scriptStartLine + batch.StartLine;
+                        for (int run = 0; run < batch.RepeatCount; run++)
+                        {
+                            if (!_sqlExecuter.ExecuteBatch(batch.Text, lineOffset, result.ResultSets, m => messages.AppendLine(m)))
+                            {
+                                result.HasErrors = true;
+                                break;
+                            }
+                        }
+
+                        if (!result.HasErrors && batch.RepeatCount > 1)
+                            messages.AppendLine($"Batch execution completed {batch.RepeatCount} times.");
+
+                        if (result.HasErrors && b < batches.Count - 1)
+                        {
+                            messages.AppendLine();
+                            messages.AppendLine($"Script stopped: the batch starting on line {lineOffset + 1} failed, the {batches.Count - b - 1} batch(es) after it were not run.");
+                        }
+                    }
+
+                    int? openTransactions = _sqlExecuter.GetOpenTransactionCount();
+                    if (openTransactions > 0)
+                    {
+                        messages.AppendLine();
+                        messages.AppendLine($"WARNING: {openTransactions} open transaction(s) left on this connection. Run COMMIT or ROLLBACK.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.HasErrors = true;
+                messages.AppendLine("Error: " + ex.Message);
+            }
+
+            sw.Stop();
+            result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+            messages.AppendLine();
+            messages.AppendLine($"{(result.HasErrors ? "Completed with errors" : "Completed")} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}, {batches.Count} batch(es), {result.ResultSets.Count} result set(s), {sw.ElapsedMilliseconds} ms.");
+            result.Messages = messages.ToString();
+
+            lock (this)
+            {
+                _bussy = false;
+            }
+
+            ScriptExecutionFinished?.Invoke(this, result);
         }
 
         public Task DeleteCascading(TableKeyValues tableKeyValues, bool onlyDisplayAffectedRows)

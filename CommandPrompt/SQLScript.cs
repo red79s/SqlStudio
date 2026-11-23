@@ -14,12 +14,41 @@ namespace CommandPrompt
         private string _fileName = null;
         public string FileName { get { return _fileName; } }
 
+        private readonly SqlScriptHighlighter _highlighter = new SqlScriptHighlighter();
+        private bool _highlightPending = false;
+
         public SQLScript()
         {
             InitializeComponent();
             var miRepeat = new ToolStripMenuItem("Expand text");
             miRepeat.Click += new EventHandler(miRepeat_Click);
             formatTextControl.ContextMenuStrip.Items.Add(miRepeat);
+
+            formatTextControl.ContentChanged += formatTextControl_ContentChanged;
+        }
+
+        // One edit can raise several change events (e.g. replace = remove + insert), so collect them and
+        // re-colour once. The posted call runs before the pending repaint, so the old colours never show.
+        private void formatTextControl_ContentChanged(object sender, EventArgs e)
+        {
+            if (_highlightPending)
+                return;
+
+            if (!IsHandleCreated)
+            {
+                Highlight();
+                return;
+            }
+
+            _highlightPending = true;
+            BeginInvoke(new Action(Highlight));
+        }
+
+        private void Highlight()
+        {
+            _highlightPending = false;
+            _highlighter.Highlight(formatTextControl);
+            formatTextControl.Invalidate();
         }
 
         void miRepeat_Click(object sender, EventArgs e)
@@ -82,7 +111,7 @@ namespace CommandPrompt
             if (formatTextControl.SelectionEnd > formatTextControl.SelectionStart)
                 content = formatTextControl.GetSelectedText();
             else
-                content = formatTextControl.Text;
+                content = GetAllText();
 
             string[] commands = content.Split(new char[] { ';' });
             foreach (string command in commands)
@@ -99,7 +128,30 @@ namespace CommandPrompt
             if (formatTextControl.SelectionEnd > formatTextControl.SelectionStart)
                 return formatTextControl.GetSelectedText();
             else
-                return formatTextControl.Text;
+                return GetAllText();
+        }
+
+        /// <summary>
+        /// The text to run: the selection if there is one, otherwise the whole script. startLine is the
+        /// 0-based script line the text starts on, so error line numbers can point into the script.
+        /// </summary>
+        public string GetScriptToRun(out int startLine)
+        {
+            if (formatTextControl.IsTextSelected())
+            {
+                startLine = formatTextControl.SelectionStart.Line;
+                return formatTextControl.GetSelectedText();
+            }
+
+            startLine = 0;
+            return GetAllText();
+        }
+
+        // FormatTextControl.Text joins the lines without line breaks, which would let a -- comment swallow
+        // the rest of the script.
+        private string GetAllText()
+        {
+            return string.Join(Environment.NewLine, formatTextControl.Lines);
         }
     }
 }

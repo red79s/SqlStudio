@@ -19,6 +19,7 @@ namespace SqlStudio
         private TabPage _outputTab = null;
         private TextBox _textBoxOutput = null;
         private int _resCounter = 0;
+        private readonly List<TabPage> _scriptResultTabs = new List<TabPage>();
 
         ContextMenuStrip _dataTabContextMenu = null;
         private IServiceProvider _serviceProvider = null;
@@ -215,14 +216,50 @@ namespace SqlStudio
             currentDataTab.SetResults(results);
         }
 
+        /// <summary>
+        /// Shows the results of a script run: one tab per result set plus a Messages tab. The tabs of the
+        /// previous script run are replaced, so repeated runs do not pile up tabs.
+        /// </summary>
+        public void DisplayScriptResults(ScriptExecutionResult result)
+        {
+            foreach (var oldTab in _scriptResultTabs)
+            {
+                if (TabPages.Contains(oldTab))
+                    TabPages.Remove(oldTab);
+                oldTab.Dispose();
+            }
+            _scriptResultTabs.Clear();
+
+            TabPage firstResultTab = null;
+            for (int i = 0; i < result.ResultSets.Count; i++)
+            {
+                var resultSet = result.ResultSets[i];
+                var tab = InsertNewDataTab(null);
+                tab.SetResults(new List<SqlResult> { resultSet });
+                tab.Text = $"Result {i + 1}";
+                tab.ToolTipText = $"{resultSet.RowsAffected} row(s)";
+                _scriptResultTabs.Add(tab);
+                firstResultTab ??= tab;
+            }
+
+            var messagesTab = new TextOutputTabPage();
+            messagesTab.SetText(result.Messages);
+            messagesTab.Text = result.HasErrors ? "Messages (errors)" : "Messages";
+            TabPages.Insert(TabCount - 1, messagesTab);
+            _scriptResultTabs.Add(messagesTab);
+
+            SelectTabKeepFocus(result.HasErrors || firstResultTab == null ? messagesTab : firstResultTab);
+        }
+
         private DataSetTabPage GetCurrentDataTab()
         {
+            // Script result tabs are replaced on the next script run, so command-line results never go there.
             TabPage tp = SelectedTab;
-            if (tp is DataSetTabPage)
+            if (tp is DataSetTabPage && !_scriptResultTabs.Contains(tp))
                 return (DataSetTabPage)tp;
             for (int i = TabPages.Count - 1; i >= 0; i--)
             {
-                if (TabPages[i] is DataSetTabPage)
+                if (TabPages[i] is DataSetTabPage && !_scriptResultTabs.Contains(TabPages[i]))
                     return (DataSetTabPage)TabPages[i];
             }
 

@@ -16,6 +16,14 @@ namespace FormatTextControl
         public event IconLineClickedDelegate IconLineClicked;
         public delegate void IconLineDoubleClickedDelegate(object sender, int line);
         public event IconLineDoubleClickedDelegate IconLineDoubleClicked;
+
+        /// <summary>Raised after any change to the text: typing, deleting, Enter, Tab, paste, undo/redo or setting Text.</summary>
+        public event EventHandler ContentChanged;
+
+        protected virtual void OnContentChanged()
+        {
+            ContentChanged?.Invoke(this, EventArgs.Empty);
+        }
         
         private LineBuffer _lineBuffer = null;
         private TextCaret _textCaret = null;
@@ -309,6 +317,7 @@ namespace FormatTextControl
                 AutoScrollPosition = new Point(0, 0);
                 MeasureLineWidthAll();
                 InvalidateFromLine(0);
+                OnContentChanged();
             }
         }
 
@@ -331,6 +340,7 @@ namespace FormatTextControl
             AutoScrollPosition = new Point(0, 0);
             MeasureLineWidthAll();
             InvalidateFromLine(0);
+            OnContentChanged();
         }
 
         public void BeginUpdate()
@@ -1657,6 +1667,7 @@ namespace FormatTextControl
                 TextInserted(this, startPos, startPos, "");
 
             CaretPos = startPos;
+            OnContentChanged();
             return linesInvolved + 1;
         }
 
@@ -1731,6 +1742,7 @@ namespace FormatTextControl
             }
 
             CaretPos = pos;
+            OnContentChanged();
             return pos;
         }
 
@@ -1826,6 +1838,7 @@ namespace FormatTextControl
             }
             MeasureLineWidth(CaretPos.Line, true);
             InvalidateLine(CaretPos.Line);
+            OnContentChanged();
         }
 
         protected virtual void OnBackKey()
@@ -1892,6 +1905,7 @@ namespace FormatTextControl
             UpdateLineNumWidth();
             SetAutoScrollMinSize();
             EnsureCaretVisible();
+            OnContentChanged();
         }
     }
 }
