@@ -1,4 +1,4 @@
-namespace SqlStudio
+﻿namespace SqlStudio
 {
     partial class MainWindow
     {
@@ -85,6 +85,7 @@ namespace SqlStudio
             tabControlDatabaseConnections = new DatabaseConnectionTabControl();
             setUserPermissionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             llmSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            databaseTransferToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuStripTop.SuspendLayout();
             cmScriptTabs.SuspendLayout();
             SuspendLayout();
@@ -312,7 +313,7 @@ namespace SqlStudio
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, logSearchToolStripMenuItem, generatePasswordToolStripMenuItem, generateDataToolStripMenuItem, importEnumValuesToolStripMenuItem, setUserPermissionsToolStripMenuItem, llmSettingsToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aliasesToolStripMenuItem, autoQueriesToolStripMenuItem, logSearchToolStripMenuItem, generatePasswordToolStripMenuItem, generateDataToolStripMenuItem, importEnumValuesToolStripMenuItem, setUserPermissionsToolStripMenuItem, databaseTransferToolStripMenuItem, llmSettingsToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             toolsToolStripMenuItem.Text = "Tools";
@@ -472,6 +473,13 @@ namespace SqlStudio
             llmSettingsToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             llmSettingsToolStripMenuItem.Text = "LLM Settings...";
             llmSettingsToolStripMenuItem.Click += llmSettingsToolStripMenuItem_Click;
+            // 
+            // databaseTransferToolStripMenuItem
+            // 
+            databaseTransferToolStripMenuItem.Name = "databaseTransferToolStripMenuItem";
+            databaseTransferToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            databaseTransferToolStripMenuItem.Text = "Database Transfer...";
+            databaseTransferToolStripMenuItem.Click += databaseTransferToolStripMenuItem_Click;
             //
             // MainWindow
             // 
@@ -549,6 +557,7 @@ namespace SqlStudio
         private System.Windows.Forms.ToolStripMenuItem formatTextToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setUserPermissionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem llmSettingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem databaseTransferToolStripMenuItem;
     }
 }
 

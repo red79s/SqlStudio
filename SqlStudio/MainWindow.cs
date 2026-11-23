@@ -1,4 +1,4 @@
-using CfgDataStore;
+﻿using CfgDataStore;
 using Common;
 using Common.Model;
 using SqlStudio.ColumnMetaDataInfo;
@@ -508,6 +508,12 @@ namespace SqlStudio
         {
             var dlg = new LlmSettingsDialog(_cfgDataStore) { StartPosition = FormStartPosition.CenterParent };
             dlg.ShowDialog();
+        }
+
+        private void databaseTransferToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using var dlg = new DatabaseTransfer.DatabaseTransferForm(_cfgDataStore);
+            dlg.ShowDialog(this);
         }
     }
 }
